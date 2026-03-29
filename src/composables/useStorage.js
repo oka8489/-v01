@@ -18,12 +18,63 @@ function getDefaultData() {
 }
 
 export function useStorage() {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  const data = reactive(saved ? { ...getDefaultData(), ...JSON.parse(saved) } : getDefaultData())
+  const data = reactive(getDefaultData())
+  let apiLoaded = false
 
-  watch(data, () => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
-  }, { deep: true })
+  // APIからロード（優先）、失敗時はlocalStorage
+  fetch('/api/data')
+    .then(r => {
+      console.log('[useStorage] API status:', r.status)
+      return r.json()
+    })
+    .then(serverData => {
+      if (serverData && serverData.version) {
+        Object.keys(getDefaultData()).forEach(k => delete data[k])
+        Object.assign(data, serverData)
+        apiLoaded = true
+        startWatch()
+      }
+    })
+    .catch(() => {
+      // API不通→localStorageからロード
+      const saved = localStorage.getItem(STORAGE_KEY)
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved)
+          for (const key of Object.keys(parsed)) {
+            data[key] = parsed[key]
+          }
+        } catch {}
+      }
+      startWatch()
+    })
+
+  function deepMerge(target, source) {
+    for (const key of Object.keys(source)) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])
+          && target[key] && typeof target[key] === 'object') {
+        deepMerge(target[key], source[key])
+      } else {
+        target[key] = source[key]
+      }
+    }
+  }
+
+  // debounce付き保存（APIロード完了後に開始）
+  let saveTimer = null
+  function startWatch() {
+    watch(data, () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+      clearTimeout(saveTimer)
+      saveTimer = setTimeout(() => {
+        fetch('/api/data', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ data }),
+        }).catch(() => {})
+      }, 500)
+    }, { deep: true })
+  }
 
   function exportJSON() {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })

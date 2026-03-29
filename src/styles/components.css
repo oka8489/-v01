@@ -51,7 +51,9 @@
   background: var(--surface2);
 }
 .fee-table .total-row td { border-top: 1.5px solid var(--border-strong); }
+.fee-table .sub-row { background: #f9f9f9; }
 .fee-table .new-row { background: rgba(227,240,255,0.3); }
+.fee-input.empty-input { border-color: #e53e3e; background: #fff5f5; }
 .fee-table .abolished-row {
   background: rgba(254,236,236,0.3);
   text-decoration: line-through;

@@ -266,12 +266,14 @@ function convertToHoushuFormat(raw) {
   set('naiteki_cnt', 'naiteki_zai')
 
   // 薬学管理料
-  set('kanri_27_cnt', 'chmgr_nai_cnt', 'chmgr_cnt')
+  // 調剤管理料: PDFは合計のみ→kanri_7に入れる（区分別は手入力）
+  set('kanri_7_cnt', 'chmgr_nai_cnt', 'chmgr_cnt')
   set('kanri_gaiyou_cnt', 'chmgr_other_cnt')
-  set('fukuyaku_1i_cnt', 'fuyaku_a_cnt')
-  // fukuyaku_1ro, 2ro はPDFに区分がない → 設定しない
-  set('fukuyaku_2i_cnt', 'fuyaku_b_cnt')
-  set('fukuyaku_3_cnt', 'fuyaku_c_cnt', 'fuyaku_3_cnt')
+  set('fukuyaku_a_cnt', 'fuyaku_a_cnt')
+  set('fukuyaku_b_cnt', 'fuyaku_b_cnt')
+  set('fukuyaku_c_cnt', 'fuyaku_c_cnt')
+  set('fukuyaku_3_cnt', 'fuyaku_3_cnt')
+  set('fukuyaku_toku2a_cnt', 'fuyaku_toku2a_cnt')
   set('kakaritsuke_shido_cnt', 'kakari_cnt')
   set('kakaritsuke_hokatsu_cnt', 'kakari_hokatsu_cnt')
   // 重複防止: 両方あれば合算、片方でもあれば取得済み

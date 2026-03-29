@@ -8,6 +8,6 @@ defineProps({ data: Object, era: { type: String, default: 'r6' } })
 <template>
   <div class="section">
     <div class="section-title">C. 薬学管理料</div>
-    <FeeTable :items="MANAGEMENT_FEES" :data="data" :era="era" />
+    <FeeTable :items="MANAGEMENT_FEES" :data="data" :era="era" showTotal />
   </div>
 </template>

@@ -8,6 +8,7 @@ const props = defineProps({
   data: Object,
   era: { type: String, default: 'r8' }, // 'r6' or 'r8'
   showAmount: { type: Boolean, default: true },
+  showTotal: { type: Boolean, default: false },
 })
 
 function getPoints(item) {
@@ -25,6 +26,10 @@ function getCount(item) {
 }
 
 function getAmount(item) {
+  // count-only: _amt フィールドから直接金額を取得
+  if (item.inputType === 'count-only') {
+    return props.data[props.era]?.[item.id + '_amt'] || 0
+  }
   const pts = getPoints(item)
   const cnt = getCount(item)
   if (pts == null || cnt == null) return 0
@@ -38,11 +43,23 @@ function updateSelect(item, value) {
 
 function updateCount(item, value) {
   if (!props.data[props.era]) props.data[props.era] = {}
-  props.data[props.era][item.id + '_cnt'] = value ? Number(value) : 0
+  props.data[props.era][item.id + '_cnt'] = value ? Number(String(value).replace(/,/g, '')) : 0
+}
+
+function fmtCount(v) {
+  return (v || 0).toLocaleString()
 }
 
 function isDisabled(item) {
   return item[props.era] === null
+}
+
+function totalCount() {
+  return props.items.filter(i => !isDisabled(i)).reduce((sum, i) => sum + getCount(i), 0)
+}
+
+function totalAmount() {
+  return props.items.filter(i => !isDisabled(i)).reduce((sum, i) => sum + getAmount(i), 0)
 }
 </script>
 
@@ -63,12 +80,15 @@ function isDisabled(item) {
         :class="{
           'new-row': item.changeType === 'new' && era === 'r8',
           'abolished-row': isDisabled(item),
+          'sub-row': item.isDetail,
         }"
       >
-        <td class="label-cell">
-          {{ item.label }}
+        <td class="label-cell" :style="item.isSub ? 'padding-left:24px' : (item.isDetail ? 'padding-left:32px;color:var(--text-muted)' : '')">
+          <span v-if="item.isDetail">┗ {{ item.label }}</span>
+          <span v-else>{{ item.label }}</span>
           <BadgeLabel :type="item.changeType" />
-          <div v-if="item[era]?.frequency" style="font-size:10px;color:var(--text-faint)">{{ item[era].frequency }}</div>
+          <div v-if="item.description" style="font-size:10px;color:var(--text-faint)">{{ item.description }}</div>
+          <div v-else-if="item[era]?.frequency" style="font-size:10px;color:var(--text-faint)">{{ item[era].frequency }}</div>
         </td>
         <td>
           <!-- select型 -->
@@ -92,12 +112,12 @@ function isDisabled(item) {
         <td v-if="showAmount" style="text-align:right">
           <input
             v-if="!isDisabled(item)"
-            type="number"
+            type="text"
             class="fee-input"
-            style="max-width:80px"
-            :value="getCount(item)"
-            @input="updateCount(item, $event.target.value)"
-            min="0"
+            :class="{ 'empty-input': item.isDetail && !getCount(item) }"
+            style="max-width:90px;text-align:right"
+            :value="fmtCount(getCount(item))"
+            @change="updateCount(item, $event.target.value)"
           >
           <span v-else style="color:var(--text-faint)">-</span>
         </td>
@@ -105,6 +125,12 @@ function isDisabled(item) {
           <span v-if="!isDisabled(item)">{{ formatYen(getAmount(item)) }}</span>
           <span v-else style="color:var(--text-faint)">-</span>
         </td>
+      </tr>
+      <tr v-if="showTotal" class="total-row">
+        <td style="font-weight:700">合計</td>
+        <td></td>
+        <td v-if="showAmount" class="num-cell" style="font-weight:700">{{ fmtCount(totalCount()) }}</td>
+        <td v-if="showAmount" class="num-cell" style="font-weight:700">{{ formatYen(totalAmount()) }}</td>
       </tr>
     </tbody>
   </table>
