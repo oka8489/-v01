@@ -1,0 +1,40 @@
+{
+  "version": "1.0",
+  "source": "pdf-import",
+  "r6": {
+    "naifuku_cnt": 20167,
+    "tonpuku_cnt": 2644,
+    "gaiyou_cnt": 11745,
+    "chusya_cnt": 52,
+    "naiteki_cnt": 47
+  },
+  "r8": {},
+  "monthly": {
+    "2025-05": {
+      "rxCount": 12557,
+      "rxSheets": 12574,
+      "geRate": 95.35,
+      "zaiCount": 0,
+      "avgZai": 2.51,
+      "totalReward": 55172080,
+      "rxPrice": 4387.79,
+      "techoRate": 91.21,
+      "drugCost": 23080420
+    },
+    "2025-04": {
+      "rxCount": 13856,
+      "rxSheets": 13874,
+      "geRate": 95.34,
+      "zaiCount": 0,
+      "avgZai": 2.5,
+      "totalReward": 60983190,
+      "rxPrice": 4395.5,
+      "techoRate": 91.36,
+      "drugCost": 25559910
+    }
+  },
+  "tasks": {},
+  "requirements": {},
+  "drugPriceRate": 4.02,
+  "drugPriceEnabled": true
+}

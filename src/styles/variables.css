@@ -1,0 +1,52 @@
+:root {
+  /* migiude.css準拠 */
+  --bg: #f5f4f0;
+  --surface: #ffffff;
+  --surface2: #f0eee8;
+  --border: #e2e0d8;
+  --border-strong: #c8c6be;
+  --text: #2c2c2a;
+  --text-muted: #5f5e5a;
+  --text-faint: #9e9e97;
+
+  --purple: #534ab7;
+  --purple-l: #eeedfe;
+  --teal: #0f6e56;
+  --teal-l: #e1f5ee;
+  --amber: #ba7517;
+  --amber-l: #faeeda;
+  --red: #a32d2d;
+  --red-l: #fcebeb;
+  --green: #3b6d11;
+  --green-l: #eaf3de;
+
+  --r6: #1a73e8;
+  --r6-bg: #e8f0fe;
+  --r6-border: #4285f4;
+  --r8: #1e8e3e;
+  --r8-bg: #e6f4ea;
+  --r8-border: #34a853;
+
+  --accent: #534ab7;
+  --pos: #0f6e56;
+  --neg: #a32d2d;
+
+  --chg-bg: #fff8e1;
+  --chg-text: #f57f17;
+  --del-bg: #ffebee;
+  --del-text: #c62828;
+  --new-bg: #e3f2fd;
+  --new-text: #1565c0;
+  --mod-bg: #e6f4ea;
+  --mod-text: #1e8e3e;
+  --rename-bg: #f3f0e8;
+  --rename-text: #4a4030;
+  --merge-bg: #e3f2fd;
+  --merge-text: #1565c0;
+  --same-bg: #f0eee8;
+  --same-text: #5f5e5a;
+
+  --radius: 10px;
+  --radius-lg: 10px;
+  --shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
