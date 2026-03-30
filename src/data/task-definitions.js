@@ -1,4 +1,13 @@
-export const TASK_DEFINITIONS = {
+// 報酬改定 事務タスク定義
+// カテゴリ: todoke(届出), shisetsu(施設基準), jimu(事務), keika(経過措置)
+window.TASK_CATEGORIES = [
+  { id: 'todoke', label: '届出の変更・新規・取り下げ', keys: ['t01','t02','t03','t04','t05','t06','t07','t08'] },
+  { id: 'shisetsu', label: '施設基準・要件の確認', keys: ['t10','t11','t12','t13','t14','t15'] },
+  { id: 'jimu', label: '事務・システム対応', keys: ['t20','t21','t22','t23','t24','t25','t26','t27'] },
+  { id: 'keika', label: '経過措置の期限管理', keys: ['t30','t31'] },
+]
+
+window.TASK_DEFINITIONS = {
   // 届出の変更・新規・取り下げ
   t01: {
     title: '調剤基本料の届出更新',

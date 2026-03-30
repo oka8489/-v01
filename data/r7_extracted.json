@@ -1,0 +1,1487 @@
+{
+  "version": "2.0",
+  "pharmacyName": "アフェット薬局",
+  "period": "令和07年05月01日～令和08年03月27日",
+  "raw_toukei": {
+    "header": {
+      "title": "調剤報酬統計表",
+      "created": "令和08年03月27日",
+      "pharmacy": "アフェット薬局",
+      "period_from": "令和07年05月01日",
+      "period_to": "令和08年03月27日"
+    },
+    "basic_indicators": {
+      "rx_count": {
+        "current": 12557,
+        "previous": 13526,
+        "diff": -969
+      },
+      "rx_sheets": {
+        "current": 12574,
+        "previous": 13540,
+        "diff": -966
+      },
+      "ge_rate": {
+        "current": 95.35,
+        "previous": 93.37,
+        "diff": 1.98
+      },
+      "zai_count": {
+        "current": 31574,
+        "previous": 32227,
+        "diff": -653
+      },
+      "avg_zai": {
+        "current": 2.51,
+        "previous": 2.38,
+        "diff": 0.13
+      },
+      "total_reward": {
+        "current": 55172080,
+        "previous": 55607740,
+        "diff": -435660
+      },
+      "rx_price": {
+        "current": 4387.79,
+        "previous": 4106.92,
+        "diff": 280.87
+      }
+    },
+    "patient_burden": {
+      "hoken_futan": {
+        "current": 1391754,
+        "previous": 1434650,
+        "diff": -42896
+      },
+      "jihi_futan": {
+        "current": 62820,
+        "previous": 32560,
+        "diff": 30260
+      },
+      "hokengai_futan": {
+        "current": 209866,
+        "previous": 254621,
+        "diff": -44755
+      },
+      "sonota_kingaku": {
+        "current": 195940,
+        "previous": 228760,
+        "diff": -32820
+      },
+      "otc_kingaku": {
+        "current": 0,
+        "previous": 0,
+        "diff": 0
+      },
+      "sentei_ryoyo": {
+        "current": 13926,
+        "previous": 25861,
+        "diff": -11935
+      }
+    },
+    "techo": {
+      "techo_rate": {
+        "current": 91.21,
+        "previous": 93.57,
+        "diff": -2.36
+      },
+      "rx_3month": {
+        "current": 8581,
+        "previous": 9336,
+        "diff": -755
+      },
+      "rx_3month_techo": {
+        "current": 7827,
+        "previous": 8736,
+        "diff": -909
+      }
+    },
+    "kihon_summary": {
+      "total_amt": 14230080,
+      "pct": 25.79,
+      "kihon": {
+        "cnt": 12494,
+        "amt": 14040210,
+        "pct": 98.67
+      },
+      "kihon_doji": {
+        "cnt": 39,
+        "amt": 37930,
+        "pct": 0.27
+      },
+      "bunkatsu_chouki": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "bunkatsu_kouhatsu": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "bunkatsu_ishi": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "jikangai": {
+        "cnt": 29,
+        "amt": 32340,
+        "pct": 0.23
+      },
+      "kyujitsu": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "shinya": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "yakan": {
+        "cnt": 299,
+        "amt": 119600,
+        "pct": 0.84
+      },
+      "dx_saikei": {
+        "cnt": 9729,
+        "amt": 775620,
+        "pct": 5.45
+      },
+      "zaitaku_taisei_saikei": {
+        "cnt": 21,
+        "amt": 3150,
+        "pct": 0.02
+      }
+    },
+    "yakugaku_summary": {
+      "total_amt": 10057870,
+      "pct": 18.23
+    },
+    "yakuzai_summary": {
+      "total_amt": 23080420,
+      "pct": 41.83
+    },
+    "chozai_matrix": {
+      "naifuku": {
+        "zai": 18353,
+        "yakuzai": 15242030,
+        "chozai": 3949440,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 1120,
+        "mukyoko": 8160,
+        "keiryo": 2143350,
+        "keiryo_yo": 0,
+        "jika": 11760,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 11040,
+        "kazan_total": 2175430
+      },
+      "sinsenn": {
+        "zai": 0,
+        "yakuzai": 0,
+        "chozai": 0,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 0,
+        "keiryo": 0,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 0,
+        "kazan_total": 0
+      },
+      "yuyaku": {
+        "zai": 0,
+        "yakuzai": 0,
+        "chozai": 0,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 0,
+        "keiryo": 0,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 0,
+        "kazan_total": 0
+      },
+      "tonpuku": {
+        "zai": 2487,
+        "yakuzai": 179110,
+        "chozai": 510300,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 80,
+        "keiryo": 0,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 1050,
+        "kazan_total": 1130
+      },
+      "gaiyou": {
+        "zai": 10627,
+        "yakuzai": 5912610,
+        "chozai": 1036600,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 2800,
+        "keiryo": 113850,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 1500,
+        "kazan_total": 118150
+      },
+      "chusya": {
+        "zai": 49,
+        "yakuzai": 1726820,
+        "chozai": 8060,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 0,
+        "keiryo": 0,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 0,
+        "kazan_total": 0
+      },
+      "naiteki": {
+        "zai": 46,
+        "yakuzai": 7010,
+        "chozai": 4600,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 0,
+        "mukyoko": 0,
+        "keiryo": 0,
+        "keiryo_yo": 0,
+        "jika": 0,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 0,
+        "kazan_total": 0
+      },
+      "zairyo": {
+        "zai": 12,
+        "yakuzai": 12840
+      },
+      "total": {
+        "zai": 31574,
+        "yakuzai": 23080420,
+        "chozai": 5509000,
+        "mayaku": 0,
+        "doku": 0,
+        "kakusei": 1120,
+        "mukyoko": 11040,
+        "keiryo": 2257200,
+        "keiryo_yo": 0,
+        "jika": 11760,
+        "jika_yo": 0,
+        "mukin": 0,
+        "jikou": 13590,
+        "kazan_total": 2294710
+      }
+    },
+    "yakugaku_items": {
+      "kanri_total": {
+        "cnt": 10936,
+        "amt": 2444240,
+        "pct": 24.3
+      },
+      "kanri_gaiyou": {
+        "cnt": 1606,
+        "amt": 64240,
+        "pct": 0.64
+      },
+      "chmgr_kazan": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "jufuku_other": {
+        "cnt": 126,
+        "amt": 50400,
+        "pct": 0.5
+      },
+      "jufuku_zan": {
+        "cnt": 12,
+        "amt": 2400,
+        "pct": 0.02
+      },
+      "iryo_joho": {
+        "cnt": 2951,
+        "amt": 29510,
+        "pct": 0.29
+      },
+      "jikangai_kanri": {
+        "cnt": 29,
+        "amt": 13480,
+        "pct": 0.13
+      },
+      "fukuyaku_a": {
+        "cnt": 7872,
+        "amt": 3542400,
+        "pct": 35.22
+      },
+      "fukuyaku_b": {
+        "cnt": 773,
+        "amt": 456070,
+        "pct": 4.53
+      },
+      "fukuyaku_c": {
+        "cnt": 3763,
+        "amt": 2220170,
+        "pct": 22.07
+      },
+      "fukuyaku_3": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "fukuyaku_online": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "fukuyaku_toku2a": {
+        "cnt": 15,
+        "amt": 8850,
+        "pct": 0.09
+      },
+      "kakaritsuke_shido": {
+        "cnt": 79,
+        "amt": 60040,
+        "pct": 0.6
+      },
+      "mayaku_kanri": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "tokutei_1i": {
+        "cnt": 39,
+        "amt": 3900,
+        "pct": 0.04
+      },
+      "tokutei_1ro": {
+        "cnt": 25,
+        "amt": 1250,
+        "pct": 0.01
+      },
+      "tokutei_2": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "tokutei_3i": {
+        "cnt": 372,
+        "amt": 18600,
+        "pct": 0.18
+      },
+      "tokutei_3ro": {
+        "cnt": 6,
+        "amt": 600,
+        "pct": 0.01
+      },
+      "kyunyu": {
+        "cnt": 10,
+        "amt": 3000,
+        "pct": 0.03
+      },
+      "nyuyoji": {
+        "cnt": 7240,
+        "amt": 868800,
+        "pct": 8.64
+      },
+      "shoni": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "chozai_go": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "kakaritsuke_hokatsu": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "joho_1": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "joho_2": {
+        "cnt": 5,
+        "amt": 1000,
+        "pct": 0.01
+      },
+      "joho_3": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "gairai_1": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "gairai_2": {
+        "cnt": 81,
+        "amt": 129920,
+        "pct": 1.29
+      },
+      "shisetsu_renkei": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "choseihi_1": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "choseihi_2": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "keikan": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      }
+    },
+    "zaitaku_items": {
+      "zaitaku_houmon_1": {
+        "cnt": 21,
+        "amt": 136500,
+        "pct": 1.36
+      },
+      "zaitaku_houmon_2": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "kinkyu_houmon_1": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "kinkyu_houmon_2": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "kinkyu_kyodo": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_online": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_kinkyu_online": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_mayaku": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_nyuyoji": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_shoni": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_mayaku_chu": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_chushin": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "yakan_homon": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "kyujitsu_homon": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "shinya_homon": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_boushi": {
+        "cnt": 1,
+        "amt": 200,
+        "pct": 0
+      },
+      "taiin_kyodo": {
+        "cnt": 0,
+        "amt": 0,
+        "pct": 0
+      },
+      "zaitaku_ikou": {
+        "cnt": 1,
+        "amt": 2300,
+        "pct": 0.02
+      }
+    }
+  },
+  "raw_kasan": {
+    "header": {
+      "title": "加算種別内訳表",
+      "created": "令和08年03月27日",
+      "pharmacy": "アフェット薬局",
+      "period_from": "令和07年05月01日",
+      "period_to": "令和08年03月27日"
+    },
+    "kihon": [
+      {
+        "name": "調剤基本料（45点）",
+        "cnt": 12494,
+        "pts": 45,
+        "total_pts": 562230,
+        "amt": 5622300
+      },
+      {
+        "name": "算定なし（0点）",
+        "cnt": 24,
+        "pts": 0,
+        "total_pts": 0,
+        "amt": 0
+      },
+      {
+        "name": "調剤基本料※同時受付（36点）",
+        "cnt": 39,
+        "pts": 36,
+        "total_pts": 1404,
+        "amt": 14040
+      },
+      {
+        "name": "地域支援体制加算（32点）",
+        "cnt": 10239,
+        "pts": 32,
+        "total_pts": 327648,
+        "amt": 3276480
+      },
+      {
+        "name": "後発医薬品調剤体制加算（30点）",
+        "cnt": 12533,
+        "pts": 30,
+        "total_pts": 375990,
+        "amt": 3759900
+      },
+      {
+        "name": "連携強化加算",
+        "cnt": 12533,
+        "pts": 5,
+        "total_pts": 62665,
+        "amt": 626650
+      },
+      {
+        "name": "医療DX推進体制整備加算（8点）",
+        "cnt": 8206,
+        "pts": 8,
+        "total_pts": 65648,
+        "amt": 656480
+      },
+      {
+        "name": "医療DX推進体制整備加算（6点）",
+        "cnt": 829,
+        "pts": 6,
+        "total_pts": 4974,
+        "amt": 49740
+      },
+      {
+        "name": "医療DX推進体制整備加算（10点）",
+        "cnt": 694,
+        "pts": 10,
+        "total_pts": 6940,
+        "amt": 69400
+      },
+      {
+        "name": "在宅薬学総合体制加算",
+        "cnt": 21,
+        "pts": 15,
+        "total_pts": 315,
+        "amt": 3150
+      },
+      {
+        "name": "時間外加算",
+        "cnt": 29,
+        "total_pts": 3234,
+        "amt": 32340
+      },
+      {
+        "name": "夜間・休日等加算",
+        "cnt": 299,
+        "pts": 40,
+        "total_pts": 11960,
+        "amt": 119600
+      }
+    ],
+    "chozai": [
+      {
+        "name": "（内服薬適用分）",
+        "cnt": 16456,
+        "total_pts": 394944,
+        "amt": 3949440
+      },
+      {
+        "name": "（屯服薬適用分）",
+        "cnt": 2430,
+        "total_pts": 51030,
+        "amt": 510300
+      },
+      {
+        "name": "（外用薬適用分）",
+        "cnt": 10366,
+        "total_pts": 103660,
+        "amt": 1036600
+      },
+      {
+        "name": "（注射薬適用分）",
+        "cnt": 31,
+        "total_pts": 806,
+        "amt": 8060
+      },
+      {
+        "name": "（内服用滴剤適用分）",
+        "cnt": 46,
+        "total_pts": 460,
+        "amt": 4600
+      }
+    ],
+    "chozai_total": {
+      "cnt": 29329,
+      "total_pts": 550900,
+      "amt": 5509000
+    },
+    "kazan": [
+      {
+        "name": "覚せい剤原料加算（内服薬）",
+        "cnt": 14,
+        "pts": 8,
+        "total_pts": 112,
+        "amt": 1120
+      },
+      {
+        "name": "向精神薬加算（内服薬）",
+        "cnt": 102,
+        "pts": 8,
+        "total_pts": 816,
+        "amt": 8160
+      },
+      {
+        "name": "向精神薬加算（屯服薬）",
+        "cnt": 1,
+        "pts": 8,
+        "total_pts": 8,
+        "amt": 80
+      },
+      {
+        "name": "向精神薬加算（外用薬）",
+        "cnt": 35,
+        "pts": 8,
+        "total_pts": 280,
+        "amt": 2800
+      },
+      {
+        "name": "計量混合①液剤（内服薬）",
+        "cnt": 1773,
+        "pts": 35,
+        "total_pts": 62055,
+        "amt": 620550
+      },
+      {
+        "name": "計量混合②散剤顆粒剤（内服薬）",
+        "cnt": 3384,
+        "pts": 45,
+        "total_pts": 152280,
+        "amt": 1522800
+      },
+      {
+        "name": "計量混合①液剤（外用薬）",
+        "cnt": 3,
+        "pts": 35,
+        "total_pts": 105,
+        "amt": 1050
+      },
+      {
+        "name": "計量混合③軟硬膏剤（外用薬）",
+        "cnt": 141,
+        "pts": 80,
+        "total_pts": 11280,
+        "amt": 112800
+      },
+      {
+        "name": "自家製剤③錠散軟膏等（8-14日）",
+        "cnt": 1,
+        "pts": 40,
+        "total_pts": 40,
+        "amt": 400
+      },
+      {
+        "name": "自家製剤③錠散軟膏等（22-28日）",
+        "cnt": 1,
+        "pts": 80,
+        "total_pts": 80,
+        "amt": 800
+      },
+      {
+        "name": "自家製剤③錠散軟膏等（29-35日）",
+        "cnt": 1,
+        "pts": 100,
+        "total_pts": 100,
+        "amt": 1000
+      },
+      {
+        "name": "自家製剤④半錠（1-7日）",
+        "cnt": 62,
+        "pts": 4,
+        "total_pts": 248,
+        "amt": 2480
+      },
+      {
+        "name": "自家製剤④半錠（8-14日）",
+        "cnt": 8,
+        "pts": 8,
+        "total_pts": 64,
+        "amt": 640
+      },
+      {
+        "name": "自家製剤④半錠（15-21日）",
+        "cnt": 5,
+        "pts": 12,
+        "total_pts": 60,
+        "amt": 600
+      },
+      {
+        "name": "自家製剤④半錠（22-28日）",
+        "cnt": 3,
+        "pts": 16,
+        "total_pts": 48,
+        "amt": 480
+      },
+      {
+        "name": "自家製剤④半錠（29-35日）",
+        "cnt": 12,
+        "pts": 20,
+        "total_pts": 240,
+        "amt": 2400
+      },
+      {
+        "name": "自家製剤④半錠（36-42日）",
+        "cnt": 4,
+        "pts": 24,
+        "total_pts": 96,
+        "amt": 960
+      },
+      {
+        "name": "自家製剤④半錠（43-49日）",
+        "cnt": 2,
+        "pts": 28,
+        "total_pts": 56,
+        "amt": 560
+      },
+      {
+        "name": "自家製剤④半錠（57-63日）",
+        "cnt": 4,
+        "pts": 36,
+        "total_pts": 144,
+        "amt": 1440
+      },
+      {
+        "name": "時間外加算（内服薬）",
+        "cnt": 46,
+        "total_pts": 1104,
+        "amt": 11040
+      },
+      {
+        "name": "時間外加算（屯服薬）",
+        "cnt": 5,
+        "total_pts": 105,
+        "amt": 1050
+      },
+      {
+        "name": "時間外加算（外用薬）",
+        "cnt": 15,
+        "total_pts": 150,
+        "amt": 1500
+      }
+    ],
+    "kazan_total": {
+      "cnt": 5622,
+      "total_pts": 229471,
+      "amt": 2294710
+    },
+    "yakugaku": [
+      {
+        "name": "調剤管理料",
+        "cnt": 12542,
+        "total_pts": 250848,
+        "amt": 2508480
+      },
+      {
+        "name": "重複投薬・相互作用等防止加算（防A）",
+        "cnt": 126,
+        "pts": 40,
+        "total_pts": 5040,
+        "amt": 50400
+      },
+      {
+        "name": "重複投薬・相互作用等防止加算（防B）",
+        "cnt": 12,
+        "pts": 20,
+        "total_pts": 240,
+        "amt": 2400
+      },
+      {
+        "name": "医療情報取得加算",
+        "cnt": 2951,
+        "pts": 1,
+        "total_pts": 2951,
+        "amt": 29510
+      },
+      {
+        "name": "調剤管理料（時間外加算）",
+        "cnt": 29,
+        "total_pts": 1348,
+        "amt": 13480
+      },
+      {
+        "name": "服薬管理指導料（薬A）",
+        "cnt": 7872,
+        "pts": 45,
+        "total_pts": 354240,
+        "amt": 3542400
+      },
+      {
+        "name": "特定薬剤管理指導加算１（イ）[薬A]",
+        "cnt": 26,
+        "pts": 10,
+        "total_pts": 260,
+        "amt": 2600
+      },
+      {
+        "name": "特定薬剤管理指導加算１（ロ）[薬A]",
+        "cnt": 21,
+        "pts": 5,
+        "total_pts": 105,
+        "amt": 1050
+      },
+      {
+        "name": "特定薬剤管理指導加算３（イ）[薬A]",
+        "cnt": 182,
+        "pts": 5,
+        "total_pts": 910,
+        "amt": 9100
+      },
+      {
+        "name": "特定薬剤管理指導加算３（ロ）[薬A]",
+        "cnt": 3,
+        "pts": 10,
+        "total_pts": 30,
+        "amt": 300
+      },
+      {
+        "name": "乳幼児服薬指導加算[薬A]",
+        "cnt": 5157,
+        "pts": 12,
+        "total_pts": 61884,
+        "amt": 618840
+      },
+      {
+        "name": "吸入薬指導加算[薬A]",
+        "cnt": 7,
+        "pts": 30,
+        "total_pts": 210,
+        "amt": 2100
+      },
+      {
+        "name": "服薬管理指導料（薬B）",
+        "cnt": 773,
+        "pts": 59,
+        "total_pts": 45607,
+        "amt": 456070
+      },
+      {
+        "name": "特定薬剤管理指導加算１（イ）[薬B]",
+        "cnt": 4,
+        "pts": 10,
+        "total_pts": 40,
+        "amt": 400
+      },
+      {
+        "name": "特定薬剤管理指導加算１（ロ）[薬B]",
+        "cnt": 3,
+        "pts": 5,
+        "total_pts": 15,
+        "amt": 150
+      },
+      {
+        "name": "特定薬剤管理指導加算３（イ）[薬B]",
+        "cnt": 18,
+        "pts": 5,
+        "total_pts": 90,
+        "amt": 900
+      },
+      {
+        "name": "乳幼児服薬指導加算[薬B]",
+        "cnt": 427,
+        "pts": 12,
+        "total_pts": 5124,
+        "amt": 51240
+      },
+      {
+        "name": "吸入薬指導加算[薬B]",
+        "cnt": 1,
+        "pts": 30,
+        "total_pts": 30,
+        "amt": 300
+      },
+      {
+        "name": "服薬管理指導料（薬C）",
+        "cnt": 3763,
+        "pts": 59,
+        "total_pts": 222017,
+        "amt": 2220170
+      },
+      {
+        "name": "特定薬剤管理指導加算１（イ）[薬C]",
+        "cnt": 9,
+        "pts": 10,
+        "total_pts": 90,
+        "amt": 900
+      },
+      {
+        "name": "特定薬剤管理指導加算１（ロ）[薬C]",
+        "cnt": 1,
+        "pts": 5,
+        "total_pts": 5,
+        "amt": 50
+      },
+      {
+        "name": "特定薬剤管理指導加算３（イ）[薬C]",
+        "cnt": 170,
+        "pts": 5,
+        "total_pts": 850,
+        "amt": 8500
+      },
+      {
+        "name": "特定薬剤管理指導加算３（ロ）[薬C]",
+        "cnt": 3,
+        "pts": 10,
+        "total_pts": 30,
+        "amt": 300
+      },
+      {
+        "name": "乳幼児服薬指導加算[薬C]",
+        "cnt": 1656,
+        "pts": 12,
+        "total_pts": 19872,
+        "amt": 198720
+      },
+      {
+        "name": "かかりつけ薬剤師指導料（薬指）",
+        "cnt": 79,
+        "pts": 76,
+        "total_pts": 6004,
+        "amt": 60040
+      },
+      {
+        "name": "特定薬剤管理指導加算３（イ）[薬指]",
+        "cnt": 2,
+        "pts": 5,
+        "total_pts": 10,
+        "amt": 100
+      },
+      {
+        "name": "吸入薬指導加算[薬指]",
+        "cnt": 2,
+        "pts": 30,
+        "total_pts": 60,
+        "amt": 600
+      },
+      {
+        "name": "服薬管理指導料（特2A）",
+        "cnt": 14,
+        "pts": 59,
+        "total_pts": 826,
+        "amt": 8260
+      },
+      {
+        "name": "服薬管理指導料（特2B）",
+        "cnt": 1,
+        "pts": 59,
+        "total_pts": 59,
+        "amt": 590
+      },
+      {
+        "name": "服薬情報等提供料２（医療機関）",
+        "cnt": 5,
+        "pts": 20,
+        "total_pts": 100,
+        "amt": 1000
+      },
+      {
+        "name": "外来服薬支援料２（7日以下）",
+        "cnt": 4,
+        "pts": 34,
+        "total_pts": 136,
+        "amt": 1360
+      },
+      {
+        "name": "外来服薬支援料２（8-14日）",
+        "cnt": 8,
+        "pts": 68,
+        "total_pts": 544,
+        "amt": 5440
+      },
+      {
+        "name": "外来服薬支援料２（15-21日）",
+        "cnt": 1,
+        "pts": 102,
+        "total_pts": 102,
+        "amt": 1020
+      },
+      {
+        "name": "外来服薬支援料２（22-28日）",
+        "cnt": 21,
+        "pts": 136,
+        "total_pts": 2856,
+        "amt": 28560
+      },
+      {
+        "name": "外来服薬支援料２（29-35日）",
+        "cnt": 27,
+        "pts": 170,
+        "total_pts": 4590,
+        "amt": 45900
+      },
+      {
+        "name": "外来服薬支援料２（36-42日）",
+        "cnt": 1,
+        "pts": 204,
+        "total_pts": 204,
+        "amt": 2040
+      },
+      {
+        "name": "外来服薬支援料２（43日以上）",
+        "cnt": 19,
+        "pts": 240,
+        "total_pts": 4560,
+        "amt": 45600
+      }
+    ],
+    "yakugaku_total": {
+      "cnt": 35911,
+      "total_pts": 991887,
+      "amt": 9918870
+    },
+    "zaitaku": [
+      {
+        "name": "在宅患者訪問薬剤管理指導料（訪A）",
+        "cnt": 21,
+        "pts": 650,
+        "total_pts": 13650,
+        "amt": 136500
+      },
+      {
+        "name": "在宅患者重複投薬等管理料1（在防Aﾛ）",
+        "cnt": 1,
+        "pts": 20,
+        "total_pts": 20,
+        "amt": 200
+      },
+      {
+        "name": "在宅移行初期管理料",
+        "cnt": 1,
+        "pts": 230,
+        "total_pts": 230,
+        "amt": 2300
+      }
+    ],
+    "zaitaku_total": {
+      "cnt": 23,
+      "total_pts": 13900,
+      "amt": 139000
+    },
+    "chozai_grand_total": {
+      "cnt": 83463,
+      "total_pts": 3209166,
+      "amt": 32091660
+    },
+    "kaigo": [
+      {
+        "name": "薬剤師居宅療養Ⅱ１",
+        "cnt": 15,
+        "pts": 518,
+        "total_pts": 7770,
+        "amt": 77700
+      },
+      {
+        "name": "予防薬剤師居宅療養Ⅱ１",
+        "cnt": 2,
+        "pts": 518,
+        "total_pts": 1036,
+        "amt": 10360
+      }
+    ],
+    "kaigo_total": {
+      "cnt": 17,
+      "total_pts": 8806,
+      "amt": 88060
+    },
+    "grand_total": {
+      "cnt": 83480,
+      "total_pts": 3217972,
+      "amt": 32179720
+    }
+  },
+  "r6": {
+    "rx_count": 12557,
+    "rx_sheets": 12574,
+    "ge_rate": 95.35,
+    "zai_count": 31574,
+    "avg_zai": 2.51,
+    "total_reward": 55172080,
+    "rx_price": 4387.79,
+    "hoken_futan": 1391754,
+    "jihi_futan": 62820,
+    "hokengai_futan": 209866,
+    "sonota_kingaku": 195940,
+    "otc_kingaku": 0,
+    "sentei_ryoyo": 13926,
+    "techo_rate": 91.21,
+    "rx_3month": 8581,
+    "rx_3month_techo": 7827,
+    "kihon": 45,
+    "kihon_cnt": 12494,
+    "kihon_pts": 45,
+    "kihon_amt": 5622300,
+    "kihon_santei_nashi_cnt": 24,
+    "kihon_santei_nashi_pts": 0,
+    "kihon_santei_nashi_amt": 0,
+    "kihon_doji_cnt": 39,
+    "kihon_doji_pts": 36,
+    "kihon_doji_amt": 14040,
+    "chiiki": 32,
+    "chiiki_cnt": 10239,
+    "chiiki_pts": 32,
+    "chiiki_amt": 3276480,
+    "kouhatsu": 30,
+    "kouhatsu_cnt": 12533,
+    "kouhatsu_pts": 30,
+    "kouhatsu_amt": 3759900,
+    "renkei": 5,
+    "renkei_cnt": 12533,
+    "renkei_pts": 5,
+    "renkei_amt": 626650,
+    "dx8": 8,
+    "dx8_cnt": 8206,
+    "dx8_pts": 8,
+    "dx8_amt": 656480,
+    "dx6": 6,
+    "dx6_cnt": 829,
+    "dx6_pts": 6,
+    "dx6_amt": 49740,
+    "dx10": 10,
+    "dx10_cnt": 694,
+    "dx10_pts": 10,
+    "dx10_amt": 69400,
+    "zaitaku_taisei": 15,
+    "zaitaku_taisei_cnt": 21,
+    "zaitaku_taisei_pts": 15,
+    "zaitaku_taisei_amt": 3150,
+    "jikangai_cnt": 29,
+    "jikangai_amt": 32340,
+    "yakan_cnt": 299,
+    "yakan_pts": 40,
+    "yakan_amt": 119600,
+    "naifuku_cnt": 16456,
+    "naifuku_amt": 3949440,
+    "tonpuku_cnt": 2430,
+    "tonpuku_amt": 510300,
+    "gaiyou_cnt": 10366,
+    "gaiyou_amt": 1036600,
+    "chusya_cnt": 31,
+    "chusya_amt": 8060,
+    "naiteki_cnt": 46,
+    "naiteki_amt": 4600,
+    "yakuzai_total_amt": 23080420,
+    "naifuku_zai": 18353,
+    "naifuku_yakuzai": 15242030,
+    "sinsenn_zai": 0,
+    "sinsenn_yakuzai": 0,
+    "sinsenn_cnt": 0,
+    "sinsenn_amt": 0,
+    "yuyaku_zai": 0,
+    "yuyaku_yakuzai": 0,
+    "yuyaku_cnt": 0,
+    "yuyaku_amt": 0,
+    "tonpuku_zai": 2487,
+    "tonpuku_yakuzai": 179110,
+    "gaiyou_zai": 10627,
+    "gaiyou_yakuzai": 5912610,
+    "chusya_zai": 49,
+    "chusya_yakuzai": 1726820,
+    "naiteki_zai": 46,
+    "naiteki_yakuzai": 7010,
+    "zairyo_zai": 12,
+    "zairyo_yakuzai": 12840,
+    "kaz_nai_kakusei": 1120,
+    "kaz_nai_mukyoko": 8160,
+    "kaz_nai_keiryo": 2143350,
+    "kaz_nai_jika": 11760,
+    "kaz_nai_jikou": 11040,
+    "kaz_nai_total": 2175430,
+    "kaz_ton_mukyoko": 80,
+    "kaz_ton_jikou": 1050,
+    "kaz_ton_total": 1130,
+    "kaz_gai_mukyoko": 2800,
+    "kaz_gai_keiryo": 113850,
+    "kaz_gai_jikou": 1500,
+    "kaz_gai_total": 118150,
+    "kaz_kakusei_cnt": 14,
+    "kaz_kakusei_amt": 1120,
+    "kaz_mukyoko_cnt": 138,
+    "kaz_mukyoko_amt": 11040,
+    "kaz_keiryo_cnt": 5301,
+    "kaz_keiryo_amt": 2257200,
+    "kaz_jika_cnt": 103,
+    "kaz_jika_amt": 11760,
+    "kaz_jikou_cnt": 66,
+    "kaz_jikou_amt": 13590,
+    "kanri_total_cnt": 10936,
+    "kanri_total_amt": 2444240,
+    "kanri_gaiyou_cnt": 1606,
+    "kanri_gaiyou_amt": 64240,
+    "chmgr_kazan_cnt": 0,
+    "chmgr_kazan_amt": 0,
+    "jufuku_other_cnt": 126,
+    "jufuku_other_amt": 50400,
+    "jufuku_zan_cnt": 12,
+    "jufuku_zan_amt": 2400,
+    "iryo_joho_cnt": 2951,
+    "iryo_joho_amt": 29510,
+    "jikangai_kanri_cnt": 29,
+    "jikangai_kanri_amt": 13480,
+    "fukuyaku_a_cnt": 7872,
+    "fukuyaku_a_amt": 3542400,
+    "fukuyaku_b_cnt": 773,
+    "fukuyaku_b_amt": 456070,
+    "fukuyaku_c_cnt": 3763,
+    "fukuyaku_c_amt": 2220170,
+    "fukuyaku_3_cnt": 0,
+    "fukuyaku_3_amt": 0,
+    "fukuyaku_online_cnt": 0,
+    "fukuyaku_online_amt": 0,
+    "fukuyaku_toku2a_cnt": 15,
+    "fukuyaku_toku2a_amt": 8850,
+    "kakaritsuke_shido_cnt": 79,
+    "kakaritsuke_shido_amt": 60040,
+    "mayaku_kanri_cnt": 0,
+    "mayaku_kanri_amt": 0,
+    "tokutei_1i_cnt": 39,
+    "tokutei_1i_amt": 3900,
+    "tokutei_1ro_cnt": 25,
+    "tokutei_1ro_amt": 1250,
+    "tokutei_2_cnt": 0,
+    "tokutei_2_amt": 0,
+    "tokutei_3i_cnt": 372,
+    "tokutei_3i_amt": 18600,
+    "tokutei_3ro_cnt": 6,
+    "tokutei_3ro_amt": 600,
+    "kyunyu_cnt": 10,
+    "kyunyu_amt": 3000,
+    "nyuyoji_cnt": 7240,
+    "nyuyoji_amt": 868800,
+    "shoni_cnt": 0,
+    "shoni_amt": 0,
+    "chozai_go_cnt": 0,
+    "chozai_go_amt": 0,
+    "kakaritsuke_hokatsu_cnt": 0,
+    "kakaritsuke_hokatsu_amt": 0,
+    "joho_1_cnt": 0,
+    "joho_1_amt": 0,
+    "joho_2_cnt": 5,
+    "joho_2_amt": 1000,
+    "joho_3_cnt": 0,
+    "joho_3_amt": 0,
+    "gairai_1_cnt": 0,
+    "gairai_1_amt": 0,
+    "gairai_2_cnt": 81,
+    "gairai_2_amt": 129920,
+    "shisetsu_renkei_cnt": 0,
+    "shisetsu_renkei_amt": 0,
+    "choseihi_1_cnt": 0,
+    "choseihi_1_amt": 0,
+    "choseihi_2_cnt": 0,
+    "choseihi_2_amt": 0,
+    "keikan_cnt": 0,
+    "keikan_amt": 0,
+    "zaitaku_houmon_1_cnt": 21,
+    "zaitaku_houmon_1_amt": 136500,
+    "zaitaku_houmon_2_cnt": 0,
+    "zaitaku_houmon_2_amt": 0,
+    "zaitaku_houmon_3_cnt": 0,
+    "zaitaku_houmon_3_amt": 0,
+    "kinkyu_houmon_1_cnt": 0,
+    "kinkyu_houmon_1_amt": 0,
+    "kinkyu_houmon_2_cnt": 0,
+    "kinkyu_houmon_2_amt": 0,
+    "kinkyu_kyodo_cnt": 0,
+    "kinkyu_kyodo_amt": 0,
+    "zaitaku_online_cnt": 0,
+    "zaitaku_online_amt": 0,
+    "zaitaku_kinkyu_online_cnt": 0,
+    "zaitaku_kinkyu_online_amt": 0,
+    "zaitaku_mayaku_cnt": 0,
+    "zaitaku_mayaku_amt": 0,
+    "zaitaku_nyuyoji_cnt": 0,
+    "zaitaku_nyuyoji_amt": 0,
+    "zaitaku_shoni_cnt": 0,
+    "zaitaku_shoni_amt": 0,
+    "zaitaku_mayaku_chu_cnt": 0,
+    "zaitaku_mayaku_chu_amt": 0,
+    "zaitaku_chushin_cnt": 0,
+    "zaitaku_chushin_amt": 0,
+    "yakan_homon_cnt": 0,
+    "yakan_homon_amt": 0,
+    "kyujitsu_homon_cnt": 0,
+    "kyujitsu_homon_amt": 0,
+    "shinya_homon_cnt": 0,
+    "shinya_homon_amt": 0,
+    "zaitaku_boushi_cnt": 1,
+    "zaitaku_boushi_amt": 200,
+    "taiin_kyodo_cnt": 0,
+    "taiin_kyodo_amt": 0,
+    "zaitaku_ikou_cnt": 1,
+    "zaitaku_ikou_amt": 2300,
+    "kaigo_kyotaku_1_cnt": 15,
+    "kaigo_kyotaku_1_pts": 518,
+    "kaigo_kyotaku_1_amt": 77700,
+    "kaigo_kyotaku_2_cnt": 0,
+    "kaigo_kyotaku_2_amt": 0,
+    "kaigo_kyotaku_3_cnt": 0,
+    "kaigo_kyotaku_3_amt": 0,
+    "kaigo_tsushin_cnt": 0,
+    "kaigo_tsushin_amt": 0,
+    "kaigo_yobo_kyotaku_1_cnt": 2,
+    "kaigo_yobo_kyotaku_1_pts": 518,
+    "kaigo_yobo_kyotaku_1_amt": 10360,
+    "kaigo_chushin_cnt": 0,
+    "kaigo_chushin_amt": 0,
+    "kaigo_mayaku_cnt": 0,
+    "kaigo_mayaku_amt": 0,
+    "chozai_total_amt": 5509000,
+    "kazan_total_amt": 2294710,
+    "yakugaku_total_amt": 9918870,
+    "zaitaku_total_amt": 139000,
+    "chozai_grand_total_amt": 32091660,
+    "kaigo_total_amt": 88060,
+    "grand_total_amt": 32179720
+  },
+  "sources": {
+    "rx_count": "統",
+    "rx_sheets": "統",
+    "ge_rate": "統",
+    "zai_count": "統",
+    "avg_zai": "統",
+    "total_reward": "統",
+    "rx_price": "統",
+    "hoken_futan": "統",
+    "jihi_futan": "統",
+    "hokengai_futan": "統",
+    "sonota_kingaku": "統",
+    "otc_kingaku": "統",
+    "sentei_ryoyo": "統",
+    "techo_rate": "統",
+    "rx_3month": "統",
+    "rx_3month_techo": "統",
+    "kihon_cnt": "加",
+    "kihon_doji_cnt": "加",
+    "chiiki_cnt": "加",
+    "kouhatsu_cnt": "加",
+    "renkei_cnt": "加",
+    "dx8_cnt": "加",
+    "dx6_cnt": "加",
+    "dx10_cnt": "加",
+    "zaitaku_taisei_cnt": "加",
+    "jikangai_cnt": "加",
+    "yakan_cnt": "加",
+    "naifuku_cnt": "加",
+    "tonpuku_cnt": "加",
+    "gaiyou_cnt": "加",
+    "chusya_cnt": "加",
+    "naiteki_cnt": "加",
+    "naifuku_zai": "統",
+    "tonpuku_zai": "統",
+    "gaiyou_zai": "統",
+    "chusya_zai": "統",
+    "naiteki_zai": "統",
+    "zairyo_zai": "統",
+    "kanri_total_cnt": "統",
+    "kanri_gaiyou_cnt": "統",
+    "fukuyaku_a_cnt": "統",
+    "fukuyaku_b_cnt": "統",
+    "fukuyaku_c_cnt": "統",
+    "kakaritsuke_shido_cnt": "統",
+    "nyuyoji_cnt": "統",
+    "tokutei_1i_cnt": "統",
+    "tokutei_1ro_cnt": "統",
+    "tokutei_3i_cnt": "統",
+    "tokutei_3ro_cnt": "統",
+    "kyunyu_cnt": "統",
+    "jufuku_other_cnt": "統",
+    "jufuku_zan_cnt": "統",
+    "iryo_joho_cnt": "統",
+    "jikangai_kanri_cnt": "統",
+    "fukuyaku_toku2a_cnt": "統",
+    "joho_2_cnt": "統",
+    "gairai_2_cnt": "統",
+    "zaitaku_houmon_1_cnt": "統",
+    "zaitaku_boushi_cnt": "統",
+    "zaitaku_ikou_cnt": "統",
+    "kaigo_kyotaku_1_cnt": "加",
+    "kaigo_yobo_kyotaku_1_cnt": "加"
+  },
+  "tasks": {},
+  "requirements": {}
+}

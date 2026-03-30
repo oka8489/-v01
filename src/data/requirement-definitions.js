@@ -1,4 +1,5 @@
-export const REQUIREMENT_DEFINITIONS = [
+// 施設基準・要件チェックリスト定義
+window.REQUIREMENT_DEFINITIONS = [
   {
     id: 'chiiki_jisseki',
     label: '地域支援・医薬品供給対応体制加算 実績9指標',
