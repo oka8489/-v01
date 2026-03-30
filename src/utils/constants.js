@@ -15,6 +15,7 @@ export const POINT_TO_YEN = 10
 export const CHANGE_TYPES = {
   new: { label: '新設', class: 'badge-new' },
   abolished: { label: '廃止', class: 'badge-abolished' },
+  abolished_merged: { label: '廃止→統合', class: 'badge-abolished-merged' },
   modified: { label: '変更', class: 'badge-modified' },
   merged: { label: '統合', class: 'badge-merged' },
   renamed: { label: '名称変更', class: 'badge-renamed' },

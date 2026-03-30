@@ -7,7 +7,6 @@ function getDefaultData() {
     version: '1.0',
     pharmacyName: '',
     r6: {},
-    r8: {},
     annualReward: 0,
     annualDrugCost: 0,
     tasks: {},

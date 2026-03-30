@@ -10,10 +10,13 @@
 }
 .badge-new { background: var(--new-bg); color: var(--new-text); border: 1px solid #b3d4f7; }
 .badge-abolished { background: var(--del-bg); color: var(--del-text); border: 1px solid #f5c6c6; }
-.badge-modified { background: var(--mod-bg); color: var(--mod-text); border: 1px solid var(--r8-border); }
+.badge-abolished-merged { background: #f3e8ff; color: #6b21a8; border: 1px solid #d8b4fe; }
+.badge-modified { background: var(--mod-bg); color: var(--mod-text); border: 1px solid var(--mod-text); }
 .badge-merged { background: var(--merge-bg); color: var(--merge-text); border: 1px solid #ffcc80; }
 .badge-renamed { background: var(--rename-bg); color: var(--rename-text); border: 1px solid #d6cebe; }
 .badge-same { background: var(--same-bg); color: var(--same-text); border: 1px solid var(--border); }
+.badge-clickable { cursor: pointer; transition: opacity .15s; }
+.badge-clickable:hover { opacity: 0.75; }
 
 /* Fee Table */
 .fee-table {
@@ -54,6 +57,10 @@
 .fee-table .sub-row { background: #f9f9f9; }
 .fee-table .new-row { background: rgba(227,240,255,0.3); }
 .fee-input.empty-input { border-color: #e53e3e; background: #fff5f5; }
+
+/* 金額セル: 赤=データ不足（手入力が必要）、青=計算値（点数×件数×10） */
+.amt-missing { color: #e53e3e; font-weight: 700; }
+.amt-computed { color: #2b6cb0; }
 .fee-table .abolished-row {
   background: rgba(254,236,236,0.3);
   text-decoration: line-through;

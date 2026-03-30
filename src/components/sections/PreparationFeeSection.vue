@@ -3,14 +3,15 @@ import { computed } from 'vue'
 import { PREPARATION_FEES } from '../../data/fee-definitions.js'
 import { POINT_TO_YEN } from '../../utils/constants.js'
 import { formatYen } from '../../utils/formatters.js'
+import BadgeLabel from '../shared/BadgeLabel.vue'
 
-const props = defineProps({ data: Object, era: { type: String, default: 'r6' } })
+const props = defineProps({ data: Object })
 
 function fmt(v) { return (v || 0).toLocaleString() }
 function parseNum(s) { return Number(String(s).replace(/,/g, '')) || 0 }
 
 // 薬剤調製料の主要項目（加算を除く）
-const mainItems = computed(() => PREPARATION_FEES.filter(f => !f.id.startsWith('kaz_') && f.id !== 'zairyo'))
+const mainItems = computed(() => PREPARATION_FEES.filter(f => !f.id.startsWith('kaz_') && f.id !== 'zairyo' && f.id !== 'yakuzai_total'))
 // 材料
 const zairyoItem = computed(() => PREPARATION_FEES.find(f => f.id === 'zairyo'))
 
@@ -37,6 +38,11 @@ const kazanCols = [
   { id: 'mukin', label: '無菌' },
   { id: 'jikou', label: '時間外' },
 ]
+
+// 加算のfee定義取得（fee-definitionsから参照）
+const kazanFeeMap = Object.fromEntries(
+  PREPARATION_FEES.filter(f => f.id.startsWith('kaz_')).map(f => [f.id.replace('kaz_', ''), f])
+)
 
 function kazanRowTotal(rowId) {
   let sum = 0
@@ -75,18 +81,20 @@ const unitLabels = {
 }
 
 function getPoints(item) {
-  const eraData = item[props.era]
+  const eraData = item['r6']
   if (!eraData) return null
   if (eraData.fixedPoints != null) return eraData.fixedPoints
   return null
 }
 
-function getRaw(key) { return props.data[props.era]?.[key] || 0 }
+function getRaw(key) { return props.data['r6']?.[key] || 0 }
 function getVal(key) { return fmt(getRaw(key)) }
 function setVal(key, v) {
-  if (!props.data[props.era]) props.data[props.era] = {}
-  props.data[props.era][key] = parseNum(v)
+  if (!props.data['r6']) props.data['r6'] = {}
+  props.data['r6'][key] = parseNum(v)
 }
+// DBにデータがないか判定（赤表示用）
+function isFieldMissing(key) { return props.data['r6']?.[key] == null }
 
 function getAmount(item) {
   const pts = getPoints(item)
@@ -129,20 +137,23 @@ const totals = computed(() => {
       </thead>
       <tbody>
         <tr v-for="item in mainItems" :key="item.id">
-          <td style="font-weight:600">{{ item.label }}</td>
+          <td style="font-weight:600">{{ item.label }} <BadgeLabel :type="item.changeType" :item="item" /></td>
           <td style="font-size:11px;color:var(--text-muted);white-space:nowrap">{{ unitLabels[item.id] || '' }}</td>
           <td style="text-align:right">
             <input type="text" class="fee-input" style="max-width:90px"
+              :class="{ 'empty-input': isFieldMissing(item.id + '_zai') }"
               :value="getVal(item.id + '_zai')"
               @change="setVal(item.id + '_zai', $event.target.value)">
           </td>
           <td style="text-align:right">
             <input type="text" class="fee-input" style="max-width:120px"
+              :class="{ 'empty-input': isFieldMissing(item.id + '_yakuzai') }"
               :value="getVal(item.id + '_yakuzai')"
               @change="setVal(item.id + '_yakuzai', $event.target.value)">
           </td>
           <td style="text-align:right">
             <input type="text" class="fee-input" style="max-width:90px"
+              :class="{ 'empty-input': isFieldMissing(item.id + '_cnt') }"
               :value="getVal(item.id + '_cnt')"
               @change="setVal(item.id + '_cnt', $event.target.value)">
           </td>
@@ -150,7 +161,7 @@ const totals = computed(() => {
             <span v-if="getPoints(item) != null">{{ getPoints(item) }}</span>
             <span v-else style="color:var(--text-faint)">※</span>
           </td>
-          <td class="num-cell">{{ formatYen(getAmount(item)) }}</td>
+          <td class="num-cell"><span class="amt-computed">{{ formatYen(getAmount(item)) }}</span></td>
         </tr>
         <!-- 材料 -->
         <tr v-if="zairyoItem">
@@ -158,11 +169,13 @@ const totals = computed(() => {
           <td></td>
           <td style="text-align:right">
             <input type="text" class="fee-input" style="max-width:90px"
+              :class="{ 'empty-input': isFieldMissing('zairyo_zai') }"
               :value="getVal('zairyo_zai')"
               @change="setVal('zairyo_zai', $event.target.value)">
           </td>
           <td style="text-align:right">
             <input type="text" class="fee-input" style="max-width:120px"
+              :class="{ 'empty-input': isFieldMissing('zairyo_yakuzai') }"
               :value="getVal('zairyo_yakuzai')"
               @change="setVal('zairyo_yakuzai', $event.target.value)">
           </td>
@@ -173,11 +186,11 @@ const totals = computed(() => {
         <!-- 合計 -->
         <tr class="total-row">
           <td colspan="2" style="font-weight:700">◆ 合計</td>
-          <td class="num-cell" style="font-weight:700">{{ totals.zaiSum.toLocaleString() }}</td>
-          <td class="num-cell" style="font-weight:700">{{ totals.yakuzaiSum.toLocaleString() }}</td>
-          <td class="num-cell" style="font-weight:700">{{ totals.cntSum.toLocaleString() }}</td>
+          <td class="num-cell" style="font-weight:700"><span class="amt-computed">{{ totals.zaiSum.toLocaleString() }}</span></td>
+          <td class="num-cell" style="font-weight:700"><span class="amt-computed">{{ totals.yakuzaiSum.toLocaleString() }}</span></td>
+          <td class="num-cell" style="font-weight:700"><span class="amt-computed">{{ totals.cntSum.toLocaleString() }}</span></td>
           <td></td>
-          <td class="num-cell" style="font-weight:700">{{ formatYen(totals.amtSum) }}</td>
+          <td class="num-cell" style="font-weight:700"><span class="amt-computed">{{ formatYen(totals.amtSum) }}</span></td>
         </tr>
       </tbody>
     </table>
@@ -185,12 +198,11 @@ const totals = computed(() => {
     <!-- 薬剤調製料加算（マトリクス） -->
     <div style="margin-top:16px">
       <div style="font-size:13px;font-weight:700;margin-bottom:8px">薬剤調製料加算（円）</div>
-      <div style="overflow-x:auto">
-      <table class="fee-table kazan-table" style="min-width:900px">
+      <table class="fee-table kazan-table">
         <thead>
           <tr>
             <th style="width:60px">剤種</th>
-            <th v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:4px 2px;width:90px">{{ kz.label }}</th>
+            <th v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:4px 2px;width:90px">{{ kz.label }} <BadgeLabel :type="kazanFeeMap[kz.id]?.changeType" :item="kazanFeeMap[kz.id]" /></th>
             <th style="text-align:right;padding:6px 4px">加算合計</th>
           </tr>
         </thead>
@@ -199,19 +211,19 @@ const totals = computed(() => {
             <td style="font-weight:600">{{ row.label }}</td>
             <td v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:6px 4px">
               <input type="text" class="fee-input kaz-input"
+                :class="{ 'empty-input': isFieldMissing('kaz_' + row.id + '_' + kz.id) }"
                 :value="getVal('kaz_' + row.id + '_' + kz.id)"
                 @change="setVal('kaz_' + row.id + '_' + kz.id, $event.target.value)">
             </td>
-            <td class="num-cell" style="font-weight:600">{{ kazanRowTotal(row.id).toLocaleString() }}</td>
+            <td class="num-cell" style="font-weight:600"><span class="amt-computed">{{ kazanRowTotal(row.id).toLocaleString() }}</span></td>
           </tr>
           <tr class="total-row">
             <td style="font-weight:700">合計</td>
-            <td v-for="kz in kazanCols" :key="kz.id" class="num-cell" style="font-weight:700">{{ kazanColTotal(kz.id).toLocaleString() }}</td>
-            <td class="num-cell" style="font-weight:700">{{ kazanGrandTotal().toLocaleString() }}</td>
+            <td v-for="kz in kazanCols" :key="kz.id" class="num-cell" style="font-weight:700"><span class="amt-computed">{{ kazanColTotal(kz.id).toLocaleString() }}</span></td>
+            <td class="num-cell" style="font-weight:700"><span class="amt-computed">{{ kazanGrandTotal().toLocaleString() }}</span></td>
           </tr>
         </tbody>
       </table>
-      </div>
     </div>
   </div>
 </template>
