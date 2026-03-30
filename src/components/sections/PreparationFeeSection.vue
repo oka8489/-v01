@@ -185,7 +185,8 @@ const totals = computed(() => {
     <!-- 薬剤調製料加算（マトリクス） -->
     <div style="margin-top:16px">
       <div style="font-size:13px;font-weight:700;margin-bottom:8px">薬剤調製料加算（円）</div>
-      <table class="fee-table kazan-table">
+      <div style="overflow-x:auto">
+      <table class="fee-table kazan-table" style="min-width:900px">
         <thead>
           <tr>
             <th style="width:60px">剤種</th>
@@ -210,6 +211,7 @@ const totals = computed(() => {
           </tr>
         </tbody>
       </table>
+      </div>
     </div>
   </div>
 </template>

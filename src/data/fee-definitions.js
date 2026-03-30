@@ -263,7 +263,7 @@ export const PREPARATION_FEES = [
 // C. 薬学管理料
 export const MANAGEMENT_FEES = [
   {
-    id: 'kanri_total', label: '調剤管理料（内服）', category: 'management', inputType: 'count-only',
+    id: 'kanri_nai', label: '調剤管理料（内服）', category: 'management', inputType: 'count-only',
     changeType: 'modified', changeNote: 'R6の4区分→R8は2区分に統合',
     r6: {}, r8: {},
   },

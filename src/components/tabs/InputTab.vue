@@ -6,16 +6,22 @@ import ManagementFeeSection from '../sections/ManagementFeeSection.vue'
 import HomeCareSection from '../sections/HomeCareSection.vue'
 import LongTermCareSection from '../sections/LongTermCareSection.vue'
 import { ALL_FEES } from '../../data/fee-definitions.js'
+import { useCalculation } from '../../composables/useCalculation.js'
 
 const { data } = inject('storage')
+const calc = useCalculation(data)
 
+// 医療保険売上 = 各セクション合計 + 薬剤料/材料料（自動計算）
+const ikaTotal = computed(() =>
+  calc.r6BasicTotal.value + calc.r6PrepTotal.value + calc.r6MgmtTotal.value + calc.r6HomeTotal.value + (data.r6.yakuzai_total || 0)
+)
 // 患者負担合計 = 保険分 + 自費分 + 保険外
 const futanTotal = computed(() =>
   (data.r6.hoken_futan || 0) + (data.r6.jihi_futan || 0) + (data.r6.hokengai_futan || 0)
 )
-// 総売上 = 医療保険 + 介護 + その他(患者負担)
+// 総売上 = 医療保険 + 介護 + 患者負担
 const grandTotal = computed(() =>
-  (data.r6.ika_total || 0) + (data.r6.kaigo_total || 0) + futanTotal.value
+  ikaTotal.value + (data.r6.kaigo_total || data.r6.kaisan_kaigo_total || 0) + futanTotal.value
 )
 
 // カンマ付き数値入力ヘルパー
@@ -173,7 +179,7 @@ const hasAnyData = computed(() => {
         <div class="summary-card" style="border-color:var(--teal)">
           <div class="summary-label">医療保険</div>
           <div class="summary-row">
-            <input type="text" class="summary-input" :value="fmt(data.r6.ika_total)" @change="data.r6.ika_total = parseNum($event.target.value)">
+            <span class="summary-input" style="background:none;border:none;font-weight:700">{{ fmt(ikaTotal) }}</span>
             <span class="summary-unit">円</span>
           </div>
         </div>
