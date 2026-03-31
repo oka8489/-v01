@@ -42,6 +42,7 @@ PDFに記載されている**全ての行・全ての数値**を読み取る。
 - **数値のカンマは除去。円は整数、%は小数で保存**
 - **絶対にPDFにない値を勝手に作るな。**
 - **数値型を厳守**。文字列で保存しない。
+- **加算種別内訳表の薬剤調製料加算の項目は合計だけでよい
 
 ### 3. JSONファイルに書き出し
 
@@ -57,19 +58,17 @@ PDFに記載されている**全ての行・全ての数値**を読み取る。
 
 **確認方法**: ブラウザに表示された各カテゴリの合計値をPDF記載の合計値と照合する。
 
-| # | チェック | 統計表 計算式 | 加算表 計算式 | 合計キー |
+| # | チェック | 統計表 計算式 | 加算表 計算式 |
 |---|---|---|---|---|
-| ① | 調剤基本料合計 | （PDFに合計行があれば読み取る） | k_kihon_amt + k_kihon_doji_amt + k_chiiki_amt + k_kouhatsu_amt + k_renkei_amt + k_dx8_amt + k_dx6_amt + k_dx10_amt + k_zaitaku_taisei_amt + k_jikangai_amt + k_yakan_amt | k_kihon_grand_total |
-| ② | 薬剤料/材料料合計 | t_naifuku_yakuzai + t_tonpuku_yakuzai + t_gaiyou_yakuzai + t_chusya_yakuzai + t_naiteki_yakuzai + t_zairyo_yakuzai | t_yakuzai_total（合計行） | t_yakuzai_total |
-| ③ | 薬剤調製料合計 | t_naifuku_chosei + t_tonpuku_chosei + t_gaiyou_chosei + t_chusya_chosei + t_naiteki_chosei | k_naifuku_amt + k_tonpuku_amt + k_gaiyou_amt + k_chusya_amt + k_naiteki_amt | k_chozai_grand_total |
-| ④ | 薬剤調製料加算合計 | 全t_kaz_*キーの合計 | k_kaz_mayaku_amt + k_kaz_doku_amt + k_kaz_kakusei_amt + k_kaz_mukyoko_amt + k_kaz_keiryo_amt + k_kaz_keiryo_yo_amt + k_kaz_jika_amt + k_kaz_jika_yo_amt + k_kaz_mukin_amt + k_kaz_jikou_amt | k_kazan_grand_total |
-| ⑤ | 薬学管理料合計 | 統計表右側の薬学管理料全t_*_amt合計 | 加算表の薬学管理料全k_*_amt合計 | k_yakugaku_grand_total |
-| ⑥ | 介護合計 | ー | k_kaigo_kyotaku_1_amt + k_kaigo_yobo_kyotaku_1_amt | k_kaigo_grand_total |
-| ⑦ | 患者負担合計 | t_hoken_futan + t_jihi_futan + t_hokengai_futan | ー | （統計表の患者負担合計行） |
-| ⑧ | 調剤報酬金額合計 | t_total_reward | k_chozai_total + t_yakuzai_total | t_total_reward |
-
+| ① | 調剤基本料合計 | t_kihon_total | - |
+| ② | 薬剤料/材料料合計 | t_yakuzai_total | - |
+| ③ | 薬剤調製料合計 | t_chozai_total | k_chozai_grand_total |
+| ④ | 薬剤調製料加算合計 | t_kazan_total | k_kazan_grand_total |
+| ⑤ | 薬学管理料合計 | t_yakugaku_total | k_yakugaku_grand_total+k_zaitaku_grand_total |
+| ⑥ | 介護合計 | - | k_kaigo_grand_total |
+| ⑦ | 患者負担合計 | t_hoken_futan+t_jihi_futan+t_hokengai_futan| - |
+| ⑧ | 調剤報酬金額合計 | t_total_reward | - |
 | ⑨ | null項目チェック | `data/r7_extracted.json` 内の全nullキーを列挙し、PDFで0件か記載なしか確認。0件なら0に修正。 |
-| ⑩ | 赤表示チェック | ブラウザで赤表示（データ不足）の項目がないか確認。赤があればPDFを再確認。 |
 
 ## ユーザーへ報告
 

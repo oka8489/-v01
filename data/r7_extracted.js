@@ -1,4 +1,4 @@
-{
+window.R7_EXTRACTED = {
   "version": "1.0",
   "pharmacyName": "アフェット薬局",
   "period": "令和07年05月01日～令和08年03月27日",
@@ -932,4 +932,4 @@
       "k_kihon_santei_nashi_amt": 0
     }
   }
-}
+};
