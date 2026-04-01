@@ -311,46 +311,200 @@ const ImpactTab = {
 }
 
 const TasksTab = {
-  props:['data'],
-  setup(props) {
+  props:['data','activeSub'],
+  emits:['update:activeSub'],
+  setup(props, { emit }) {
+    const sub = computed({ get:()=>props.activeSub||'kanban', set:v=>emit('update:activeSub',v) })
     const categories = window.TASK_CATEGORIES || []
     const tasks = window.TASK_DEFINITIONS || {}
-    function isChecked(id) { return !!props.data.tasks?.[id] }
-    function toggle(id) { if (!props.data.tasks) props.data.tasks = {}; props.data.tasks[id] = !props.data.tasks[id] }
-    const totalTasks = computed(() => Object.keys(tasks).length)
-    const doneTasks = computed(() => Object.keys(tasks).filter(id => props.data.tasks?.[id]).length)
+
+    // Status: undefined/false='todo', 'wip'=in progress, true=done
+    function status(id) {
+      const v = props.data.tasks?.[id]
+      if (v === true) return 'done'
+      if (v === 'wip') return 'wip'
+      return 'todo'
+    }
+    function setStatus(id, s) {
+      if (!props.data.tasks) props.data.tasks = {}
+      if (s === 'done') props.data.tasks[id] = true
+      else if (s === 'wip') props.data.tasks[id] = 'wip'
+      else delete props.data.tasks[id]
+    }
+    // Cycle: todo -> wip -> done -> todo
+    function cycleStatus(id) {
+      const s = status(id)
+      setStatus(id, s === 'todo' ? 'wip' : s === 'wip' ? 'done' : 'todo')
+    }
+    const statusLabel = { todo: '未着手', wip: '進行中', done: '完了' }
+
+    const columns = [
+      { key: 'todo', label: '未着手' },
+      { key: 'wip',  label: '進行中' },
+      { key: 'done', label: '完了' },
+    ]
+    const allTasks = computed(() => {
+      const list = []
+      for (const cat of categories) {
+        for (const tid of cat.keys) {
+          if (tasks[tid]) list.push({ id: tid, task: tasks[tid], cat: cat.label })
+        }
+      }
+      return list
+    })
+    const totalTasks = computed(() => allTasks.value.length)
+    const doneTasks = computed(() => allTasks.value.filter(t => status(t.id) === 'done').length)
+    const wipTasks = computed(() => allTasks.value.filter(t => status(t.id) === 'wip').length)
     const pct = computed(() => totalTasks.value ? Math.round(doneTasks.value / totalTasks.value * 100) : 0)
-    function catDone(cat) { return cat.keys.filter(id => props.data.tasks?.[id]).length }
-    return { categories, tasks, isChecked, toggle, totalTasks, doneTasks, pct, catDone }
+    function tasksInColumn(col) { return allTasks.value.filter(t => status(t.id) === col) }
+
+    // Drag & drop state
+    const dragId = ref(null)
+    function onDragStart(e, id) { dragId.value = id; e.dataTransfer.effectAllowed = 'move' }
+    function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move' }
+    function onDrop(e, targetCol) { e.preventDefault(); if (dragId.value) { setStatus(dragId.value, targetCol); dragId.value = null } }
+    function onDragEnd() { dragId.value = null }
+
+    // Expand detail
+    const expandedCard = ref(null)
+    function toggleExpand(id) { expandedCard.value = expandedCard.value === id ? null : id }
+
+    // Calendar
+    function parseDeadline(dl) {
+      if (!dl || dl === '随時') return null
+      const dates = []
+      const re = /R(\d+)\.(\d+)(?:\.(\d+))?/g
+      let m
+      while ((m = re.exec(dl)) !== null) {
+        dates.push(new Date(2018 + parseInt(m[1]), parseInt(m[2]) - 1, m[3] ? parseInt(m[3]) : 1))
+      }
+      if (dates.length === 0) {
+        const m3 = dl.match(/R(\d+)\.(\d+)月/)
+        if (m3) dates.push(new Date(2018 + parseInt(m3[1]), parseInt(m3[2]) - 1, 1))
+      }
+      return dates.length > 0 ? dates : null
+    }
+    const calMonths = []
+    for (let y = 2026; y <= 2027; y++) {
+      const s = y === 2026 ? 3 : 0, e = y === 2027 ? 5 : 11
+      for (let m = s; m <= e; m++) calMonths.push({ year: y, month: m })
+    }
+    function monthLabel(ym) { return ym.year + '年' + (ym.month + 1) + '月' }
+    function daysInMonth(ym) { return new Date(ym.year, ym.month + 1, 0).getDate() }
+    function firstDayOfWeek(ym) { return new Date(ym.year, ym.month, 1).getDay() }
+    const calendarTasks = computed(() => {
+      const map = {}, noDate = []
+      for (const t of allTasks.value) {
+        const id = t.id, task = t.task
+        if (!task.deadline || task.deadline === '随時') { noDate.push({ id, task }); continue }
+        const dates = parseDeadline(task.deadline)
+        if (!dates || !dates.length) { noDate.push({ id, task }); continue }
+        const d = dates[dates.length - 1]
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
+        if (!map[key]) map[key] = []
+        map[key].push({ id, task })
+      }
+      return { map, noDate }
+    })
+    function tasksForDay(ym, day) {
+      return calendarTasks.value.map[ym.year + '-' + String(ym.month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0')] || []
+    }
+    function isToday(ym, day) { const n = new Date(); return n.getFullYear() === ym.year && n.getMonth() === ym.month && n.getDate() === day }
+    function isPast(ym, day) { const d = new Date(ym.year, ym.month, day), n = new Date(); n.setHours(0,0,0,0); return d < n }
+    const activeMonths = computed(() => {
+      const s = new Set()
+      for (const k of Object.keys(calendarTasks.value.map)) { const [y, m] = k.split('-'); s.add(parseInt(y) + '-' + parseInt(m)) }
+      return s
+    })
+    const visibleMonths = computed(() => calMonths.filter(ym => activeMonths.value.has(ym.year + '-' + (ym.month+1))))
+
+    return { sub, tasks, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
+             columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd, expandedCard, toggleExpand,
+             visibleMonths, monthLabel, daysInMonth, firstDayOfWeek, tasksForDay, isToday, isPast, calendarTasks }
   },
   template: `<div>
     <div class="section">
       <div class="section-title">事務タスク進捗</div>
       <div class="kpi-grid" style="margin-bottom:16px">
+        <div class="kpi-card"><div class="kpi-label">未着手</div><div class="kpi-value" style="font-size:18px">{{totalTasks - doneTasks - wipTasks}}</div></div>
+        <div class="kpi-card" style="border-color:var(--amber)"><div class="kpi-label" style="color:var(--amber)">進行中</div><div class="kpi-value" style="font-size:18px;color:var(--amber)">{{wipTasks}}</div></div>
         <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">完了</div><div class="kpi-value" style="font-size:18px">{{doneTasks}} / {{totalTasks}}</div></div>
         <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">進捗率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
       </div>
       <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
     </div>
-    <div v-for="cat in categories" :key="cat.id" class="section">
-      <div class="section-title">{{cat.label}} <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px">{{catDone(cat)}}/{{cat.keys.length}}</span></div>
-      <ul class="task-list">
-        <li v-for="tid in cat.keys" :key="tid" class="task-item" v-if="tasks[tid]">
-          <input type="checkbox" class="task-check" :checked="isChecked(tid)" @change="toggle(tid)">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:600" :style="isChecked(tid)?'text-decoration:line-through;opacity:0.5':''">{{tasks[tid].title}}</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:2px">{{tasks[tid].detail}}</div>
-            <span v-if="tasks[tid].deadline" class="badge badge-modified" style="margin-top:4px;margin-left:0">{{tasks[tid].deadline}}</span>
+    <div class="sub-tabs" style="margin-bottom:12px">
+      <button class="sub-tab" :class="{active:sub==='kanban'}" @click="sub='kanban'">カンバン</button>
+      <button class="sub-tab" :class="{active:sub==='calendar'}" @click="sub='calendar'">カレンダー</button>
+    </div>
+    <div v-if="sub==='kanban'" class="kb-board">
+      <div v-for="col in columns" :key="col.key" class="kb-col" :class="'kb-col-'+col.key"
+           @dragover="onDragOver" @drop="onDrop($event, col.key)">
+        <div class="kb-col-head">
+          <span class="kb-dot" :class="'kb-dot-'+col.key"></span>
+          <span class="kb-col-name">{{col.label}}</span>
+          <span class="kb-col-num">{{tasksInColumn(col.key).length}}</span>
+        </div>
+        <div class="kb-col-cards">
+          <div v-for="t in tasksInColumn(col.key)" :key="t.id"
+               class="kb-card" :class="['kb-card-'+col.key, {dragging: dragId===t.id}]"
+               draggable="true" @dragstart="onDragStart($event, t.id)" @dragend="onDragEnd"
+               @click="toggleExpand(t.id)">
+            <div class="kb-card-top">
+              <span class="kb-card-title" :class="{'kb-done-text': col.key==='done'}">{{t.task.title}}</span>
+            </div>
+            <div v-if="t.task.deadline" class="kb-card-dl">{{t.task.deadline}}</div>
+            <div class="kb-card-foot">
+              <span class="kb-card-tag">{{t.cat}}</span>
+              <span class="kb-status-pill" :class="'kb-pill-'+col.key" @click.stop="cycleStatus(t.id)">{{statusLabel[col.key]}}</span>
+            </div>
+            <div v-if="expandedCard===t.id" class="kb-card-expand" @click.stop>
+              <div class="kb-card-desc">{{t.task.detail}}</div>
+              <div class="kb-card-move">
+                <button v-for="c in columns" :key="c.key" class="kb-move-btn" :class="{'kb-move-active': col.key===c.key}" @click.stop="setStatus(t.id, c.key)">{{c.label}}</button>
+              </div>
+            </div>
           </div>
-        </li>
-      </ul>
+        </div>
+        <div v-if="!tasksInColumn(col.key).length" class="kb-empty-col">ドラッグしてここに移動</div>
+      </div>
+    </div>
+    <div v-if="sub==='calendar'">
+      <div v-for="ym in visibleMonths" :key="ym.year+'-'+ym.month" class="section cal-month">
+        <div class="section-title">{{monthLabel(ym)}}</div>
+        <div class="cal-grid">
+          <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div><div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
+          <div v-for="n in firstDayOfWeek(ym)" :key="'e'+n" class="cal-cell cal-empty"></div>
+          <div v-for="day in daysInMonth(ym)" :key="day" class="cal-cell" :class="{'cal-today':isToday(ym,day),'cal-past':isPast(ym,day)&&!isToday(ym,day)}">
+            <div class="cal-day">{{day}}</div>
+            <template v-for="t in tasksForDay(ym,day)" :key="t.id">
+              <div class="cal-chip" :class="'cal-chip-'+status(t.id)" @click="cycleStatus(t.id)" :title="t.task.title + ' ['+statusLabel[status(t.id)]+'] — クリックでステータス変更'">
+                <span class="cal-chip-dot" :class="'kb-dot-'+status(t.id)"></span>
+                <span class="cal-chip-text">{{t.task.title}}</span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div v-if="calendarTasks.noDate.length" class="section">
+        <div class="section-title">期限なし・随時</div>
+        <div class="cal-nodate">
+          <div v-for="t in calendarTasks.noDate" :key="t.id" class="cal-chip cal-chip-nodate" :class="'cal-chip-'+status(t.id)" @click="cycleStatus(t.id)" :title="'クリックでステータス変更'">
+            <span class="cal-chip-dot" :class="'kb-dot-'+status(t.id)"></span>
+            <span class="cal-chip-text">{{t.task.title}}</span>
+            <span v-if="t.task.deadline" class="cal-chip-dl">{{t.task.deadline}}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>`
 }
 
 const RequirementsTab = {
-  props:['data'],
-  setup(props) {
+  props:['data','r8Data','activeSub'],
+  emits:['update:activeSub'],
+  setup(props, { emit }) {
+    const sub = computed({ get:()=>props.activeSub||'checklist', set:v=>emit('update:activeSub',v) })
     const groups = window.REQUIREMENT_DEFINITIONS || []
     function isChecked(id) { return !!props.data.requirements?.[id] }
     function toggle(id) { if (!props.data.requirements) props.data.requirements = {}; props.data.requirements[id] = !props.data.requirements[id] }
@@ -359,27 +513,215 @@ const RequirementsTab = {
     const totalItems = computed(() => groups.reduce((s, g) => s + g.items.length, 0))
     const doneItems = computed(() => groups.reduce((s, g) => s + groupDone(g), 0))
     const pct = computed(() => totalItems.value ? Math.round(doneItems.value / totalItems.value * 100) : 0)
-    return { groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct }
+    // 調剤基本料判定（ステップ式）
+    const jStep = ref(1)
+    const jResult = ref(null)
+    // Step 1: 届出・敷地内
+    const j1Todokede = ref('yes')  // yes/no
+    const j1Shikichi = ref('no')   // yes/no
+    // Step 2: チェーン薬局・グループ規模
+    const j2IsChain = ref('no')  // yes/no
+    const j2GroupTotal = ref(0)
+    // Step 3: 受付回数・集中率
+    const j3RxCount = ref(0)
+    const j3Conc = ref(0)
+    const j3Top3Conc = ref(0)
+    const j3SpecificRx = ref(0)
+    const j3IsCity = ref(false)
+    // Step 4: 新規開設（減算）
+    const j4IsNew = ref(false)
+    // 実績読込
+    const jPeriod = ref('')
+    const jMonths = ref(12)
+    function jLoadR7() {
+      const r6 = props.data.r6 || {}
+      const annual = r6.t_rx_count || 0
+      const period = props.data.period || ''
+      jPeriod.value = period
+      const m = period.match(/(\d+)年(\d+)月(\d+)日～.*?(\d+)年(\d+)月(\d+)日/)
+      if (m) {
+        const d1 = new Date(2000+parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]))
+        const d2 = new Date(2000+parseInt(m[4]), parseInt(m[5])-1, parseInt(m[6]))
+        const diff = (d2 - d1) / (1000*60*60*24*30.44)
+        jMonths.value = Math.max(1, Math.round(diff))
+      }
+      j3RxCount.value = Math.round(annual / jMonths.value)
+    }
+    function jJudge() {
+      const grp = j2GroupTotal.value
+      const rx = j3RxCount.value
+      const conc = j3Conc.value
+      const top3 = j3Top3Conc.value
+      const specRx = j3SpecificRx.value
+      let pts, label, cat, gensan = 0
+      if (j1Todokede.value === 'no') {
+        pts = 3; label = '特別B（3点）'; cat = '届出なし'
+      } else if (j1Shikichi.value === 'yes') {
+        pts = 5; label = '特別A（5点）'; cat = '同一敷地内薬局'
+      } else if (grp > 400000 && conc <= 85) {
+        pts = 37; label = '基本料3ハ（37点）'; cat = '大型チェーン薬局（グループ月40万回超・集中率85%以下）'
+      } else if (grp > 400000 && conc > 85) {
+        pts = 20; label = '基本料3ロ（20点）'; cat = '大型チェーン薬局（グループ月40万回超・集中率85%超）'
+      } else if (grp > 35000 && conc > 85) {
+        pts = 25; label = '基本料3イ（25点）'; cat = '大型チェーン薬局（グループ月3.5万回超～40万回・集中率85%超）'
+      } else if (j3IsCity.value && rx > 600 && rx <= 1800 && conc > 85) {
+        pts = 30; label = '基本料2（30点）'; cat = '都市部で受付600回超1,800回以下かつ集中率85%超'
+      } else if (rx > 1800 && conc > 85) {
+        pts = 30; label = '基本料2（30点）'; cat = '受付1,800回超かつ集中率85%超'
+      } else if (rx > 4000 && top3 > 70) {
+        pts = 30; label = '基本料2（30点）'; cat = '受付4,000回超かつ上位3医療機関の集中率合計70%超'
+      } else if (specRx > 4000) {
+        pts = 30; label = '基本料2（30点）'; cat = '特定医療機関からの受付4,000回超'
+      } else {
+        pts = 47; label = '基本料1（47点）'; cat = '上記以外（一般薬局）'
+      }
+      if (j4IsNew.value && pts !== 5 && pts !== 3 && j3IsCity.value && conc > 85) {
+        gensan = 15
+      }
+      jResult.value = { pts, label, cat, gensan }
+    }
+    const jApplied = ref(false)
+    function jApplyToR8() {
+      if (!jResult.value) return
+      if (props.r8Data) {
+        if (!props.r8Data.r6) props.r8Data.r6 = {}
+        props.r8Data.r6['k_kihon'] = jResult.value.pts
+        jApplied.value = true
+      }
+    }
+    function jReset() { jStep.value = 1; jResult.value = null; jApplied.value = false }
+    const jError = ref('')
+    function jNext() {
+      jError.value = ''
+      if (jStep.value === 1) {
+        if (j1Todokede.value === 'no' || j1Shikichi.value === 'yes') { jStep.value = 5; jJudge(); return }
+        jStep.value = 2
+      } else if (jStep.value === 2) {
+        if (j2IsChain.value === 'yes' && j2GroupTotal.value <= 0) { jError.value = 'グループ全店舗の月合計受付回数を入力してください'; return }
+        if (j2IsChain.value === 'no') { j2GroupTotal.value = 0 }
+        jStep.value = 3
+      } else if (jStep.value === 3) {
+        if (j3RxCount.value <= 0) { jError.value = '月あたり処方箋受付回数を入力してください'; return }
+        jStep.value = 4
+      } else if (jStep.value === 4) {
+        jStep.value = 5; jJudge()
+      }
+    }
+    function jBack() { if (jStep.value > 1 && jStep.value < 5) jStep.value-- ; else if (jStep.value === 5 && (j1Todokede.value === 'no' || j1Shikichi.value === 'yes')) jStep.value = 1; else if (jStep.value === 5) jStep.value = 4 }
+    return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct, jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack }
   },
   template: `<div>
-    <div class="section">
-      <div class="section-title">施設基準 達成状況</div>
-      <div class="kpi-grid" style="margin-bottom:16px">
-        <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成</div><div class="kpi-value" style="font-size:18px">{{doneItems}} / {{totalItems}}</div></div>
-        <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
-      </div>
-      <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
+    <div class="sub-tabs" style="margin-bottom:12px">
+      <button class="sub-tab" :class="{active:sub==='checklist'}" @click="sub='checklist'">チェックリスト</button>
+      <button class="sub-tab" :class="{active:sub==='judge'}" @click="sub='judge'">調剤基本料の判定</button>
     </div>
-    <div v-for="group in groups" :key="group.id" class="section">
-      <div class="section-title">{{group.label}} <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px">{{groupDone(group)}}/{{group.items.length}}</span></div>
-      <p v-if="group.description" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">{{group.description}}</p>
-      <ul class="task-list">
-        <li v-for="item in group.items" :key="item.id" class="task-item">
-          <input type="checkbox" class="task-check" :checked="isChecked(item.id)" @change="toggle(item.id)">
-          <div style="font-size:13px" :style="isChecked(item.id)?'text-decoration:line-through;opacity:0.5':''">{{item.label}}</div>
-        </li>
-      </ul>
-      <div class="req-progress" style="margin-top:4px"><div class="req-progress-bar" :style="{width:groupPct(group)+'%'}"></div></div>
+    <div v-if="sub==='checklist'">
+      <div class="section">
+        <div class="section-title">施設基準 達成状況</div>
+        <div class="kpi-grid" style="margin-bottom:16px">
+          <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成</div><div class="kpi-value" style="font-size:18px">{{doneItems}} / {{totalItems}}</div></div>
+          <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
+        </div>
+        <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
+      </div>
+      <div v-for="group in groups" :key="group.id" class="section">
+        <div class="section-title">{{group.label}} <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px">{{groupDone(group)}}/{{group.items.length}}</span></div>
+        <p v-if="group.description" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">{{group.description}}</p>
+        <ul class="task-list">
+          <li v-for="item in group.items" :key="item.id" class="task-item">
+            <input type="checkbox" class="task-check" :checked="isChecked(item.id)" @change="toggle(item.id)">
+            <div style="font-size:13px" :style="isChecked(item.id)?'text-decoration:line-through;opacity:0.5':''">{{item.label}}</div>
+          </li>
+        </ul>
+        <div class="req-progress" style="margin-top:4px"><div class="req-progress-bar" :style="{width:groupPct(group)+'%'}"></div></div>
+      </div>
+    </div>
+    <div v-if="sub==='judge'">
+      <div class="section">
+        <div class="section-title">調剤基本料の施設基準（R8改定後）</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">出典：令和8年度診療報酬改定の概要【調剤】p.13</p>
+        <img src="img/r8_kihon_chart.png" alt="調剤基本料の見直し（R8改定後）" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0">
+      </div>
+      <div class="section">
+        <div class="section-title">判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div style="font-weight:600;color:var(--text)">基準期間</div>
+          <div>処方箋受付回数・集中率は<strong>前年5月1日～当年4月30日</strong>の1年間の実績で判定します。</div>
+          <div>R8（令和8年6月施行）の場合：<strong>令和7年5月1日～令和8年4月30日</strong></div>
+          <div>届出受付期間：令和8年5月7日～6月1日（必着）</div>
+        </div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{jStep}} / 5</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(jStep*20)+'%'}"></div></div>
+
+        <div v-if="jStep===1" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：薬局の種別</div>
+          <div style="margin-bottom:12px">
+            <div style="font-weight:600;margin-bottom:6px">調剤基本料の届出をしますか？</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="j1Todokede" value="yes">はい（届出する）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="j1Todokede" value="no">いいえ（届出しない）→ 特別B（3点）</label>
+          </div>
+          <div v-if="j1Todokede==='yes'" style="margin-bottom:12px">
+            <div style="font-weight:600;margin-bottom:6px">同一敷地内薬局ですか？（医療機関と不動産取引等の特別な関係があり、集中率50%超）</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="j1Shikichi" value="no">いいえ</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="j1Shikichi" value="yes">はい → 特別A（5点）</label>
+          </div>
+        </div>
+
+        <div v-if="jStep===2" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：グループ薬局かどうか</div>
+          <div style="margin-bottom:12px">
+            <div style="font-weight:600;margin-bottom:6px">同一法人・同一経営主体が運営する薬局が他にありますか？</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="j2IsChain" value="no">いいえ（個人経営・自薬局のみ）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="j2IsChain" value="yes">はい（グループ・チェーンに属する）</label>
+          </div>
+          <div v-if="j2IsChain==='yes'" style="margin-top:12px">
+            <div style="font-weight:600;margin-bottom:6px">グループ全店舗の処方箋受付回数の月合計</div>
+            <div style="display:flex;align-items:center;gap:8px"><input type="number" class="fee-input" style="max-width:150px;font-size:16px" v-model.number="j2GroupTotal"> 回/月</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px">※グループ本部等にご確認ください</div>
+          </div>
+        </div>
+
+        <div v-if="jStep===3" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：受付回数・集中率</div>
+          <table style="font-size:13px;width:100%;max-width:550px;border-collapse:collapse">
+            <tr><td style="padding:8px 0;font-weight:600;width:260px">月あたり処方箋受付回数（自薬局）</td><td><input type="number" class="fee-input" style="max-width:120px" v-model.number="j3RxCount"> 回</td></tr>
+            <tr><td style="padding:8px 0;font-weight:600">処方箋集中率（特定医療機関）</td><td><input type="number" class="fee-input" style="max-width:80px" step="0.1" v-model.number="j3Conc"> %<div style="font-size:11px;color:var(--text-muted)">※医療モール内は複数医療機関を1つとみなす</div></td></tr>
+            <tr v-if="j3RxCount>4000"><td style="padding:8px 0;font-weight:600">上位3医療機関の集中率合計</td><td><input type="number" class="fee-input" style="max-width:80px" step="0.1" v-model.number="j3Top3Conc"> %</td></tr>
+            <tr><td style="padding:8px 0;font-weight:600">特定医療機関からの月受付回数</td><td><input type="number" class="fee-input" style="max-width:120px" v-model.number="j3SpecificRx"> 回<div style="font-size:11px;color:var(--text-muted)">※最も多い1医療機関からの回数</div></td></tr>
+            <tr><td style="padding:8px 0" colspan="2"><label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" v-model="j3IsCity" style="width:16px;height:16px"><span style="font-weight:600">都市部に所在</span><span style="color:var(--text-muted)">（特別区・政令指定都市。半径500m以内に他の薬局あり）</span></label></td></tr>
+          </table>
+        </div>
+
+        <div v-if="jStep===4" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：新規開設（減算判定）</div>
+          <div style="margin-bottom:12px">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" v-model="j4IsNew" style="width:16px;height:16px"><span style="font-weight:600">令和8年6月1日以降に新規開設した薬局</span></label>
+            <div style="font-size:12px;color:var(--text-muted);margin-top:4px">※既存薬局（R8年5月31日以前に開設）は当面の間、対象外</div>
+          </div>
+          <div v-if="j4IsNew && j3IsCity && j3Conc>85" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:13px;color:var(--del-text)">→ 門前薬局等立地依存減算（▲15点）の対象になる可能性があります</div>
+        </div>
+
+        <div v-if="jStep===5">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 5：判定結果</div>
+          <div v-if="jResult" style="padding:20px;background:var(--new-bg);border:1px solid #b3d4f7;border-radius:var(--radius);margin-bottom:12px">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{jResult.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted);margin-bottom:4px">{{jResult.cat}}</div>
+            <div v-if="jResult.gensan>0" style="font-size:15px;font-weight:700;color:var(--del-text);margin-top:12px">門前薬局等立地依存減算：▲{{jResult.gensan}}点</div>
+            <div v-if="jResult.gensan>0" style="font-size:14px;color:var(--text-muted)">実質：{{jResult.pts - jResult.gensan}}点</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="jApplyToR8()">R8予測に反映</button>
+            <button class="btn" @click="jReset()">最初からやり直す</button>
+            <span v-if="jApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映しました。シミュレータ→R8予測で確認できます。</span>
+          </div>
+        </div>
+
+        <div v-if="jError" style="margin-top:12px;padding:8px 12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">{{jError}}</div>
+        <div v-if="jStep<5" style="margin-top:20px;display:flex;gap:8px">
+          <button v-if="jStep>1" class="btn" @click="jBack()">戻る</button>
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="jNext()">次へ</button>
+        </div>
+      </div>
     </div>
   </div>`
 }

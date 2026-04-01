@@ -31,6 +31,7 @@ const app = createApp({
         }
         // Merge pharmacy name and period
         if (json.pharmacyName) data.pharmacyName = json.pharmacyName
+        if (json.period) data.period = json.period
         console.log('実績データ読込完了:', json.pharmacyName, json.period)
       } catch (e) { console.error('実績データ読込失敗:', e.message) }
     }
@@ -67,9 +68,12 @@ const app = createApp({
 
     provide('storage', { data })
     const activeSubTab = ref('r7')
-    return { data, r8Data, activeTab, activeSubTab, loadR7Data, clearR7Data, loadR8Data, clearR8Data }
+    const reqSubTab = ref('checklist')
+    const taskSubTab = ref('kanban')
+    function goToJudge() { activeTab.value = 'requirements'; reqSubTab.value = 'judge' }
+    return { data, r8Data, activeTab, activeSubTab, reqSubTab, taskSubTab, loadR7Data, clearR7Data, loadR8Data, clearR8Data, goToJudge }
   },
-  template: `<div class="container"><div class="hero"><div><h1>令和8年度 調剤報酬改定</h1><p>2026年6月施行 報酬改定管理システム</p></div></div><div class="tabs"><button class="tab" :class="{active:activeTab==='overview'}" @click="activeTab='overview'">概要</button><button class="tab" :class="{active:activeTab==='houshu'}" @click="activeTab='houshu'">シミュレータ</button><button class="tab" :class="{active:activeTab==='tasks'}" @click="activeTab='tasks'">事務タスク</button><button class="tab" :class="{active:activeTab==='requirements'}" @click="activeTab='requirements'">施設基準・要件</button></div><overview-tab v-if="activeTab==='overview'"/><div v-if="activeTab==='houshu'"><div class="sub-tabs"><button class="sub-tab" :class="{active:activeSubTab==='r7'}" @click="activeSubTab='r7'"><span class="era-pill era-r6">R6</span> R7実績</button><button class="sub-tab" :class="{active:activeSubTab==='r8'}" @click="activeSubTab='r8'"><span class="era-pill era-r8">R8</span> R8予測</button><button class="sub-tab" :class="{active:activeSubTab==='impact'}" @click="activeSubTab='impact'">経営影響</button></div><input-tab v-if="activeSubTab==='r7'" :data="data" :load-fn="loadR7Data" :clear-fn="clearR7Data"/><r8-input-tab v-if="activeSubTab==='r8'" :data="r8Data" :load-fn="loadR8Data" :clear-fn="clearR8Data"/><impact-tab v-if="activeSubTab==='impact'" :data="data" :r8-data="r8Data"/></div><tasks-tab v-if="activeTab==='tasks'" :data="data"/><requirements-tab v-if="activeTab==='requirements'" :data="data"/></div>`
+  template: `<div class="container"><div class="hero"><div><h1>令和8年度 調剤報酬改定</h1><p>2026年6月施行 報酬改定管理システム</p></div></div><div class="tabs"><button class="tab" :class="{active:activeTab==='overview'}" @click="activeTab='overview'">概要</button><button class="tab" :class="{active:activeTab==='houshu'}" @click="activeTab='houshu'">シミュレータ</button><button class="tab" :class="{active:activeTab==='tasks'}" @click="activeTab='tasks'">事務タスク</button><button class="tab" :class="{active:activeTab==='requirements'}" @click="activeTab='requirements'">施設基準・要件</button></div><overview-tab v-if="activeTab==='overview'"/><div v-if="activeTab==='houshu'"><div class="sub-tabs"><button class="sub-tab" :class="{active:activeSubTab==='r7'}" @click="activeSubTab='r7'"><span class="era-pill era-r6">R6</span> R7実績</button><button class="sub-tab" :class="{active:activeSubTab==='r8'}" @click="activeSubTab='r8'"><span class="era-pill era-r8">R8</span> R8予測</button><button class="sub-tab" :class="{active:activeSubTab==='impact'}" @click="activeSubTab='impact'">経営影響</button></div><input-tab v-if="activeSubTab==='r7'" :data="data" :load-fn="loadR7Data" :clear-fn="clearR7Data"/><r8-input-tab v-if="activeSubTab==='r8'" :data="r8Data" :load-fn="loadR8Data" :clear-fn="clearR8Data" :go-to-judge="goToJudge"/><impact-tab v-if="activeSubTab==='impact'" :data="data" :r8-data="r8Data"/></div><tasks-tab v-if="activeTab==='tasks'" :data="data" :active-sub="taskSubTab" @update:active-sub="taskSubTab=$event"/><requirements-tab v-if="activeTab==='requirements'" :data="data" :r8-data="r8Data" :active-sub="reqSubTab" @update:active-sub="reqSubTab=$event"/></div>`
 })
 
 app.mount('#app')
