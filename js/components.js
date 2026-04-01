@@ -652,27 +652,32 @@ const RequirementsTab = {
     const cError = ref('')
     // Step 2: 加算1基礎要件
     const cBase = reactive({
-      ge85: cjd.c_ge85 || false,
       supply: cjd.c_supply || false,
       share: cjd.c_share || false,
+      supply_alt: cjd.c_supply_alt || false,
       stock: cjd.c_stock || false,
-      biyaku: cjd.c_biyaku || false,
-      mayaku: cjd.c_mayaku || false,
-      kaikyoku: cjd.c_kaikyoku || false,
-      zaitaku: cjd.c_zaitaku || false,
-      kakaritsuke: cjd.c_kakaritsuke || false,
+      tanpin: cjd.c_tanpin || false,
+      haibin: cjd.c_haibin || false,
+      henpin: cjd.c_henpin || false,
+      renkei: cjd.c_renkei || false,
+      ge85: cjd.c_ge85 || false,
     })
-    const cBaseChecks = [
-      { key: 'ge85', label: '後発医薬品使用率85%以上' },
-      { key: 'supply', label: '計画的な医薬品の調達・在庫管理を行っている' },
-      { key: 'share', label: '他の薬局への医薬品分譲実績あり（同一グループ除く）' },
-      { key: 'stock', label: '重要供給確保医薬品の1ヶ月程度の備蓄' },
-      { key: 'biyaku', label: '医療用医薬品1,200品目以上の備蓄・周知' },
-      { key: 'mayaku', label: '麻薬小売業者の免許' },
-      { key: 'kaikyoku', label: '一定時間以上の開局、休日夜間対応体制' },
-      { key: 'zaitaku', label: '在宅薬剤管理の実績 24回以上/年' },
-      { key: 'kakaritsuke', label: 'かかりつけ薬剤師が服薬管理指導を行う旨の届出' },
+    // イ: 医薬品の安定供給体制 (1)～(8)
+    const cBaseChecksA = [
+      { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行っている' },
+      { key: 'share', label: '(2) 他の保険薬局に医薬品を分譲した実績がある（同一グループは含めない）' },
+      { key: 'supply_alt', label: '(3) 医薬品入手困難時に、他薬局への紹介や処方変更の照会等の適切な対応を行っている' },
+      { key: 'stock', label: '(4) 重要供給確保医薬品のうち内用薬・外用薬を1ヶ月程度備蓄するよう努めている' },
+      { key: 'tanpin', label: '(5) 原則として単品単価交渉を実施している' },
+      { key: 'haibin', label: '(6) 卸売販売業者への頻回配送・休日夜間配送・急配の過度な依頼を慎んでいる' },
+      { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整目的の返品を慎んでいる' },
+      { key: 'renkei', label: '(8) 地域の医療機関・薬局・医療関係団体と医薬品の品目について情報共有している（望ましい）' },
     ]
+    // ロ: 後発医薬品使用率
+    const cBaseChecksB = [
+      { key: 'ge85', label: '後発医薬品の規格単位数量の割合が85%以上である' },
+    ]
+    const cBaseChecks = [...cBaseChecksA, ...cBaseChecksB]
     const cBaseOk = computed(() => Object.values(cBase).every(v => v))
     // Step 3: 9指標
     const cInd = reactive({
@@ -737,8 +742,8 @@ const RequirementsTab = {
       Object.assign(props.data.judge, {
         c_step: cStep.value, c_result: cResult.value, c_kihonType: cKihonType.value, c_applied: cApplied.value,
         c_aimHigher: cAimHigher.value,
-        c_ge85: cBase.ge85, c_supply: cBase.supply, c_share: cBase.share, c_stock: cBase.stock,
-        c_biyaku: cBase.biyaku, c_mayaku: cBase.mayaku, c_kaikyoku: cBase.kaikyoku, c_zaitaku: cBase.zaitaku, c_kakaritsuke: cBase.kakaritsuke,
+        c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
+        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei, c_ge85: cBase.ge85,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
@@ -842,7 +847,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cKihonType, cBase, cBaseChecks, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cJudgeHigher, cApplyToR8,
+             cKihonType, cBase, cBaseChecksA, cBaseChecksB, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cJudgeHigher, cApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -970,10 +975,26 @@ const RequirementsTab = {
         </div>
       </div>
       <div class="section">
-        <div class="section-title">加算1（27点）の判定 — 医薬品安定供給体制</div>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">全ての要件を満たせば加算1（27点）を算定可能。</p>
+        <div class="section-title">加算1（27点）の判定</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div style="font-weight:600;color:var(--text);margin-bottom:4px">施設基準（告示第71号 第十五の四の(1)）</div>
+          <div><strong>イ</strong> 地域における医薬品の安定供給を確保するために必要な体制を有していること。</div>
+          <div style="padding-left:16px;font-size:11px">→ 下記(1)～(8)の要件</div>
+          <div><strong>ロ</strong> 後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
+          <div style="margin-top:8px;padding:8px;background:var(--amber-l);border-radius:var(--radius);color:var(--amber)">
+            <strong>〔経過措置〕</strong>R8.3.31時点で後発医薬品調剤体制加算1～3の届出済み薬局は、<strong>R9.5.31まで</strong>ロの要件を満たしているとみなす。
+          </div>
+        </div>
+        <div style="font-weight:700;margin-bottom:8px;font-size:14px">イ：医薬品の安定供給体制 (1)～(8)</div>
         <ul class="task-list">
-          <li v-for="chk in cBaseChecks" :key="chk.key" class="task-item">
+          <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item">
+            <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
+            <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+          </li>
+        </ul>
+        <div style="font-weight:700;margin:16px 0 8px;font-size:14px">ロ：後発医薬品使用率</div>
+        <ul class="task-list">
+          <li v-for="chk in cBaseChecksB" :key="chk.key" class="task-item">
             <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
             <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
           </li>
