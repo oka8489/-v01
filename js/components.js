@@ -888,7 +888,7 @@ const RequirementsTab = {
         </div>
       </div>
     </div>
-    <div v-for="pid in judgePageIds" :key="pid" v-if="sub===pid">
+    <template v-for="pid in judgePageIds" :key="pid"><div v-if="sub===pid">
       <div class="section">
         <div class="section-title">{{JUDGE_PAGES[pid].title}}</div>
         <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">出典：{{JUDGE_PAGES[pid].source}}</p>
@@ -929,6 +929,6 @@ const RequirementsTab = {
           <span v-if="jpApplied(pid)" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
         </div>
       </div>
-    </div>
+    </div></template>
   </div>`
 }
