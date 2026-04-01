@@ -671,7 +671,7 @@ const RequirementsTab = {
       { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行うこと。',
         help: '必要な対応:\n・発注・在庫管理システムの運用（不動在庫・期限切れの定期チェック）\n・需要予測に基づく適正在庫の維持\n・欠品時の代替品確保手順の整備\n・在庫管理に関する手順書の作成' },
       { key: 'share', label: '(2) 他の保険薬局に医薬品を分譲した実績（同一グループは含めない）があること。',
-        help: '必要な対応:\n・近隣の他薬局（自グループ外）への医薬品融通の実績を1回以上確保\n・分譲記録（日付・品名・数量・相手先）を保存\n・地域の薬局間連携ネットワークへの参加' },
+        help: '必要な対応:\n・<b>直近1年間</b>に近隣の他薬局（自グループ外）への医薬品融通の実績を1回以上確保\n・分譲記録（日付・品名・数量・相手先）を保存\n・地域の薬局間連携ネットワークへの参加' },
       { key: 'supply_alt', label: '(3) 医薬品供給不安等により、迅速な医薬品入手が困難な場合は、入手可能な保険薬局を探し、在庫を確認の上、患者を紹介や、処方医に処方変更の可否を照会する等適切な対応をすること。',
         help: '必要な対応:\n・供給不安時の対応手順書を作成\n・近隣薬局の在庫確認ルートを整備（電話・FAX・システム）\n・処方医への疑義照会フローの整備\n・患者への説明と他薬局紹介の体制' },
       { key: 'stock', label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。',
@@ -1010,7 +1010,7 @@ const RequirementsTab = {
           <div v-if="cHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="closeHelp()">
             <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
               <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{cBaseChecksA.find(c=>c.key===cHelpModal)?.label}}</div>
-              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line">{{getHelp(cHelpModal)}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="getHelp(cHelpModal)"></div>
               <div style="margin-top:16px;text-align:right"><button class="btn" @click="closeHelp()" style="background:var(--text);color:white">閉じる</button></div>
             </div>
           </div>
