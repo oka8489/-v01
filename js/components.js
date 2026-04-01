@@ -643,41 +643,93 @@ const RequirementsTab = {
     }
     function jBack() { if (jStep.value > 1 && jStep.value < 5) jStep.value-- ; else if (jStep.value === 5 && (j1Todokede.value === 'no' || j1Shikichi.value === 'yes')) jStep.value = 1; else if (jStep.value === 5) jStep.value = 4 }
     // 汎用判定ページ（チェックリスト式）
+    // 地域支援・医薬品供給対応体制加算 ステップ式判定
+    const cjd = props.data.judge || {}
+    const cStep = ref(cjd.c_step || 1)
+    const cKihonType = ref(cjd.c_kihonType || 'kihon1') // kihon1 or other
+    const cResult = ref(cjd.c_result || null)
+    const cApplied = ref(cjd.c_applied || false)
+    const cError = ref('')
+    // Step 2: 加算1基礎要件
+    const cBase = reactive({
+      ge85: cjd.c_ge85 || false,
+      supply: cjd.c_supply || false,
+      share: cjd.c_share || false,
+      stock: cjd.c_stock || false,
+      biyaku: cjd.c_biyaku || false,
+      mayaku: cjd.c_mayaku || false,
+      kaikyoku: cjd.c_kaikyoku || false,
+      zaitaku: cjd.c_zaitaku || false,
+      kakaritsuke: cjd.c_kakaritsuke || false,
+    })
+    const cBaseChecks = [
+      { key: 'ge85', label: '後発医薬品使用率85%以上' },
+      { key: 'supply', label: '計画的な医薬品の調達・在庫管理を行っている' },
+      { key: 'share', label: '他の薬局への医薬品分譲実績あり（同一グループ除く）' },
+      { key: 'stock', label: '重要供給確保医薬品の1ヶ月程度の備蓄' },
+      { key: 'biyaku', label: '医療用医薬品1,200品目以上の備蓄・周知' },
+      { key: 'mayaku', label: '麻薬小売業者の免許' },
+      { key: 'kaikyoku', label: '一定時間以上の開局、休日夜間対応体制' },
+      { key: 'zaitaku', label: '在宅薬剤管理の実績 24回以上/年' },
+      { key: 'kakaritsuke', label: 'かかりつけ薬剤師が服薬管理指導を行う旨の届出' },
+    ]
+    const cBaseOk = computed(() => Object.values(cBase).every(v => v))
+    // Step 3: 9指標
+    const cInd = reactive({
+      i1: cjd.c_i1 || false, i2: cjd.c_i2 || false, i3: cjd.c_i3 || false,
+      i4: cjd.c_i4 || false, i5: cjd.c_i5 || false, i6: cjd.c_i6 || false,
+      i7: cjd.c_i7 || false, i8: cjd.c_i8 || false, i9: cjd.c_i9 || false,
+    })
+    const cIndLabels = [
+      { key: 'i1', label: '①夜間・休日等の対応実績', note: '基本料1: 40回 / それ以外: 400回以上' },
+      { key: 'i2', label: '②麻薬の調剤実績', note: '基本料1: 1回 / それ以外: 10回以上' },
+      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', note: '基本料1: 20回 / それ以外: 40回以上' },
+      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', note: '基本料1: 20回 / それ以外: 40回以上 ★加算2・4必須' },
+      { key: 'i5', label: '⑤外来服薬支援料1の実績', note: '基本料1: 1回 / それ以外: 12回以上' },
+      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', note: '24回以上 ★加算4必須' },
+      { key: 'i7', label: '⑦服薬情報等提供料の実績', note: '基本料1: 30回 / それ以外: 60回以上' },
+      { key: 'i8', label: '⑧小児特定加算の算定実績', note: '1回以上' },
+      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', note: '基本料1: 1回 / それ以外: 5回以上' },
+    ]
+    const cIndCount = computed(() => Object.values(cInd).filter(v => v).length)
+    function cJudge() {
+      if (!cBaseOk.value) { cResult.value = { pts: 0, label: '算定なし', reason: '加算1の基礎要件を満たしていません' }; return }
+      const cnt = cIndCount.value
+      const has4 = cInd.i4, has6 = cInd.i6
+      if (cKihonType.value === 'kihon1') {
+        if (cnt >= 7) cResult.value = { pts: 67, label: '加算3（67点）', reason: '基本料1＋実績7つ以上' }
+        else if (cnt >= 3 && has4) cResult.value = { pts: 59, label: '加算2（59点）', reason: '基本料1＋④含む3つ以上' }
+        else cResult.value = { pts: 27, label: '加算1（27点）', reason: '基本料1＋基礎要件のみ' }
+      } else {
+        if (cnt >= 7) cResult.value = { pts: 59, label: '加算5（59点）', reason: '基本料1以外＋実績7つ以上' }
+        else if (cnt >= 3 && has4 && has6) cResult.value = { pts: 37, label: '加算4（37点）', reason: '基本料1以外＋④⑥含む3つ以上' }
+        else cResult.value = { pts: 27, label: '加算1（27点）', reason: '基礎要件のみ' }
+      }
+    }
+    function cNext() {
+      cError.value = ''
+      if (cStep.value === 1) cStep.value = 2
+      else if (cStep.value === 2) { if (!cBaseOk.value) { cError.value = '全ての基礎要件にチェックを入れるか、Step4に進んで「算定なし」を確認してください' }; cStep.value = 3 }
+      else if (cStep.value === 3) { cStep.value = 4; cJudge() }
+    }
+    function cBack() { if (cStep.value > 1) cStep.value-- }
+    function cReset() { cStep.value = 1; cResult.value = null; cApplied.value = false }
+    function cApplyToR8() {
+      if (!cResult.value) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_chiiki'] = cResult.value.pts; cApplied.value = true }
+    }
+    function saveCJudge() {
+      if (!props.data.judge) props.data.judge = {}
+      Object.assign(props.data.judge, {
+        c_step: cStep.value, c_result: cResult.value, c_kihonType: cKihonType.value, c_applied: cApplied.value,
+        c_ge85: cBase.ge85, c_supply: cBase.supply, c_share: cBase.share, c_stock: cBase.stock,
+        c_biyaku: cBase.biyaku, c_mayaku: cBase.mayaku, c_kaikyoku: cBase.kaikyoku, c_zaitaku: cBase.zaitaku, c_kakaritsuke: cBase.kakaritsuke,
+        c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
+      })
+    }
+    watch([cStep, cResult, cKihonType, cApplied, cBase, cInd], saveCJudge, { deep: true })
+
     const JUDGE_PAGES = {
-      k_chiiki: {
-        title: '地域支援・医薬品供給対応体制加算',
-        source: 'docu/ 改定概要 p.21-23',
-        options: [
-          { value: 0, label: '算定なし' },
-          { value: 27, label: '加算1（27点）— 医薬品安定供給体制' },
-          { value: 59, label: '加算2（59点）— 基本料1＋実績3つ以上（④含む）' },
-          { value: 67, label: '加算3（67点）— 基本料1＋実績7つ以上' },
-          { value: 37, label: '加算4（37点）— 基本料1以外＋実績3つ以上（④⑥含む）' },
-          { value: 59, label: '加算5（59点）— 基本料1以外＋実績7つ以上' },
-        ],
-        checks: [
-          { id: 'ge85', label: '後発医薬品使用率85%以上' },
-          { id: 'supply_plan', label: '計画的な医薬品の調達・在庫管理' },
-          { id: 'supply_share', label: '他の薬局への医薬品分譲実績あり（同一グループ除く）' },
-          { id: 'supply_stock', label: '重要供給確保医薬品の1ヶ月程度の備蓄' },
-          { id: 'biyaku1200', label: '医療用医薬品1,200品目以上の備蓄' },
-          { id: 'mayaku', label: '麻薬小売業者の免許' },
-          { id: 'kaikyoku', label: '一定時間以上の開局・休日夜間対応体制' },
-          { id: 'zaitaku24', label: '在宅薬剤管理の実績 24回以上/年' },
-          { id: 'kakaritsuke', label: 'かかりつけ薬剤師が服薬管理指導を行う旨の届出' },
-        ],
-        indicators: [
-          { id: 'ind1', label: '①夜間・休日等の対応実績（基本料1: 40回/基本料1以外: 400回以上）' },
-          { id: 'ind2', label: '②麻薬の調剤実績（1回/10回以上）' },
-          { id: 'ind3', label: '③残薬調整加算・有害事象防止加算の算定実績（20回/40回以上）' },
-          { id: 'ind4', label: '④かかりつけ薬剤師の算定実績（20回/40回以上）★加算2・4必須' },
-          { id: 'ind5', label: '⑤外来服薬支援料1の実績（1回/12回以上）' },
-          { id: 'ind6', label: '⑥単一建物1人の在宅薬剤管理の実績（24回以上）★加算4必須' },
-          { id: 'ind7', label: '⑦服薬情報等提供料の実績（30回/60回以上）' },
-          { id: 'ind8', label: '⑧小児特定加算の算定実績（1回以上）' },
-          { id: 'ind9', label: '⑨研修認定薬剤師の多職種連携会議出席（1回/5回以上）' },
-        ],
-      },
       k_renkei: {
         title: '連携強化加算',
         source: 'docu/ 改定概要',
@@ -775,12 +827,14 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
+             cStep, cKihonType, cBase, cBaseChecks, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
     <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
       <button class="btn" :class="{active:sub==='checklist'}" :style="sub==='checklist'?'background:var(--text);color:white':''" @click="sub='checklist'" style="font-size:12px;padding:6px 12px">チェックリスト</button>
       <button class="btn" :class="{active:sub==='k_kihon'}" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
+      <button class="btn" :style="sub==='k_chiiki'?'background:var(--teal);color:white':''" @click="sub='k_chiiki'" style="font-size:12px;padding:6px 12px">地域支援・医薬品供給対応体制</button>
       <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
     </div>
     <div v-if="sub==='checklist'">
@@ -806,8 +860,7 @@ const RequirementsTab = {
     </div>
     <div v-if="sub==='k_kihon'">
       <div class="section">
-        <div class="section-title">調剤基本料の施設基準（R8改定後）</div>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">出典：令和8年度診療報酬改定の概要【調剤】p.13</p>
+        <div class="section-title">調剤基本料の施設基準 <span class="badge badge-modified">変更</span></div>
         <img src="img/r8_kihon_chart.png" alt="調剤基本料の見直し（R8改定後）" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0">
       </div>
       <div class="section">
@@ -890,6 +943,86 @@ const RequirementsTab = {
         <div v-if="jStep<5" style="margin-top:20px;display:flex;gap:8px">
           <button v-if="jStep>1" class="btn" @click="jBack()">戻る</button>
           <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="jNext()">次へ</button>
+        </div>
+      </div>
+    </div>
+    <div v-if="sub==='k_chiiki'">
+      <div class="section">
+        <div class="section-title">地域支援・医薬品供給対応体制加算 <span class="badge badge-modified">統合</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div style="font-weight:600;color:var(--text)">改定の概要</div>
+          <div>旧「地域支援体制加算」と「後発医薬品調剤体制加算」を統合。5段階に再編。</div>
+          <div>加算1（27点）: 医薬品安定供給体制の基礎要件</div>
+          <div>加算2（59点）/ 加算3（67点）: 基本料1の薬局向け（実績要件あり）</div>
+          <div>加算4（37点）/ 加算5（59点）: 基本料1以外の薬局向け（実績要件あり）</div>
+          <div>経過措置: 後発品調剤体制加算の届出済み薬局はR9.5.31まで後発品85%要件みなし</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{cStep}} / 4</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep*25)+'%'}"></div></div>
+
+        <div v-if="cStep===1" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：調剤基本料の種別</div>
+          <div style="margin-bottom:12px">
+            <div style="font-weight:600;margin-bottom:6px">現在の調剤基本料は？</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKihonType" value="kihon1">調剤基本料1（47点）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外（基本料2・3、特別A・B）</label>
+          </div>
+          <div style="font-size:12px;color:var(--text-muted);padding:8px;background:var(--surface2);border-radius:var(--radius)">
+            <div v-if="cKihonType==='kihon1'">→ 加算1（27点）、加算2（59点）、加算3（67点）が対象</div>
+            <div v-else>→ 加算1（27点）、加算4（37点）、加算5（59点）が対象</div>
+          </div>
+        </div>
+
+        <div v-if="cStep===2" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算1の基礎要件</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">全てにチェックが入れば加算1（27点）以上を算定可能。未達の場合は算定なし。</p>
+          <ul class="task-list">
+            <li v-for="chk in cBaseChecks" :key="chk.key" class="task-item">
+              <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
+              <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+            </li>
+          </ul>
+          <div v-if="!cBaseOk" style="margin-top:8px;padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text)">未達の要件があります。全て満たさないと加算1以上は算定できません。</div>
+        </div>
+
+        <div v-if="cStep===3" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：実績9指標（処方箋1万枚当たり/年）</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
+            <span v-if="cKihonType==='kihon1'">加算2: ④含む3つ以上 / 加算3: 7つ以上</span>
+            <span v-else>加算4: ④⑥含む3つ以上 / 加算5: 7つ以上</span>
+          </p>
+          <ul class="task-list">
+            <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
+              <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px" :style="cInd[ind.key]?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
+                <div style="font-size:11px;color:var(--text-muted)">{{ind.note}}</div>
+              </div>
+            </li>
+          </ul>
+          <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
+        </div>
+
+        <div v-if="cStep===4">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：判定結果</div>
+          <div v-if="cResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="cResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{cResult.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">R8予測に反映</button>
+            <button class="btn" @click="cReset()">最初からやり直す</button>
+            <span v-if="cApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+        </div>
+
+        <div v-if="cError" style="margin-top:12px;padding:8px 12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">{{cError}}</div>
+        <div v-if="cStep<4" style="margin-top:20px;display:flex;gap:8px">
+          <button v-if="cStep>1" class="btn" @click="cBack()">戻る</button>
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="cNext()">次へ</button>
         </div>
       </div>
     </div>
