@@ -24,7 +24,7 @@
       "t_sentei_ryoyo": "int|選定療養金額",
       "_c2": "調剤基本料セクション（統計表の集計行）",
       "t_kihon_cnt": "int|調剤基本料 件数",
-      "t_kihon_amt": "int|t_kihon 金額",
+      "t_kihon_amt": "int|調剤基本料 金額",
       "t_kihon_total": "int|調剤基本料 合計金額",
       "t_jikangai_cnt": "int|時間外加算 件数",
       "t_jikangai_amt": "int|時間外加算 金額",
