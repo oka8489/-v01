@@ -692,27 +692,41 @@ const RequirementsTab = {
       { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', note: '基本料1: 1回 / それ以外: 5回以上' },
     ]
     const cIndCount = computed(() => Object.values(cInd).filter(v => v).length)
-    function cJudge() {
-      if (!cBaseOk.value) { cResult.value = { pts: 0, label: '算定なし', reason: '加算1の基礎要件を満たしていません' }; return }
+    // 加算1の判定結果
+    const cBase1Result = computed(() => cBaseOk.value ? { pts: 27, label: '加算1（27点）', ok: true } : { pts: 0, label: '算定なし', ok: false })
+    // 加算2～5の判定
+    const cAimHigher = ref(cjd.c_aimHigher !== false) // 加算2～5を目指すか
+    function cJudgeHigher() {
       const cnt = cIndCount.value
       const has4 = cInd.i4, has6 = cInd.i6
       if (cKihonType.value === 'kihon1') {
         if (cnt >= 7) cResult.value = { pts: 67, label: '加算3（67点）', reason: '基本料1＋実績7つ以上' }
         else if (cnt >= 3 && has4) cResult.value = { pts: 59, label: '加算2（59点）', reason: '基本料1＋④含む3つ以上' }
-        else cResult.value = { pts: 27, label: '加算1（27点）', reason: '基本料1＋基礎要件のみ' }
+        else cResult.value = { pts: 27, label: '加算1（27点）止まり', reason: '実績要件未達（④含む3つ以上が必要）' }
       } else {
         if (cnt >= 7) cResult.value = { pts: 59, label: '加算5（59点）', reason: '基本料1以外＋実績7つ以上' }
         else if (cnt >= 3 && has4 && has6) cResult.value = { pts: 37, label: '加算4（37点）', reason: '基本料1以外＋④⑥含む3つ以上' }
-        else cResult.value = { pts: 27, label: '加算1（27点）', reason: '基礎要件のみ' }
+        else cResult.value = { pts: 27, label: '加算1（27点）止まり', reason: '実績要件未達（④⑥含む3つ以上が必要）' }
       }
     }
     function cNext() {
       cError.value = ''
       if (cStep.value === 1) cStep.value = 2
-      else if (cStep.value === 2) { if (!cBaseOk.value) { cError.value = '全ての基礎要件にチェックを入れるか、Step4に進んで「算定なし」を確認してください' }; cStep.value = 3 }
-      else if (cStep.value === 3) { cStep.value = 4; cJudge() }
+      else if (cStep.value === 2) {
+        if (!cBaseOk.value) { cError.value = '全ての基礎要件にチェックが必要です'; return }
+        cStep.value = 3 // 加算1判定結果
+      }
+      else if (cStep.value === 3) {
+        if (cAimHigher.value) { cStep.value = 4 } // 9指標へ
+        else { cResult.value = cBase1Result.value; cStep.value = 5 } // 加算1で確定
+      }
+      else if (cStep.value === 4) { cJudgeHigher(); cStep.value = 5 }
     }
-    function cBack() { if (cStep.value > 1) cStep.value-- }
+    function cBack() {
+      if (cStep.value === 5 && !cAimHigher.value) cStep.value = 3
+      else if (cStep.value === 5) cStep.value = 4
+      else if (cStep.value > 1) cStep.value--
+    }
     function cReset() { cStep.value = 1; cResult.value = null; cApplied.value = false }
     function cApplyToR8() {
       if (!cResult.value) return
@@ -722,12 +736,13 @@ const RequirementsTab = {
       if (!props.data.judge) props.data.judge = {}
       Object.assign(props.data.judge, {
         c_step: cStep.value, c_result: cResult.value, c_kihonType: cKihonType.value, c_applied: cApplied.value,
+        c_aimHigher: cAimHigher.value,
         c_ge85: cBase.ge85, c_supply: cBase.supply, c_share: cBase.share, c_stock: cBase.stock,
         c_biyaku: cBase.biyaku, c_mayaku: cBase.mayaku, c_kaikyoku: cBase.kaikyoku, c_zaitaku: cBase.zaitaku, c_kakaritsuke: cBase.kakaritsuke,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, cResult, cKihonType, cApplied, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, cResult, cKihonType, cApplied, cAimHigher, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -827,7 +842,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, cKihonType, cBase, cBaseChecks, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cApplyToR8,
+             cStep, cKihonType, cBase, cBaseChecks, cBaseOk, cBase1Result, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -960,8 +975,8 @@ const RequirementsTab = {
       </div>
       <div class="section">
         <div class="section-title">判定ツール</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{cStep}} / 4</div>
-        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep*25)+'%'}"></div></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{cStep}} / 5</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep*20)+'%'}"></div></div>
 
         <div v-if="cStep===1" style="font-size:14px;line-height:2">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：調剤基本料の種別</div>
@@ -977,23 +992,37 @@ const RequirementsTab = {
         </div>
 
         <div v-if="cStep===2" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算1の基礎要件</div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">全てにチェックが入れば加算1（27点）以上を算定可能。未達の場合は算定なし。</p>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算1の基礎要件（医薬品安定供給体制）</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">加算1（27点）の算定に必要な要件です。全てにチェックが入れば加算1を算定可能。</p>
           <ul class="task-list">
             <li v-for="chk in cBaseChecks" :key="chk.key" class="task-item">
               <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
               <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
             </li>
           </ul>
-          <div v-if="!cBaseOk" style="margin-top:8px;padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text)">未達の要件があります。全て満たさないと加算1以上は算定できません。</div>
+          <div v-if="!cBaseOk" style="margin-top:8px;padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text)">未達の要件があります。全て満たさないと加算1は算定できません。</div>
         </div>
 
         <div v-if="cStep===3" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：実績9指標（処方箋1万枚当たり/年）</div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">
-            <span v-if="cKihonType==='kihon1'">加算2: ④含む3つ以上 / 加算3: 7つ以上</span>
-            <span v-else>加算4: ④⑥含む3つ以上 / 加算5: 7つ以上</span>
-          </p>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：加算1の判定結果</div>
+          <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="cBase1Result.ok?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{cBase1Result.label}}</div>
+            <div v-if="cBase1Result.ok" style="font-size:13px;color:var(--text-muted)">基礎要件を全て満たしています。加算1（27点）を算定できます。</div>
+            <div v-else style="font-size:13px;color:var(--del-text)">基礎要件が未達です。Step 2に戻って確認してください。</div>
+          </div>
+          <div v-if="cBase1Result.ok" style="margin-bottom:12px">
+            <div style="font-weight:600;margin-bottom:8px">加算2～5も目指しますか？（地域医療への貢献実績が必要）</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cAimHigher" :value="true">はい（実績9指標をチェックして加算2～5を判定する）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cAimHigher" :value="false">いいえ（加算1のみで確定する）</label>
+          </div>
+        </div>
+
+        <div v-if="cStep===4" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：実績9指標（処方箋1万枚当たり/年）</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">
+            <div v-if="cKihonType==='kihon1'"><strong>加算2（59点）:</strong> ④を含む3つ以上 / <strong>加算3（67点）:</strong> 7つ以上</div>
+            <div v-else><strong>加算4（37点）:</strong> ④⑥を含む3つ以上 / <strong>加算5（59点）:</strong> 7つ以上</div>
+          </div>
           <ul class="task-list">
             <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
               <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
@@ -1006,13 +1035,13 @@ const RequirementsTab = {
           <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
         </div>
 
-        <div v-if="cStep===4">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：判定結果</div>
+        <div v-if="cStep===5">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 5：最終判定結果</div>
           <div v-if="cResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="cResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
             <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{cResult.label}}</div>
             <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center">
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
             <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">R8予測に反映</button>
             <button class="btn" @click="cReset()">最初からやり直す</button>
             <span v-if="cApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
@@ -1020,7 +1049,7 @@ const RequirementsTab = {
         </div>
 
         <div v-if="cError" style="margin-top:12px;padding:8px 12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">{{cError}}</div>
-        <div v-if="cStep<4" style="margin-top:20px;display:flex;gap:8px">
+        <div v-if="cStep<5" style="margin-top:20px;display:flex;gap:8px">
           <button v-if="cStep>1" class="btn" @click="cBack()">戻る</button>
           <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="cNext()">次へ</button>
         </div>
