@@ -718,13 +718,16 @@ const RequirementsTab = {
     function cNext() {
       cError.value = ''
       if (cStep.value === 1) {
-        if (!cGe85actual.value) cStep.value = 2 // 85%未満→経過措置確認へ
-        else cStep.value = 3 // 85%以上→経過措置スキップしてイへ
+        if (cKeikaSochi.value === null) { cError.value = '経過措置の該当を選択してください'; return }
+        cStep.value = 2 // イへ
       }
       else if (cStep.value === 2) {
-        if (cKeikaSochi.value === null) { cError.value = '経過措置の該当を選択してください'; return }
-        if (!cRoOk.value) { cError.value = '後発品85%未満かつ経過措置非該当では加算1は算定できません'; return }
-        cStep.value = 3
+        if (cKeikaSochi.value === true) cStep.value = 4 // 経過措置適用→ロスキップして判定結果へ
+        else cStep.value = 3 // ロへ
+      }
+      else if (cStep.value === 3) {
+        if (!cRoOk.value) { cError.value = '後発品85%未満では加算1は算定できません'; return }
+        cStep.value = 4
       }
       else if (cStep.value === 3) cStep.value = 4
       else if (cStep.value === 4) {
@@ -738,8 +741,7 @@ const RequirementsTab = {
       if (cStep.value === 6 && cAimHigher.value) cStep.value = 5
       else if (cStep.value === 6) cStep.value = 4
       else if (cStep.value === 5) cStep.value = 4
-      else if (cStep.value === 4) cStep.value = 3
-      else if (cStep.value === 3 && cGe85actual.value) cStep.value = 1 // 85%以上の場合Step2（経過措置）をスキップ
+      else if (cStep.value === 4 && cKeikaSochi.value === true) cStep.value = 2 // 経過措置適用ならロをスキップしてイに戻る
       else if (cStep.value > 1) cStep.value--
     }
     function cReset() { cStep.value = 1; cResult.value = null; cApplied.value = false; cKeikaSochi.value = null; cGe85actual.value = false }
@@ -993,17 +995,7 @@ const RequirementsTab = {
         <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep/6*100)+'%'}"></div></div>
 
         <div v-if="cStep===1" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：ロ — 後発医薬品使用率</div>
-          <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
-            <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
-            <span style="font-weight:600">後発医薬品の使用率が85%以上である</span>
-          </label>
-          <div v-if="!cGe85actual" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text);margin-bottom:8px">85%未満の場合、経過措置に該当しなければ加算1は算定できません。</div>
-        </div>
-
-        <div v-if="cStep===2" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：経過措置の確認</div>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：経過措置の確認</div>
           <div style="padding:12px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.8">
             <div style="font-weight:700;color:var(--amber);margin-bottom:4px">〔経過措置〕</div>
             <div>R8.3.31時点で後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（後発品85%以上）を満たしているとみなす。</div>
@@ -1013,8 +1005,8 @@ const RequirementsTab = {
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKeikaSochi" :value="false">いいえ</label>
         </div>
 
-        <div v-if="cStep===3" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：イ — 医薬品の安定供給体制</div>
+        <div v-if="cStep===2" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：イ — 医薬品の安定供給体制</div>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">告示第71号の(1)～(8)。全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item">
@@ -1022,6 +1014,19 @@ const RequirementsTab = {
               <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
             </li>
           </ul>
+        </div>
+
+        <div v-if="cStep===3" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：ロ — 後発医薬品使用率</div>
+          <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos)">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
+          <div v-else>
+            <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
+              <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
+              <span style="font-weight:600">後発医薬品の使用率が85%以上である</span>
+            </label>
+            <div v-if="!cGe85actual" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text);margin-bottom:8px">85%未満の場合、加算1は算定できません。</div>
+          </div>
         </div>
 
         <div v-if="cStep===4" style="font-size:14px;line-height:1.8">
