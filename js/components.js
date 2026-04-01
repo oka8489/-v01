@@ -645,11 +645,12 @@ const RequirementsTab = {
     // 汎用判定ページ（チェックリスト式）
     // 地域支援・医薬品供給対応体制加算 ステップ式判定
     const cjd = props.data.judge || {}
-    const cStep = ref(cjd.c_step || 1)
-    const cKihonType = ref(cjd.c_kihonType || 'kihon1') // kihon1 or other
+    const cKihonType = ref(cjd.c_kihonType || 'kihon1')
     const cResult = ref(cjd.c_result || null)
     const cApplied = ref(cjd.c_applied || false)
-    const cError = ref('')
+    // 経過措置: R7で後発品加算1～3の届出済みか
+    const cKeikaSochi = ref(cjd.c_keikaSochi ?? null) // null=未選択, true=該当, false=非該当
+    const cGe85actual = ref(cjd.c_ge85actual || false) // 実際に85%以上か（経過措置非該当時に使う）
     // Step 2: 加算1基礎要件
     const cBase = reactive({
       supply: cjd.c_supply || false,
@@ -660,8 +661,9 @@ const RequirementsTab = {
       haibin: cjd.c_haibin || false,
       henpin: cjd.c_henpin || false,
       renkei: cjd.c_renkei || false,
-      ge85: cjd.c_ge85 || false,
     })
+    // ロの充足: 経過措置該当 or 実際に85%以上
+    const cRoOk = computed(() => cKeikaSochi.value === true || cGe85actual.value)
     // イ: 医薬品の安定供給体制 (1)～(8)
     const cBaseChecksA = [
       { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行っている' },
@@ -673,12 +675,9 @@ const RequirementsTab = {
       { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整目的の返品を慎んでいる' },
       { key: 'renkei', label: '(8) 地域の医療機関・薬局・医療関係団体と医薬品の品目について情報共有している（望ましい）' },
     ]
-    // ロ: 後発医薬品使用率
-    const cBaseChecksB = [
-      { key: 'ge85', label: '後発医薬品の規格単位数量の割合が85%以上である' },
-    ]
-    const cBaseChecks = [...cBaseChecksA, ...cBaseChecksB]
-    const cBaseOk = computed(() => Object.values(cBase).every(v => v))
+    // イの全項目 + ロ（経過措置 or 実際に85%以上）で判定
+    const cIchiOk = computed(() => Object.values(cBase).every(v => v))
+    const cBaseOk = computed(() => cIchiOk.value && cRoOk.value)
     // Step 3: 9指標
     const cInd = reactive({
       i1: cjd.c_i1 || false, i2: cjd.c_i2 || false, i3: cjd.c_i3 || false,
@@ -742,12 +741,13 @@ const RequirementsTab = {
       Object.assign(props.data.judge, {
         c_step: cStep.value, c_result: cResult.value, c_kihonType: cKihonType.value, c_applied: cApplied.value,
         c_aimHigher: cAimHigher.value,
+        c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
         c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
-        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei, c_ge85: cBase.ge85,
+        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, cResult, cKihonType, cApplied, cAimHigher, cBase, cInd], saveCJudge, { deep: true })
+    watch([cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -847,7 +847,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cKihonType, cBase, cBaseChecksA, cBaseChecksB, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cJudgeHigher, cApplyToR8,
+             cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cJudgeHigher, cApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -981,9 +981,27 @@ const RequirementsTab = {
           <div><strong>イ</strong> 地域における医薬品の安定供給を確保するために必要な体制を有していること。</div>
           <div style="padding-left:16px;font-size:11px">→ 下記(1)～(8)の要件</div>
           <div><strong>ロ</strong> 後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
-          <div style="margin-top:8px;padding:8px;background:var(--amber-l);border-radius:var(--radius);color:var(--amber)">
-            <strong>〔経過措置〕</strong>R8.3.31時点で後発医薬品調剤体制加算1～3の届出済み薬局は、<strong>R9.5.31まで</strong>ロの要件を満たしているとみなす。
-          </div>
+        </div>
+        <div style="font-weight:700;margin-bottom:8px;font-size:14px">ロ：後発医薬品使用率の確認</div>
+        <div style="padding:12px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.8">
+          <div style="font-weight:700;color:var(--amber);margin-bottom:6px">〔経過措置〕</div>
+          <div>R8.3.31時点で後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（85%以上）を満たしているとみなす。</div>
+        </div>
+        <div style="margin-bottom:16px;font-size:14px">
+          <div style="font-weight:600;margin-bottom:8px">R7（R8.3.31時点）で後発医薬品調剤体制加算1～3の届出をしていましたか？</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKeikaSochi" :value="true">はい → R9.5.31まで85%要件みなし（経過措置適用）</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKeikaSochi" :value="false">いいえ → 実際に85%以上であることが必要</label>
+        </div>
+        <div v-if="cKeikaSochi===false" style="margin-bottom:16px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px">
+            <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
+            <span :style="cGe85actual?'font-weight:600;color:var(--pos)':'font-weight:600'">後発医薬品の使用率が85%以上である</span>
+          </label>
+        </div>
+        <div style="padding:8px 12px;border-radius:var(--radius);margin-bottom:16px;font-size:13px" :style="cRoOk?'background:var(--green-l);border:1px solid var(--pos);color:var(--pos)':'background:var(--surface2);border:1px solid var(--border);color:var(--text-muted)'">
+          <span v-if="cKeikaSochi===null">↑ まず経過措置の該当を確認してください</span>
+          <span v-else-if="cRoOk">ロ：充足{{cKeikaSochi ? '（経過措置適用）' : '（実績85%以上）'}}</span>
+          <span v-else>ロ：未充足（後発品使用率85%未満）</span>
         </div>
         <div style="font-weight:700;margin-bottom:8px;font-size:14px">イ：医薬品の安定供給体制 (1)～(8)</div>
         <ul class="task-list">
@@ -992,15 +1010,12 @@ const RequirementsTab = {
             <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
           </li>
         </ul>
-        <div style="font-weight:700;margin:16px 0 8px;font-size:14px">ロ：後発医薬品使用率</div>
-        <ul class="task-list">
-          <li v-for="chk in cBaseChecksB" :key="chk.key" class="task-item">
-            <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
-            <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
-          </li>
-        </ul>
-        <div style="margin-top:12px;padding:12px;border-radius:var(--radius)" :style="cBaseOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
-          <div style="font-size:16px;font-weight:700">{{cBaseOk ? '加算1（27点）算定可能' : '算定不可（要件未達）'}}</div>
+        <div style="margin-top:16px;padding:12px;border-radius:var(--radius)" :style="cBaseOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+          <div style="font-size:16px;font-weight:700">{{cBaseOk ? '加算1（27点）算定可能' : '算定不可'}}</div>
+          <div v-if="!cBaseOk" style="font-size:12px;color:var(--del-text);margin-top:4px">
+            <span v-if="!cRoOk">ロ（後発品85%）が未充足。</span>
+            <span v-if="!cIchiOk">イ（安定供給体制）に未チェック項目があります。</span>
+          </div>
         </div>
         <div v-if="cBaseOk" style="display:flex;gap:8px;align-items:center;margin-top:8px">
           <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">加算1（27点）をR8予測に反映</button>
