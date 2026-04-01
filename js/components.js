@@ -311,43 +311,56 @@ const ImpactTab = {
 }
 
 const TasksTab = {
-  props:['data','activeSub'],
+  props:['activeSub'],
   emits:['update:activeSub'],
   setup(props, { emit }) {
     const sub = computed({ get:()=>props.activeSub||'kanban', set:v=>emit('update:activeSub',v) })
-    const categories = window.TASK_CATEGORIES || []
-    const tasks = window.TASK_DEFINITIONS || {}
 
-    // Status: undefined/false='todo', 'wip'=in progress, true=done
-    function status(id) {
-      const v = props.data.tasks?.[id]
-      if (v === true) return 'done'
-      if (v === 'wip') return 'wip'
-      return 'todo'
+    // Reactive task store (loaded from API)
+    const store = reactive({ categories: [], tasks: {} })
+    const loading = ref(true)
+
+    // API helpers
+    async function loadTasks() {
+      try {
+        const res = await fetch('/api/tasks')
+        if (!res.ok) throw new Error(res.status)
+        const json = await res.json()
+        store.categories = json.categories || []
+        store.tasks = json.tasks || {}
+      } catch (e) {
+        console.warn('API未接続、フォールバック使用:', e.message)
+        store.categories = window.TASK_CATEGORIES || []
+        const defs = window.TASK_DEFINITIONS || {}
+        for (const [id, t] of Object.entries(defs)) store.tasks[id] = { ...t, status: 'todo' }
+      }
+      loading.value = false
     }
-    function setStatus(id, s) {
-      if (!props.data.tasks) props.data.tasks = {}
-      if (s === 'done') props.data.tasks[id] = true
-      else if (s === 'wip') props.data.tasks[id] = 'wip'
-      else delete props.data.tasks[id]
+    let saveTimer = null
+    function saveTasks() {
+      clearTimeout(saveTimer)
+      saveTimer = setTimeout(async () => {
+        try { await fetch('/api/tasks', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ categories: store.categories, tasks: store.tasks }) }) }
+        catch (e) { console.error('保存失敗:', e.message) }
+      }, 300)
     }
-    // Cycle: todo -> wip -> done -> todo
+    loadTasks()
+
+    // Status
+    function status(id) { return store.tasks[id]?.status || 'todo' }
+    function setStatus(id, s) { if (store.tasks[id]) { store.tasks[id].status = s; saveTasks() } }
     function cycleStatus(id) {
       const s = status(id)
       setStatus(id, s === 'todo' ? 'wip' : s === 'wip' ? 'done' : 'todo')
     }
     const statusLabel = { todo: '未着手', wip: '進行中', done: '完了' }
 
-    const columns = [
-      { key: 'todo', label: '未着手' },
-      { key: 'wip',  label: '進行中' },
-      { key: 'done', label: '完了' },
-    ]
+    const columns = [{ key: 'todo', label: '未着手' }, { key: 'wip', label: '進行中' }, { key: 'done', label: '完了' }]
     const allTasks = computed(() => {
       const list = []
-      for (const cat of categories) {
+      for (const cat of store.categories) {
         for (const tid of cat.keys) {
-          if (tasks[tid]) list.push({ id: tid, task: tasks[tid], cat: cat.label })
+          if (store.tasks[tid]) list.push({ id: tid, task: store.tasks[tid], cat: cat.label })
         }
       }
       return list
@@ -358,16 +371,64 @@ const TasksTab = {
     const pct = computed(() => totalTasks.value ? Math.round(doneTasks.value / totalTasks.value * 100) : 0)
     function tasksInColumn(col) { return allTasks.value.filter(t => status(t.id) === col) }
 
-    // Drag & drop state
+    // Drag & drop
     const dragId = ref(null)
     function onDragStart(e, id) { dragId.value = id; e.dataTransfer.effectAllowed = 'move' }
     function onDragOver(e) { e.preventDefault(); e.dataTransfer.dropEffect = 'move' }
     function onDrop(e, targetCol) { e.preventDefault(); if (dragId.value) { setStatus(dragId.value, targetCol); dragId.value = null } }
     function onDragEnd() { dragId.value = null }
 
-    // Expand detail
+    // Expand & edit
     const expandedCard = ref(null)
     function toggleExpand(id) { expandedCard.value = expandedCard.value === id ? null : id }
+    const editingCard = ref(null)
+    const editForm = reactive({ title: '', detail: '', deadline: '' })
+    function startEdit(id) {
+      const t = store.tasks[id]
+      if (!t) return
+      editForm.title = t.title; editForm.detail = t.detail || ''; editForm.deadline = t.deadline || ''
+      editingCard.value = id
+    }
+    function saveEdit(id) {
+      if (!store.tasks[id] || !editForm.title.trim()) return
+      store.tasks[id].title = editForm.title.trim()
+      store.tasks[id].detail = editForm.detail.trim()
+      store.tasks[id].deadline = editForm.deadline.trim()
+      editingCard.value = null
+      saveTasks()
+    }
+    function cancelEdit() { editingCard.value = null }
+
+    // Add task
+    const showAddForm = ref(false)
+    const addForm = reactive({ title: '', detail: '', deadline: '', category: '' })
+    function openAddForm() {
+      addForm.title = ''; addForm.detail = ''; addForm.deadline = ''
+      addForm.category = store.categories.length ? store.categories[0].id : ''
+      showAddForm.value = true
+    }
+    function addTask() {
+      if (!addForm.title.trim()) return
+      const id = 'u' + Date.now()
+      store.tasks[id] = { title: addForm.title.trim(), detail: addForm.detail.trim(), deadline: addForm.deadline.trim(), status: 'todo' }
+      let cat = store.categories.find(c => c.id === addForm.category)
+      if (!cat) {
+        cat = { id: 'custom', label: 'カスタム', keys: [] }
+        store.categories.push(cat)
+      }
+      cat.keys.push(id)
+      showAddForm.value = false
+      saveTasks()
+    }
+
+    // Delete task
+    function deleteTask(id) {
+      if (!confirm('このタスクを削除しますか？')) return
+      delete store.tasks[id]
+      for (const cat of store.categories) { cat.keys = cat.keys.filter(k => k !== id) }
+      expandedCard.value = null
+      saveTasks()
+    }
 
     // Calendar
     function parseDeadline(dl) {
@@ -378,17 +439,11 @@ const TasksTab = {
       while ((m = re.exec(dl)) !== null) {
         dates.push(new Date(2018 + parseInt(m[1]), parseInt(m[2]) - 1, m[3] ? parseInt(m[3]) : 1))
       }
-      if (dates.length === 0) {
-        const m3 = dl.match(/R(\d+)\.(\d+)月/)
-        if (m3) dates.push(new Date(2018 + parseInt(m3[1]), parseInt(m3[2]) - 1, 1))
-      }
-      return dates.length > 0 ? dates : null
+      if (!dates.length) { const m3 = dl.match(/R(\d+)\.(\d+)月/); if (m3) dates.push(new Date(2018 + parseInt(m3[1]), parseInt(m3[2]) - 1, 1)) }
+      return dates.length ? dates : null
     }
     const calMonths = []
-    for (let y = 2026; y <= 2027; y++) {
-      const s = y === 2026 ? 3 : 0, e = y === 2027 ? 5 : 11
-      for (let m = s; m <= e; m++) calMonths.push({ year: y, month: m })
-    }
+    for (let y = 2026; y <= 2027; y++) { const s = y === 2026 ? 3 : 0, e = y === 2027 ? 5 : 11; for (let m = s; m <= e; m++) calMonths.push({ year: y, month: m }) }
     function monthLabel(ym) { return ym.year + '年' + (ym.month + 1) + '月' }
     function daysInMonth(ym) { return new Date(ym.year, ym.month + 1, 0).getDate() }
     function firstDayOfWeek(ym) { return new Date(ym.year, ym.month, 1).getDay() }
@@ -406,23 +461,21 @@ const TasksTab = {
       }
       return { map, noDate }
     })
-    function tasksForDay(ym, day) {
-      return calendarTasks.value.map[ym.year + '-' + String(ym.month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0')] || []
-    }
+    function tasksForDay(ym, day) { return calendarTasks.value.map[ym.year + '-' + String(ym.month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0')] || [] }
     function isToday(ym, day) { const n = new Date(); return n.getFullYear() === ym.year && n.getMonth() === ym.month && n.getDate() === day }
     function isPast(ym, day) { const d = new Date(ym.year, ym.month, day), n = new Date(); n.setHours(0,0,0,0); return d < n }
-    const activeMonths = computed(() => {
-      const s = new Set()
-      for (const k of Object.keys(calendarTasks.value.map)) { const [y, m] = k.split('-'); s.add(parseInt(y) + '-' + parseInt(m)) }
-      return s
-    })
+    const activeMonths = computed(() => { const s = new Set(); for (const k of Object.keys(calendarTasks.value.map)) { const [y, m] = k.split('-'); s.add(parseInt(y) + '-' + parseInt(m)) }; return s })
     const visibleMonths = computed(() => calMonths.filter(ym => activeMonths.value.has(ym.year + '-' + (ym.month+1))))
 
-    return { sub, tasks, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
-             columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd, expandedCard, toggleExpand,
+    return { sub, store, loading, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
+             columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
+             expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
+             showAddForm, addForm, openAddForm, addTask, deleteTask,
              visibleMonths, monthLabel, daysInMonth, firstDayOfWeek, tasksForDay, isToday, isPast, calendarTasks }
   },
   template: `<div>
+    <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
+    <template v-else>
     <div class="section">
       <div class="section-title">事務タスク進捗</div>
       <div class="kpi-grid" style="margin-bottom:16px">
@@ -436,6 +489,25 @@ const TasksTab = {
     <div class="sub-tabs" style="margin-bottom:12px">
       <button class="sub-tab" :class="{active:sub==='kanban'}" @click="sub='kanban'">カンバン</button>
       <button class="sub-tab" :class="{active:sub==='calendar'}" @click="sub='calendar'">カレンダー</button>
+    </div>
+    <div style="margin-bottom:12px;text-align:right">
+      <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
+    </div>
+    <div v-if="showAddForm" class="section" style="margin-bottom:12px">
+      <div class="section-title">タスクを追加</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.title" placeholder="タスク名（必須）">
+        <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.detail" placeholder="詳細（任意）">
+        <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.deadline" placeholder="期限（例: R8.6.1）">
+        <select class="fee-select" v-model="addForm.category" style="max-width:100%">
+          <template v-for="cat in store.categories" :key="cat.id"><option :value="cat.id">{{cat.label}}</option></template>
+          <option value="__new__">+ 新しいカテゴリ</option>
+        </select>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn" @click="showAddForm=false">キャンセル</button>
+          <button class="btn" @click="addTask" style="background:var(--pos);color:white;border:none">追加</button>
+        </div>
+      </div>
     </div>
     <div v-if="sub==='kanban'" class="kb-board">
       <div v-for="col in columns" :key="col.key" class="kb-col" :class="'kb-col-'+col.key"
@@ -459,10 +531,25 @@ const TasksTab = {
               <span class="kb-status-pill" :class="'kb-pill-'+col.key" @click.stop="cycleStatus(t.id)">{{statusLabel[col.key]}}</span>
             </div>
             <div v-if="expandedCard===t.id" class="kb-card-expand" @click.stop>
-              <div class="kb-card-desc">{{t.task.detail}}</div>
-              <div class="kb-card-move">
-                <button v-for="c in columns" :key="c.key" class="kb-move-btn" :class="{'kb-move-active': col.key===c.key}" @click.stop="setStatus(t.id, c.key)">{{c.label}}</button>
-              </div>
+              <template v-if="editingCard===t.id">
+                <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:4px" v-model="editForm.title" placeholder="タスク名">
+                <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:4px" v-model="editForm.detail" placeholder="詳細">
+                <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:8px" v-model="editForm.deadline" placeholder="期限">
+                <div style="display:flex;gap:4px">
+                  <button class="kb-move-btn" @click.stop="cancelEdit">キャンセル</button>
+                  <button class="kb-move-btn kb-move-active" @click.stop="saveEdit(t.id)">保存</button>
+                </div>
+              </template>
+              <template v-else>
+                <div class="kb-card-desc">{{t.task.detail}}</div>
+                <div class="kb-card-move">
+                  <button v-for="c in columns" :key="c.key" class="kb-move-btn" :class="{'kb-move-active': col.key===c.key}" @click.stop="setStatus(t.id, c.key)">{{c.label}}</button>
+                </div>
+                <div style="display:flex;gap:4px;margin-top:6px">
+                  <button class="kb-move-btn" @click.stop="startEdit(t.id)" style="flex:1">編集</button>
+                  <button class="kb-move-btn" @click.stop="deleteTask(t.id)" style="flex:1;color:var(--neg)">削除</button>
+                </div>
+              </template>
             </div>
           </div>
         </div>
@@ -497,6 +584,7 @@ const TasksTab = {
         </div>
       </div>
     </div>
+    </template>
   </div>`
 }
 
