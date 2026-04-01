@@ -3,7 +3,7 @@
 // ====================================================================
 const STORAGE_KEY = 'houshu-kaitei-data'
 function getDefaultData() {
-  return { version:'1.0', pharmacyName:'', r6:{}, r8:{}, annualReward:0, annualDrugCost:0, tasks:{}, requirements:{}, drugPriceRate:4.02, drugPriceEnabled:true }
+  return { version:'1.0', pharmacyName:'', r6:{}, r8:{}, annualReward:0, annualDrugCost:0, tasks:{}, requirements:{}, judge:{}, drugPriceRate:4.02, drugPriceEnabled:true }
 }
 
 // ====================================================================
@@ -528,23 +528,37 @@ const RequirementsTab = {
     const totalItems = computed(() => groups.reduce((s, g) => s + g.items.length, 0))
     const doneItems = computed(() => groups.reduce((s, g) => s + groupDone(g), 0))
     const pct = computed(() => totalItems.value ? Math.round(doneItems.value / totalItems.value * 100) : 0)
-    // 調剤基本料判定（ステップ式）
-    const jStep = ref(1)
-    const jResult = ref(null)
+    // 調剤基本料判定（ステップ式）— data.judgeに永続化
+    if (!props.data.judge) props.data.judge = {}
+    const jd = props.data.judge
+    const jStep = ref(jd.step || 1)
+    const jResult = ref(jd.result || null)
     // Step 1: 届出・敷地内
-    const j1Todokede = ref('yes')  // yes/no
-    const j1Shikichi = ref('no')   // yes/no
+    const j1Todokede = ref(jd.todokede || 'yes')
+    const j1Shikichi = ref(jd.shikichi || 'no')
     // Step 2: チェーン薬局・グループ規模
-    const j2IsChain = ref('no')  // yes/no
-    const j2GroupTotal = ref(0)
+    const j2IsChain = ref(jd.isChain || 'no')
+    const j2GroupTotal = ref(jd.groupTotal || 0)
     // Step 3: 受付回数・集中率
-    const j3RxCount = ref(0)
-    const j3Conc = ref(0)
-    const j3Top3Conc = ref(0)
-    const j3SpecificRx = ref(0)
-    const j3IsCity = ref(false)
+    const j3RxCount = ref(jd.rxCount || 0)
+    const j3Conc = ref(jd.conc || 0)
+    const j3Top3Conc = ref(jd.top3Conc || 0)
+    const j3SpecificRx = ref(jd.specificRx || 0)
+    const j3IsCity = ref(jd.isCity || false)
     // Step 4: 新規開設（減算）
-    const j4IsNew = ref(false)
+    const j4IsNew = ref(jd.isNew || false)
+    // 判定データをdata.judgeに自動保存
+    function saveJudge() {
+      props.data.judge = {
+        step: jStep.value, result: jResult.value,
+        todokede: j1Todokede.value, shikichi: j1Shikichi.value,
+        isChain: j2IsChain.value, groupTotal: j2GroupTotal.value,
+        rxCount: j3RxCount.value, conc: j3Conc.value, top3Conc: j3Top3Conc.value,
+        specificRx: j3SpecificRx.value, isCity: j3IsCity.value, isNew: j4IsNew.value,
+        applied: jApplied.value
+      }
+    }
+    // watchはjApplied定義後に配置（下部）
     // 実績読込
     const jPeriod = ref('')
     const jMonths = ref(12)
@@ -595,16 +609,18 @@ const RequirementsTab = {
       }
       jResult.value = { pts, label, cat, gensan }
     }
-    const jApplied = ref(false)
+    const jApplied = ref(jd.applied || false)
     function jApplyToR8() {
       if (!jResult.value) return
       if (props.r8Data) {
         if (!props.r8Data.r6) props.r8Data.r6 = {}
         props.r8Data.r6['k_kihon'] = jResult.value.pts
         jApplied.value = true
+        saveJudge()
       }
     }
-    function jReset() { jStep.value = 1; jResult.value = null; jApplied.value = false }
+    function jReset() { jStep.value = 1; jResult.value = null; jApplied.value = false; saveJudge() }
+    watch([jStep, jResult, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jApplied], saveJudge, { deep: true })
     const jError = ref('')
     function jNext() {
       jError.value = ''
