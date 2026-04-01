@@ -111,6 +111,7 @@ const OverviewTab = {
   <div class="section-title">令和8年度 調剤報酬改定の概要</div>
   <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px">令和8年6月1日施行（薬価はR8年4月施行）。出典：厚生労働省「令和8年度診療報酬改定の概要【調剤】」令和8年3月5日版</p>
   <p style="font-size:13px;margin-bottom:16px;line-height:1.8">
+    <a href="https://www.mhlw.go.jp/stf/newpage_67729.html" target="_blank" style="color:var(--teal);text-decoration:underline">令和8年度診療報酬改定について（厚生労働省）</a><br>
     <a href="https://kouseikyoku.mhlw.go.jp/kyushu/iryo_shido/r08_shinryohoshu_00001.html" target="_blank" style="color:var(--teal);text-decoration:underline">令和8年度診療報酬改定について（九州厚生局）</a><br>
     <a href="https://www.youtube.com/playlist?list=PLMG33RKISnWjFBIQEEGRuzwFbGAsk7uLD" target="_blank" style="color:var(--teal);text-decoration:underline">説明会動画（薬局：リスト番号1、18、21）</a><br>
     <a href="https://www.mhlw.go.jp/stf/newpage_71068.html" target="_blank" style="color:var(--teal);text-decoration:underline">説明会資料（薬局：資料番号0、18、19）</a><br>
