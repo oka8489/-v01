@@ -717,11 +717,9 @@ const RequirementsTab = {
     }
     function cNext() {
       cError.value = ''
-      if (cStep.value === 1) {
-        if (cKeikaSochi.value === null) { cError.value = '経過措置の該当を選択してください'; return }
-        cStep.value = 2 // イへ
-      }
+      if (cStep.value === 1) cStep.value = 2 // イ→経過措置へ
       else if (cStep.value === 2) {
+        if (cKeikaSochi.value === null) { cError.value = '経過措置の該当を選択してください'; return }
         if (cKeikaSochi.value === true) cStep.value = 4 // 経過措置適用→ロスキップして判定結果へ
         else cStep.value = 3 // ロへ
       }
@@ -741,7 +739,7 @@ const RequirementsTab = {
       if (cStep.value === 6 && cAimHigher.value) cStep.value = 5
       else if (cStep.value === 6) cStep.value = 4
       else if (cStep.value === 5) cStep.value = 4
-      else if (cStep.value === 4 && cKeikaSochi.value === true) cStep.value = 2 // 経過措置適用ならロをスキップしてイに戻る
+      else if (cStep.value === 4 && cKeikaSochi.value === true) cStep.value = 2 // 経過措置適用ならロをスキップして経過措置に戻る
       else if (cStep.value > 1) cStep.value--
     }
     function cReset() { cStep.value = 1; cResult.value = null; cApplied.value = false; cKeikaSochi.value = null; cGe85actual.value = false }
@@ -994,19 +992,8 @@ const RequirementsTab = {
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{cStep}} / 6</div>
         <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep/6*100)+'%'}"></div></div>
 
-        <div v-if="cStep===1" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：経過措置の確認</div>
-          <div style="padding:12px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.8">
-            <div style="font-weight:700;color:var(--amber);margin-bottom:4px">〔経過措置〕</div>
-            <div>R8.3.31時点で後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（後発品85%以上）を満たしているとみなす。</div>
-          </div>
-          <div style="font-weight:600;margin-bottom:8px">R7（R8.3.31時点）で後発医薬品調剤体制加算1～3の届出をしていましたか？</div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKeikaSochi" :value="true">はい → R9.5.31まで85%要件みなし（経過措置適用）</label>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKeikaSochi" :value="false">いいえ</label>
-        </div>
-
-        <div v-if="cStep===2" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：イ — 医薬品の安定供給体制</div>
+        <div v-if="cStep===1" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：イ — 医薬品の安定供給体制</div>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">告示第71号の(1)～(8)。全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item">
@@ -1014,6 +1001,17 @@ const RequirementsTab = {
               <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
             </li>
           </ul>
+        </div>
+
+        <div v-if="cStep===2" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：ロの経過措置の確認</div>
+          <div style="padding:12px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.8">
+            <div style="font-weight:700;color:var(--amber);margin-bottom:4px">〔経過措置〕</div>
+            <div>R8.3.31時点で後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（後発品85%以上）を満たしているとみなす。</div>
+          </div>
+          <div style="font-weight:600;margin-bottom:8px">R7（R8.3.31時点）で後発医薬品調剤体制加算1～3の届出をしていましたか？</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKeikaSochi" :value="true">はい → R9.5.31まで85%要件みなし（経過措置適用）</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKeikaSochi" :value="false">いいえ</label>
         </div>
 
         <div v-if="cStep===3" style="font-size:14px;line-height:2">
