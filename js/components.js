@@ -539,8 +539,10 @@ const RequirementsTab = {
     // Step 2: チェーン薬局・グループ規模
     const j2IsChain = ref(jd.isChain || 'no')
     const j2GroupTotal = ref(jd.groupTotal || 0)
-    // Step 3: 受付回数・集中率
-    const j3RxCount = ref(jd.rxCount || 0)
+    // Step 3: 受付回数・集中率（年間から月換算）
+    const j3RxAnnual = ref(jd.rxAnnual || 0)
+    const j3RxMonths = ref(jd.rxMonths || 12)
+    const j3RxCount = computed(() => j3RxMonths.value > 0 ? Math.round(j3RxAnnual.value / j3RxMonths.value) : 0)
     const j3Conc = ref(jd.conc || 0)
     const j3Top3Conc = ref(jd.top3Conc || 0)
     const j3SpecificRx = ref(jd.specificRx || 0)
@@ -553,7 +555,7 @@ const RequirementsTab = {
         step: jStep.value, result: jResult.value,
         todokede: j1Todokede.value, shikichi: j1Shikichi.value,
         isChain: j2IsChain.value, groupTotal: j2GroupTotal.value,
-        rxCount: j3RxCount.value, conc: j3Conc.value, top3Conc: j3Top3Conc.value,
+        rxAnnual: j3RxAnnual.value, rxMonths: j3RxMonths.value, conc: j3Conc.value, top3Conc: j3Top3Conc.value,
         specificRx: j3SpecificRx.value, isCity: j3IsCity.value, isNew: j4IsNew.value,
         applied: jApplied.value
       }
@@ -574,7 +576,8 @@ const RequirementsTab = {
         const diff = (d2 - d1) / (1000*60*60*24*30.44)
         jMonths.value = Math.max(1, Math.round(diff))
       }
-      j3RxCount.value = Math.round(annual / jMonths.value)
+      j3RxAnnual.value = annual
+      j3RxMonths.value = jMonths.value
     }
     function jJudge() {
       const grp = j2GroupTotal.value
@@ -620,7 +623,7 @@ const RequirementsTab = {
       }
     }
     function jReset() { jStep.value = 1; jResult.value = null; jApplied.value = false; saveJudge() }
-    watch([jStep, jResult, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jApplied], saveJudge, { deep: true })
+    watch([jStep, jResult, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jApplied], saveJudge, { deep: true })
     const jError = ref('')
     function jNext() {
       jError.value = ''
@@ -632,7 +635,7 @@ const RequirementsTab = {
         if (j2IsChain.value === 'no') { j2GroupTotal.value = 0 }
         jStep.value = 3
       } else if (jStep.value === 3) {
-        if (j3RxCount.value <= 0) { jError.value = '月あたり処方箋受付回数を入力してください'; return }
+        if (j3RxAnnual.value <= 0) { jError.value = '年間処方箋受付回数を入力してください'; return }
         jStep.value = 4
       } else if (jStep.value === 4) {
         jStep.value = 5; jJudge()
@@ -771,7 +774,7 @@ const RequirementsTab = {
     const judgePageIds = Object.keys(JUDGE_PAGES)
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
-             jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
+             jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -848,8 +851,10 @@ const RequirementsTab = {
 
         <div v-if="jStep===3" style="font-size:14px;line-height:2">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：受付回数・集中率</div>
-          <table style="font-size:13px;width:100%;max-width:550px;border-collapse:collapse">
-            <tr><td style="padding:8px 0;font-weight:600;width:260px">月あたり処方箋受付回数（自薬局）</td><td><input type="number" class="fee-input" style="max-width:120px" v-model.number="j3RxCount"> 回</td></tr>
+          <table style="font-size:13px;width:100%;max-width:600px;border-collapse:collapse">
+            <tr><td style="padding:8px 0;font-weight:600;width:260px">年間処方箋受付回数（自薬局）</td><td><input type="number" class="fee-input" style="max-width:120px" v-model.number="j3RxAnnual"> 回</td></tr>
+            <tr><td style="padding:8px 0;font-weight:600">集計期間</td><td><input type="number" class="fee-input" style="max-width:60px" v-model.number="j3RxMonths" min="1" max="12"> ヶ月<div style="font-size:11px;color:var(--text-muted)">※基準期間: R7.5.1〜R8.4.30の12ヶ月</div></td></tr>
+            <tr><td style="padding:8px 0;font-weight:600">→ 月あたり処方箋受付回数</td><td style="font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:700;color:var(--teal)">{{j3RxCount.toLocaleString()}} 回/月</td></tr>
             <tr><td style="padding:8px 0;font-weight:600">処方箋集中率（特定医療機関）</td><td><input type="number" class="fee-input" style="max-width:80px" step="0.1" v-model.number="j3Conc"> %<div style="font-size:11px;color:var(--text-muted)">※医療モール内は複数医療機関を1つとみなす</div></td></tr>
             <tr v-if="j3RxCount>4000"><td style="padding:8px 0;font-weight:600">上位3医療機関の集中率合計</td><td><input type="number" class="fee-input" style="max-width:80px" step="0.1" v-model.number="j3Top3Conc"> %</td></tr>
             <tr><td style="padding:8px 0;font-weight:600">特定医療機関からの月受付回数</td><td><input type="number" class="fee-input" style="max-width:120px" v-model.number="j3SpecificRx"> 回<div style="font-size:11px;color:var(--text-muted)">※最も多い1医療機関からの回数</div></td></tr>
