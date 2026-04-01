@@ -27,9 +27,21 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
             data = read_tasks()
             self.send_response(200)
             self.send_header('Content-Type', 'application/json; charset=utf-8')
-            self.send_header('Cache-Control', 'no-cache')
             self.end_headers()
             self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))
+        elif self.path == '/' or self.path.startswith('/?'):
+            # index.htmlにキャッシュバスターを自動付与
+            import time, re
+            ts = str(int(time.time()))
+            with open('index.html', 'r', encoding='utf-8') as f:
+                html = f.read()
+            html = re.sub(r'(src|href)="((?:js|css)/[^"]+)"', lambda m: f'{m.group(1)}="{m.group(2)}?t={ts}"', html)
+            body = html.encode('utf-8')
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/html; charset=utf-8')
+            self.send_header('Content-Length', str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
         else:
             super().do_GET()
 
@@ -56,6 +68,9 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, PUT, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Cache-Control', 'no-cache, no-store, must-revalidate')
+        self.send_header('Pragma', 'no-cache')
+        self.send_header('Expires', '0')
         super().end_headers()
 
     def do_OPTIONS(self):
