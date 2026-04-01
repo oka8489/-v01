@@ -639,12 +639,146 @@ const RequirementsTab = {
       }
     }
     function jBack() { if (jStep.value > 1 && jStep.value < 5) jStep.value-- ; else if (jStep.value === 5 && (j1Todokede.value === 'no' || j1Shikichi.value === 'yes')) jStep.value = 1; else if (jStep.value === 5) jStep.value = 4 }
-    return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct, jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack }
+    // 汎用判定ページ（チェックリスト式）
+    const JUDGE_PAGES = {
+      k_chiiki: {
+        title: '地域支援・医薬品供給対応体制加算',
+        source: 'docu/ 改定概要 p.21-23',
+        options: [
+          { value: 0, label: '算定なし' },
+          { value: 27, label: '加算1（27点）— 医薬品安定供給体制' },
+          { value: 59, label: '加算2（59点）— 基本料1＋実績3つ以上（④含む）' },
+          { value: 67, label: '加算3（67点）— 基本料1＋実績7つ以上' },
+          { value: 37, label: '加算4（37点）— 基本料1以外＋実績3つ以上（④⑥含む）' },
+          { value: 59, label: '加算5（59点）— 基本料1以外＋実績7つ以上' },
+        ],
+        checks: [
+          { id: 'ge85', label: '後発医薬品使用率85%以上' },
+          { id: 'supply_plan', label: '計画的な医薬品の調達・在庫管理' },
+          { id: 'supply_share', label: '他の薬局への医薬品分譲実績あり（同一グループ除く）' },
+          { id: 'supply_stock', label: '重要供給確保医薬品の1ヶ月程度の備蓄' },
+          { id: 'biyaku1200', label: '医療用医薬品1,200品目以上の備蓄' },
+          { id: 'mayaku', label: '麻薬小売業者の免許' },
+          { id: 'kaikyoku', label: '一定時間以上の開局・休日夜間対応体制' },
+          { id: 'zaitaku24', label: '在宅薬剤管理の実績 24回以上/年' },
+          { id: 'kakaritsuke', label: 'かかりつけ薬剤師が服薬管理指導を行う旨の届出' },
+        ],
+        indicators: [
+          { id: 'ind1', label: '①夜間・休日等の対応実績（基本料1: 40回/基本料1以外: 400回以上）' },
+          { id: 'ind2', label: '②麻薬の調剤実績（1回/10回以上）' },
+          { id: 'ind3', label: '③残薬調整加算・有害事象防止加算の算定実績（20回/40回以上）' },
+          { id: 'ind4', label: '④かかりつけ薬剤師の算定実績（20回/40回以上）★加算2・4必須' },
+          { id: 'ind5', label: '⑤外来服薬支援料1の実績（1回/12回以上）' },
+          { id: 'ind6', label: '⑥単一建物1人の在宅薬剤管理の実績（24回以上）★加算4必須' },
+          { id: 'ind7', label: '⑦服薬情報等提供料の実績（30回/60回以上）' },
+          { id: 'ind8', label: '⑧小児特定加算の算定実績（1回以上）' },
+          { id: 'ind9', label: '⑨研修認定薬剤師の多職種連携会議出席（1回/5回以上）' },
+        ],
+      },
+      k_renkei: {
+        title: '連携強化加算',
+        source: 'docu/ 改定概要',
+        options: [
+          { value: 0, label: '算定なし' },
+          { value: 5, label: '加算（5点）' },
+        ],
+        checks: [
+          { id: 'dis_plan', label: '災害や新興感染症発生時における対応に係る地域の協議会、研修等への参加' },
+          { id: 'dis_stock', label: '災害時等における医薬品供給等に関する情報のリスト整備' },
+          { id: 'dis_train', label: '自治体や関係団体等との合同訓練への参加' },
+          { id: 'pct_report', label: 'PCR等検査無料化事業の実施体制' },
+        ],
+      },
+      k_dx8: {
+        title: '電子的調剤情報連携体制整備加算',
+        source: 'docu/ 改定概要 p.15',
+        options: [
+          { value: 0, label: '算定なし' },
+          { value: 8, label: '加算（8点）' },
+        ],
+        checks: [
+          { id: 'eshoho', label: '電子処方箋の応需体制が整備されている' },
+          { id: 'dup_check', label: '電子処方箋による重複投薬等チェック機能が有効' },
+          { id: 'inter_check', label: '相互作用チェック機能が有効' },
+          { id: 'online', label: 'オンライン資格確認の導入' },
+          { id: 'mainy', label: '電子薬歴への対応' },
+        ],
+      },
+      k_zaitaku_taisei: {
+        title: '在宅薬学総合体制加算',
+        source: 'docu/ 改定概要 p.24',
+        options: [
+          { value: 0, label: '算定なし' },
+          { value: 30, label: '加算1（30点）' },
+          { value: 100, label: '加算2イ（100点）— 単一建物1人' },
+          { value: 50, label: '加算2ロ（50点）— イ以外' },
+        ],
+        checks: [
+          { id: 'zt_todoke', label: '在宅患者訪問薬剤管理指導を行う旨の届出' },
+          { id: 'zt_48', label: '訪問薬剤管理指導の実績 48回以上/年' },
+          { id: 'zt_offhour', label: '開局時間外における在宅業務対応体制' },
+          { id: 'zt_shuuchi', label: '在宅業務実施体制に係る地域への周知' },
+          { id: 'zt_kenshu', label: '在宅業務に関する研修（認知症・緩和・ターミナル）' },
+          { id: 'zt_zairyo', label: '医療材料及び衛生材料の供給体制' },
+          { id: 'zt_mayaku', label: '麻薬小売業者の免許' },
+          { id: 'zt_kakaritsuke', label: '服薬管理指導料の届出' },
+        ],
+        checks2: [
+          { id: 'zt2_all1', label: '加算1の施設基準を全て満たす' },
+          { id: 'zt2_240', label: '個人宅の訪問薬剤指導実績 240回以上かつ2割以上、又は480回以上かつ1割以上' },
+          { id: 'zt2_mayaku10', label: '訪問時の医療用麻薬に関する指導実績10回/年、又は無菌製剤処理加算1回/年、又は小児在宅6回/年' },
+          { id: 'zt2_3nin', label: '常勤換算3名以上の薬剤師、開局時間中2名以上常駐' },
+          { id: 'zt2_kodo', label: '高度管理医療機器販売業の許可' },
+        ],
+      },
+      k_bio: {
+        title: 'バイオ後続品調剤体制加算',
+        source: 'docu/ 改定概要 p.25',
+        options: [
+          { value: 0, label: '算定なし' },
+          { value: 50, label: '加算（50点）' },
+        ],
+        checks: [
+          { id: 'bio_hokan', label: 'バイオ医薬品の適切な保管体制が整備されている' },
+          { id: 'bio_setsu', label: '患者への適切な説明体制が整備されている' },
+          { id: 'bio_80', label: 'バイオ後続品の使用割合が80%以上の成分が、調剤実績のある成分数の60%以上（望ましい）' },
+          { id: 'bio_keiji', label: 'バイオ後続品の調剤を積極的に行っている旨の掲示' },
+        ],
+      },
+    }
+    // 汎用判定のチェック状態
+    if (!props.data.judge) props.data.judge = {}
+    function jpChecked(pageId, checkId) { return !!props.data.judge?.[pageId + '_' + checkId] }
+    function jpToggle(pageId, checkId) {
+      if (!props.data.judge) props.data.judge = {}
+      props.data.judge[pageId + '_' + checkId] = !props.data.judge[pageId + '_' + checkId]
+    }
+    function jpSelectedOption(pageId) { return props.data.judge?.[pageId + '_selected'] ?? null }
+    function jpSelectOption(pageId, val) {
+      if (!props.data.judge) props.data.judge = {}
+      props.data.judge[pageId + '_selected'] = val
+    }
+    function jpApply(pageId) {
+      const val = jpSelectedOption(pageId)
+      if (val == null) return
+      if (props.r8Data) {
+        if (!props.r8Data.r6) props.r8Data.r6 = {}
+        props.r8Data.r6[pageId] = Number(val)
+        props.data.judge[pageId + '_applied'] = true
+      }
+    }
+    function jpApplied(pageId) { return !!props.data.judge?.[pageId + '_applied'] }
+    const judgePageIds = Object.keys(JUDGE_PAGES)
+
+    return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
+             jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
+             JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
-    <div class="sub-tabs" style="margin-bottom:12px">
-      <button class="sub-tab" :class="{active:sub==='checklist'}" @click="sub='checklist'">チェックリスト</button>
-      <button class="sub-tab" :class="{active:sub==='judge'}" @click="sub='judge'">調剤基本料の判定</button>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+      <button class="btn" :class="{active:sub==='checklist'}" :style="sub==='checklist'?'background:var(--text);color:white':''" @click="sub='checklist'" style="font-size:12px;padding:6px 12px">チェックリスト</button>
+      <button class="btn" :class="{active:sub==='k_kihon'}" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
+      <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
     </div>
     <div v-if="sub==='checklist'">
       <div class="section">
@@ -667,7 +801,7 @@ const RequirementsTab = {
         <div class="req-progress" style="margin-top:4px"><div class="req-progress-bar" :style="{width:groupPct(group)+'%'}"></div></div>
       </div>
     </div>
-    <div v-if="sub==='judge'">
+    <div v-if="sub==='k_kihon'">
       <div class="section">
         <div class="section-title">調剤基本料の施設基準（R8改定後）</div>
         <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">出典：令和8年度診療報酬改定の概要【調剤】p.13</p>
@@ -751,6 +885,48 @@ const RequirementsTab = {
         <div v-if="jStep<5" style="margin-top:20px;display:flex;gap:8px">
           <button v-if="jStep>1" class="btn" @click="jBack()">戻る</button>
           <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="jNext()">次へ</button>
+        </div>
+      </div>
+    </div>
+    <div v-for="pid in judgePageIds" :key="pid" v-if="sub===pid">
+      <div class="section">
+        <div class="section-title">{{JUDGE_PAGES[pid].title}}</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">出典：{{JUDGE_PAGES[pid].source}}</p>
+        <div style="font-weight:700;margin-bottom:8px">施設基準の要件</div>
+        <ul class="task-list">
+          <li v-for="chk in JUDGE_PAGES[pid].checks" :key="chk.id" class="task-item">
+            <input type="checkbox" class="task-check" :checked="jpChecked(pid, chk.id)" @change="jpToggle(pid, chk.id)">
+            <div style="font-size:13px" :style="jpChecked(pid, chk.id)?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+          </li>
+        </ul>
+        <div v-if="JUDGE_PAGES[pid].indicators" style="margin-top:16px">
+          <div style="font-weight:700;margin-bottom:8px">実績指標（処方箋1万枚当たり/年）</div>
+          <ul class="task-list">
+            <li v-for="ind in JUDGE_PAGES[pid].indicators" :key="ind.id" class="task-item">
+              <input type="checkbox" class="task-check" :checked="jpChecked(pid, ind.id)" @change="jpToggle(pid, ind.id)">
+              <div style="font-size:13px" :style="jpChecked(pid, ind.id)?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
+            </li>
+          </ul>
+        </div>
+        <div v-if="JUDGE_PAGES[pid].checks2" style="margin-top:16px">
+          <div style="font-weight:700;margin-bottom:8px">加算2の追加要件</div>
+          <ul class="task-list">
+            <li v-for="chk in JUDGE_PAGES[pid].checks2" :key="chk.id" class="task-item">
+              <input type="checkbox" class="task-check" :checked="jpChecked(pid, chk.id)" @change="jpToggle(pid, chk.id)">
+              <div style="font-size:13px" :style="jpChecked(pid, chk.id)?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">R8予測に反映</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <select class="fee-select" :value="jpSelectedOption(pid)" @change="jpSelectOption(pid, $event.target.value)">
+            <option :value="null" disabled>選択してください</option>
+            <option v-for="opt in JUDGE_PAGES[pid].options" :key="opt.value" :value="opt.value">{{opt.label}}</option>
+          </select>
+          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="jpApply(pid)">R8予測に反映</button>
+          <span v-if="jpApplied(pid)" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
         </div>
       </div>
     </div>
