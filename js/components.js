@@ -842,7 +842,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, cKihonType, cBase, cBaseChecks, cBaseOk, cBase1Result, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cApplyToR8,
+             cKihonType, cBase, cBaseChecks, cBaseOk, cInd, cIndLabels, cIndCount, cResult, cApplied, cJudgeHigher, cApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -963,65 +963,42 @@ const RequirementsTab = {
     </div>
     <div v-if="sub==='k_chiiki'">
       <div class="section">
-        <div class="section-title">地域支援・医薬品供給対応体制加算 <span class="badge badge-modified">統合</span></div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
-          <div style="font-weight:600;color:var(--text)">改定の概要</div>
+        <div class="section-title">地域支援・医薬品供給対応体制加算 <span class="badge badge-merged">統合</span></div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
           <div>旧「地域支援体制加算」と「後発医薬品調剤体制加算」を統合。5段階に再編。</div>
-          <div>加算1（27点）: 医薬品安定供給体制の基礎要件</div>
-          <div>加算2（59点）/ 加算3（67点）: 基本料1の薬局向け（実績要件あり）</div>
-          <div>加算4（37点）/ 加算5（59点）: 基本料1以外の薬局向け（実績要件あり）</div>
           <div>経過措置: 後発品調剤体制加算の届出済み薬局はR9.5.31まで後発品85%要件みなし</div>
         </div>
       </div>
       <div class="section">
-        <div class="section-title">判定ツール</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{cStep}} / 5</div>
-        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(cStep*20)+'%'}"></div></div>
-
-        <div v-if="cStep===1" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：調剤基本料の種別</div>
+        <div class="section-title">加算1（27点）の判定 — 医薬品安定供給体制</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">全ての要件を満たせば加算1（27点）を算定可能。</p>
+        <ul class="task-list">
+          <li v-for="chk in cBaseChecks" :key="chk.key" class="task-item">
+            <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
+            <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+          </li>
+        </ul>
+        <div style="margin-top:12px;padding:12px;border-radius:var(--radius)" :style="cBaseOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+          <div style="font-size:16px;font-weight:700">{{cBaseOk ? '加算1（27点）算定可能' : '算定不可（要件未達）'}}</div>
+        </div>
+        <div v-if="cBaseOk" style="display:flex;gap:8px;align-items:center;margin-top:8px">
+          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">加算1（27点）をR8予測に反映</button>
+          <span v-if="cApplied && (!cResult || cResult.pts===27)" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">加算2～5の判定 — 地域医療への貢献実績</div>
+        <div v-if="!cBaseOk" style="padding:12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">加算1の基礎要件を先に満たしてください。加算2～5は加算1の要件に加えて実績指標が必要です。</div>
+        <template v-if="cBaseOk">
           <div style="margin-bottom:12px">
-            <div style="font-weight:600;margin-bottom:6px">現在の調剤基本料は？</div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKihonType" value="kihon1">調剤基本料1（47点）</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外（基本料2・3、特別A・B）</label>
+            <div style="font-weight:600;margin-bottom:6px;font-size:14px">調剤基本料の種別</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px;font-size:13px"><input type="radio" v-model="cKihonType" value="kihon1">調剤基本料1 → 加算2（59点）/ 加算3（67点）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外 → 加算4（37点）/ 加算5（59点）</label>
           </div>
-          <div style="font-size:12px;color:var(--text-muted);padding:8px;background:var(--surface2);border-radius:var(--radius)">
-            <div v-if="cKihonType==='kihon1'">→ 加算1（27点）、加算2（59点）、加算3（67点）が対象</div>
-            <div v-else>→ 加算1（27点）、加算4（37点）、加算5（59点）が対象</div>
-          </div>
-        </div>
-
-        <div v-if="cStep===2" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算1の基礎要件（医薬品安定供給体制）</div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">加算1（27点）の算定に必要な要件です。全てにチェックが入れば加算1を算定可能。</p>
-          <ul class="task-list">
-            <li v-for="chk in cBaseChecks" :key="chk.key" class="task-item">
-              <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
-              <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
-            </li>
-          </ul>
-          <div v-if="!cBaseOk" style="margin-top:8px;padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text)">未達の要件があります。全て満たさないと加算1は算定できません。</div>
-        </div>
-
-        <div v-if="cStep===3" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：加算1の判定結果</div>
-          <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="cBase1Result.ok?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
-            <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{cBase1Result.label}}</div>
-            <div v-if="cBase1Result.ok" style="font-size:13px;color:var(--text-muted)">基礎要件を全て満たしています。加算1（27点）を算定できます。</div>
-            <div v-else style="font-size:13px;color:var(--del-text)">基礎要件が未達です。Step 2に戻って確認してください。</div>
-          </div>
-          <div v-if="cBase1Result.ok" style="margin-bottom:12px">
-            <div style="font-weight:600;margin-bottom:8px">加算2～5も目指しますか？（地域医療への貢献実績が必要）</div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cAimHigher" :value="true">はい（実績9指標をチェックして加算2～5を判定する）</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cAimHigher" :value="false">いいえ（加算1のみで確定する）</label>
-          </div>
-        </div>
-
-        <div v-if="cStep===4" style="font-size:14px;line-height:1.8">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：実績9指標（処方箋1万枚当たり/年）</div>
           <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">
             <div v-if="cKihonType==='kihon1'"><strong>加算2（59点）:</strong> ④を含む3つ以上 / <strong>加算3（67点）:</strong> 7つ以上</div>
             <div v-else><strong>加算4（37点）:</strong> ④⑥を含む3つ以上 / <strong>加算5（59点）:</strong> 7つ以上</div>
+            <div style="margin-top:4px">※①～⑧は処方箋1万枚当たりの年間回数、⑨は薬局当たりの年間回数</div>
           </div>
           <ul class="task-list">
             <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
@@ -1033,26 +1010,16 @@ const RequirementsTab = {
             </li>
           </ul>
           <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
-        </div>
-
-        <div v-if="cStep===5">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 5：最終判定結果</div>
-          <div v-if="cResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="cResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
-            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{cResult.label}}</div>
-            <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
+          <div style="margin-top:12px;padding:12px;border-radius:var(--radius)" :style="cResult&&cResult.pts>27?'background:var(--new-bg);border:1px solid #b3d4f7':'background:var(--surface2);border:1px solid var(--border)'">
+            <div style="font-size:16px;font-weight:700">{{cResult ? cResult.label : '—'}}</div>
+            <div v-if="cResult" style="font-size:13px;color:var(--text-muted)">{{cResult.reason}}</div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">R8予測に反映</button>
-            <button class="btn" @click="cReset()">最初からやり直す</button>
-            <span v-if="cApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
+            <button class="btn" @click="cJudgeHigher()" style="background:var(--teal);color:white;font-weight:600;padding:6px 16px">判定する</button>
+            <button v-if="cResult&&cResult.pts>27" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">{{cResult.label}}をR8予測に反映</button>
+            <span v-if="cApplied && cResult && cResult.pts>27" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
           </div>
-        </div>
-
-        <div v-if="cError" style="margin-top:12px;padding:8px 12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">{{cError}}</div>
-        <div v-if="cStep<5" style="margin-top:20px;display:flex;gap:8px">
-          <button v-if="cStep>1" class="btn" @click="cBack()">戻る</button>
-          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="cNext()">次へ</button>
-        </div>
+        </template>
       </div>
     </div>
     <template v-for="pid in judgePageIds" :key="pid"><div v-if="sub===pid">
