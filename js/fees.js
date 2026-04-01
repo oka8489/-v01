@@ -47,8 +47,8 @@ const BASIC_FEES = [
   {
     id: 'k_kihon_doji', label: '調剤基本料※同時受付', category: 'basic', inputType: 'fixed',
     changeType: 'same',
-    linkedTo: 'kihon', linkedRate: 0.8,
-    r6: { fixedPoints: 36 },
+    linkedTo: 'k_kihon', linkedRate: 0.8,
+    r6: {},
   },
   {
     id: 'k_chiiki', label: '地域支援体制加算', category: 'basic', inputType: 'select', isSub: true,
