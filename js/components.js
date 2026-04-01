@@ -668,15 +668,28 @@ const RequirementsTab = {
     const cRoOk = computed(() => cKeikaSochi.value === true || cGe85actual.value)
     // イ: 医薬品の安定供給体制 (1)～(8) ※PDF原文の通り
     const cBaseChecksA = [
-      { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行うこと。' },
-      { key: 'share', label: '(2) 他の保険薬局に医薬品を分譲した実績（同一グループは含めない）があること。' },
-      { key: 'supply_alt', label: '(3) 医薬品供給不安等により、迅速な医薬品入手が困難な場合は、入手可能な保険薬局を探し、在庫を確認の上、患者を紹介や、処方医に処方変更の可否を照会する等適切な対応をすること。' },
-      { key: 'stock', label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。' },
-      { key: 'tanpin', label: '(5) 原則として、単品単価交渉の実施をしていること。' },
-      { key: 'haibin', label: '(6) 卸売販売業者への頻回配送・休日夜間配送・急配に係る過度な依頼を慎むこと。' },
-      { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整を目的とした卸売販売業者への医薬品の返品は慎むこと。' },
-      { key: 'renkei', label: '(8) 地域の保険医療機関や保険薬局、医療関係団体と連携し、取り扱う医薬品の品目についての情報共有や、事前の取り決めを行っておくことが望ましい。' },
+      { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行うこと。',
+        help: '必要な対応:\n・発注・在庫管理システムの運用（不動在庫・期限切れの定期チェック）\n・需要予測に基づく適正在庫の維持\n・欠品時の代替品確保手順の整備\n・在庫管理に関する手順書の作成' },
+      { key: 'share', label: '(2) 他の保険薬局に医薬品を分譲した実績（同一グループは含めない）があること。',
+        help: '必要な対応:\n・近隣の他薬局（自グループ外）への医薬品融通の実績を1回以上確保\n・分譲記録（日付・品名・数量・相手先）を保存\n・地域の薬局間連携ネットワークへの参加' },
+      { key: 'supply_alt', label: '(3) 医薬品供給不安等により、迅速な医薬品入手が困難な場合は、入手可能な保険薬局を探し、在庫を確認の上、患者を紹介や、処方医に処方変更の可否を照会する等適切な対応をすること。',
+        help: '必要な対応:\n・供給不安時の対応手順書を作成\n・近隣薬局の在庫確認ルートを整備（電話・FAX・システム）\n・処方医への疑義照会フローの整備\n・患者への説明と他薬局紹介の体制' },
+      { key: 'stock', label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。',
+        help: '必要な対応:\n・厚労省が指定する「重要供給確保医薬品」リストの確認\n・該当する内用薬・外用薬の1ヶ月分の在庫確保\n・備蓄状況の定期的な確認・記録' },
+      { key: 'tanpin', label: '(5) 原則として、単品単価交渉の実施をしていること。',
+        help: '必要な対応:\n・卸売業者との価格交渉を品目ごとに実施（総価交渉ではなく単品単価）\n・交渉記録の保存\n・妥結率の管理（未妥結減算の回避にも関連）' },
+      { key: 'haibin', label: '(6) 卸売販売業者への頻回配送・休日夜間配送・急配に係る過度な依頼を慎むこと。',
+        help: '必要な対応:\n・発注の計画性を高め、緊急配送の頻度を減らす\n・配送回数の記録と振り返り\n・卸との配送スケジュールの取り決め' },
+      { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整を目的とした卸売販売業者への医薬品の返品は慎むこと。',
+        help: '必要な対応:\n・冷所保存品等の返品を原則行わない運用\n・在庫調整目的の返品を抑制\n・返品が必要な場合の正当な理由の記録' },
+      { key: 'renkei', label: '(8) 地域の保険医療機関や保険薬局、医療関係団体と連携し、取り扱う医薬品の品目についての情報共有や、事前の取り決めを行っておくことが望ましい。',
+        help: '必要な対応:\n・地域の薬剤師会等が主催する連携会議への参加\n・近隣医療機関との処方品目に関する情報交換\n・地域フォーミュラリーへの参加（あれば）\n・医薬品の採用・切替に関する事前の取り決め' },
     ]
+    // モーダル表示用
+    const cHelpModal = ref(null) // 表示中の要件key
+    function openHelp(key) { cHelpModal.value = key }
+    function closeHelp() { cHelpModal.value = null }
+    function getHelp(key) { return cBaseChecksA.find(c => c.key === key)?.help || '' }
     // イの全項目 + ロ（経過措置 or 実際に85%以上）で判定
     const cIchiOk = computed(() => Object.values(cBase).every(v => v))
     const cBaseOk = computed(() => cIchiOk.value && cRoOk.value)
@@ -850,6 +863,7 @@ const RequirementsTab = {
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
+             cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -987,11 +1001,19 @@ const RequirementsTab = {
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：イ — 医薬品の安定供給体制</div>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">告示第71号の(1)～(8)。全て満たす必要があります。</p>
           <ul class="task-list">
-            <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item">
+            <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
-              <div style="font-size:13px" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <div style="font-size:13px;flex:1" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <button class="btn" style="font-size:10px;padding:2px 8px;flex-shrink:0;background:var(--surface2);color:var(--text-muted)" @click.stop="openHelp(chk.key)">?</button>
             </li>
           </ul>
+          <div v-if="cHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="closeHelp()">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{cBaseChecksA.find(c=>c.key===cHelpModal)?.label}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line">{{getHelp(cHelpModal)}}</div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" @click="closeHelp()" style="background:var(--text);color:white">閉じる</button></div>
+            </div>
+          </div>
         </div>
 
         <div v-if="cStep===2" style="font-size:14px;line-height:2">
