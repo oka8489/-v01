@@ -860,7 +860,7 @@ const RequirementsTab = {
     </div>
     <div v-if="sub==='k_kihon'">
       <div class="section">
-        <div class="section-title">調剤基本料の施設基準 <span class="badge badge-modified">変更</span></div>
+        <div class="section-title">調剤基本料の施設基準 <span class="badge badge-modified">改定</span></div>
         <img src="img/r8_kihon_chart.png" alt="調剤基本料の見直し（R8改定後）" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0">
       </div>
       <div class="section">
