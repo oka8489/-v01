@@ -985,6 +985,7 @@ const RequirementsTab = {
           <div><strong>イ</strong> 医薬品の安定供給体制 + <strong>ロ</strong> 後発品85%以上 → 加算1（27点）</div>
           <div>加算1 + 地域医療への貢献実績 → 加算2～5</div>
         </div>
+        <div style="margin-top:12px"><iframe width="100%" height="315" src="https://www.youtube.com/embed/wMeB4mvPZZk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe></div>
       </div>
       <div class="section">
         <div class="section-title">判定ツール</div>
