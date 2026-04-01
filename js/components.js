@@ -645,9 +645,11 @@ const RequirementsTab = {
     // 汎用判定ページ（チェックリスト式）
     // 地域支援・医薬品供給対応体制加算 ステップ式判定
     const cjd = props.data.judge || {}
+    const cStep = ref(cjd.c_step || 1)
     const cKihonType = ref(cjd.c_kihonType || 'kihon1')
     const cResult = ref(cjd.c_result || null)
     const cApplied = ref(cjd.c_applied || false)
+    const cError = ref('')
     // 経過措置: R7で後発品加算1～3の届出済みか
     const cKeikaSochi = ref(cjd.c_keikaSochi ?? null) // null=未選択, true=該当, false=非該当
     const cGe85actual = ref(cjd.c_ge85actual || false) // 実際に85%以上か（経過措置非該当時に使う）
@@ -756,7 +758,7 @@ const RequirementsTab = {
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
