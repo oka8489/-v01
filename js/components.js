@@ -311,10 +311,7 @@ const ImpactTab = {
 }
 
 const TasksTab = {
-  props:['activeSub'],
-  emits:['update:activeSub'],
-  setup(props, { emit }) {
-    const sub = computed({ get:()=>props.activeSub||'kanban', set:v=>emit('update:activeSub',v) })
+  setup() {
 
     // Reactive task store (loaded from API)
     const store = reactive({ categories: [], tasks: {} })
@@ -430,48 +427,10 @@ const TasksTab = {
       saveTasks()
     }
 
-    // Calendar
-    function parseDeadline(dl) {
-      if (!dl || dl === '随時') return null
-      const dates = []
-      const re = /R(\d+)\.(\d+)(?:\.(\d+))?/g
-      let m
-      while ((m = re.exec(dl)) !== null) {
-        dates.push(new Date(2018 + parseInt(m[1]), parseInt(m[2]) - 1, m[3] ? parseInt(m[3]) : 1))
-      }
-      if (!dates.length) { const m3 = dl.match(/R(\d+)\.(\d+)月/); if (m3) dates.push(new Date(2018 + parseInt(m3[1]), parseInt(m3[2]) - 1, 1)) }
-      return dates.length ? dates : null
-    }
-    const calMonths = []
-    for (let y = 2026; y <= 2027; y++) { const s = y === 2026 ? 3 : 0, e = y === 2027 ? 5 : 11; for (let m = s; m <= e; m++) calMonths.push({ year: y, month: m }) }
-    function monthLabel(ym) { return ym.year + '年' + (ym.month + 1) + '月' }
-    function daysInMonth(ym) { return new Date(ym.year, ym.month + 1, 0).getDate() }
-    function firstDayOfWeek(ym) { return new Date(ym.year, ym.month, 1).getDay() }
-    const calendarTasks = computed(() => {
-      const map = {}, noDate = []
-      for (const t of allTasks.value) {
-        const id = t.id, task = t.task
-        if (!task.deadline || task.deadline === '随時') { noDate.push({ id, task }); continue }
-        const dates = parseDeadline(task.deadline)
-        if (!dates || !dates.length) { noDate.push({ id, task }); continue }
-        const d = dates[dates.length - 1]
-        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
-        if (!map[key]) map[key] = []
-        map[key].push({ id, task })
-      }
-      return { map, noDate }
-    })
-    function tasksForDay(ym, day) { return calendarTasks.value.map[ym.year + '-' + String(ym.month+1).padStart(2,'0') + '-' + String(day).padStart(2,'0')] || [] }
-    function isToday(ym, day) { const n = new Date(); return n.getFullYear() === ym.year && n.getMonth() === ym.month && n.getDate() === day }
-    function isPast(ym, day) { const d = new Date(ym.year, ym.month, day), n = new Date(); n.setHours(0,0,0,0); return d < n }
-    const activeMonths = computed(() => { const s = new Set(); for (const k of Object.keys(calendarTasks.value.map)) { const [y, m] = k.split('-'); s.add(parseInt(y) + '-' + parseInt(m)) }; return s })
-    const visibleMonths = computed(() => calMonths.filter(ym => activeMonths.value.has(ym.year + '-' + (ym.month+1))))
-
-    return { sub, store, loading, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
+    return { store, loading, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
-             showAddForm, addForm, openAddForm, addTask, deleteTask,
-             visibleMonths, monthLabel, daysInMonth, firstDayOfWeek, tasksForDay, isToday, isPast, calendarTasks }
+             showAddForm, addForm, openAddForm, addTask, deleteTask }
   },
   template: `<div>
     <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
@@ -485,10 +444,6 @@ const TasksTab = {
         <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">進捗率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
       </div>
       <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
-    </div>
-    <div class="sub-tabs" style="margin-bottom:12px">
-      <button class="sub-tab" :class="{active:sub==='kanban'}" @click="sub='kanban'">カンバン</button>
-      <button class="sub-tab" :class="{active:sub==='calendar'}" @click="sub='calendar'">カレンダー</button>
     </div>
     <div style="margin-bottom:12px;text-align:right">
       <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
@@ -509,7 +464,7 @@ const TasksTab = {
         </div>
       </div>
     </div>
-    <div v-if="sub==='kanban'" class="kb-board">
+    <div class="kb-board">
       <div v-for="col in columns" :key="col.key" class="kb-col" :class="'kb-col-'+col.key"
            @dragover="onDragOver" @drop="onDrop($event, col.key)">
         <div class="kb-col-head">
@@ -554,34 +509,6 @@ const TasksTab = {
           </div>
         </div>
         <div v-if="!tasksInColumn(col.key).length" class="kb-empty-col">ドラッグしてここに移動</div>
-      </div>
-    </div>
-    <div v-if="sub==='calendar'">
-      <div v-for="ym in visibleMonths" :key="ym.year+'-'+ym.month" class="section cal-month">
-        <div class="section-title">{{monthLabel(ym)}}</div>
-        <div class="cal-grid">
-          <div class="cal-hd">日</div><div class="cal-hd">月</div><div class="cal-hd">火</div><div class="cal-hd">水</div><div class="cal-hd">木</div><div class="cal-hd">金</div><div class="cal-hd">土</div>
-          <div v-for="n in firstDayOfWeek(ym)" :key="'e'+n" class="cal-cell cal-empty"></div>
-          <div v-for="day in daysInMonth(ym)" :key="day" class="cal-cell" :class="{'cal-today':isToday(ym,day),'cal-past':isPast(ym,day)&&!isToday(ym,day)}">
-            <div class="cal-day">{{day}}</div>
-            <template v-for="t in tasksForDay(ym,day)" :key="t.id">
-              <div class="cal-chip" :class="'cal-chip-'+status(t.id)" @click="cycleStatus(t.id)" :title="t.task.title + ' ['+statusLabel[status(t.id)]+'] — クリックでステータス変更'">
-                <span class="cal-chip-dot" :class="'kb-dot-'+status(t.id)"></span>
-                <span class="cal-chip-text">{{t.task.title}}</span>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
-      <div v-if="calendarTasks.noDate.length" class="section">
-        <div class="section-title">期限なし・随時</div>
-        <div class="cal-nodate">
-          <div v-for="t in calendarTasks.noDate" :key="t.id" class="cal-chip cal-chip-nodate" :class="'cal-chip-'+status(t.id)" @click="cycleStatus(t.id)" :title="'クリックでステータス変更'">
-            <span class="cal-chip-dot" :class="'kb-dot-'+status(t.id)"></span>
-            <span class="cal-chip-text">{{t.task.title}}</span>
-            <span v-if="t.task.deadline" class="cal-chip-dl">{{t.task.deadline}}</span>
-          </div>
-        </div>
       </div>
     </div>
     </template>
