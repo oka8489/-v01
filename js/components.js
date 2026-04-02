@@ -783,9 +783,64 @@ const RequirementsTab = {
     const cAimHigher = ref(cjd.c_aimHigher !== false) // 加算2～5を目指すか
     // 加算2～5 ステップ
     const c2Step = ref(cjd.c2_step || 1)
+    // Step 3: 施設基準(2)～(11)チェック
+    const c2Facility = reactive({
+      f2a: cjd.c2_f2a || false, f2b: cjd.c2_f2b || false, f2c: cjd.c2_f2c || false,
+      f2d: cjd.c2_f2d || false, f2e: cjd.c2_f2e || false, f2f: cjd.c2_f2f || false,
+      f3a: cjd.c2_f3a || false, f3b: cjd.c2_f3b || false, f3c: cjd.c2_f3c || false, f3d: cjd.c2_f3d || false,
+      f4a: cjd.c2_f4a || false, f4b: cjd.c2_f4b || false, f4c: cjd.c2_f4c || false, f4d: cjd.c2_f4d || false,
+      f5a: cjd.c2_f5a || false, f5b: cjd.c2_f5b || false, f5c: cjd.c2_f5c || false,
+      f6: cjd.c2_f6 || false, f7: cjd.c2_f7 || false, f8: cjd.c2_f8 || false,
+      f9: cjd.c2_f9 || false, f10: cjd.c2_f10 || false,
+      f11a: cjd.c2_f11a || false, f11b: cjd.c2_f11b || false, f11c: cjd.c2_f11c || false,
+      f11d: cjd.c2_f11d || false, f11e: cjd.c2_f11e || false, f11f: cjd.c2_f11f || false, f11g: cjd.c2_f11g || false,
+    })
+    const c2FacilityChecks = [
+      { group: '（２）地域における医薬品等の供給拠点としての対応', items: [
+        { key: 'f2a', label: 'ア 十分な数の医薬品の備蓄、周知（医療用医薬品1200品目）' },
+        { key: 'f2b', label: 'イ 薬局間連携による医薬品の融通等' },
+        { key: 'f2c', label: 'ウ 医療材料及び衛生材料を供給できる体制' },
+        { key: 'f2d', label: 'エ 麻薬小売業者の免許' },
+        { key: 'f2e', label: 'オ 取り扱う医薬品に係る情報提供体制' },
+        { key: 'f2f', label: 'カ 調剤室の面積が16平方メートル以上（R8.6以降に開設・改築・増築する場合のみ）' },
+      ]},
+      { group: '（３）休日、夜間を含む薬局における調剤・相談応需体制', items: [
+        { key: 'f3a', label: 'ア 一定時間以上の開局' },
+        { key: 'f3b', label: 'イ 休日、夜間の開局時間外の調剤・在宅業務に対応できる体制' },
+        { key: 'f3c', label: 'ウ 当該薬局を利用する患者からの相談応需体制' },
+        { key: 'f3d', label: 'エ 夜間・休日の調剤、在宅対応体制（地域の輪番体制含む）の周知' },
+      ]},
+      { group: '（４）在宅医療を行うための関係者との連携体制等の対応', items: [
+        { key: 'f4a', label: 'ア 診療所又は病院及び訪問看護ステーションと円滑な連携' },
+        { key: 'f4b', label: 'イ 保健医療・福祉サービス担当者との連携体制' },
+        { key: 'f4c', label: 'ウ 在宅薬剤管理の実績 24回以上' },
+        { key: 'f4d', label: 'エ 在宅に係る研修の実施' },
+      ]},
+      { group: '（５）医療安全に関する取組の実施', items: [
+        { key: 'f5a', label: 'ア プレアボイド事例の把握・収集' },
+        { key: 'f5b', label: 'イ 医療安全に資する取組実績の報告' },
+        { key: 'f5c', label: 'ウ 副作用報告に係る手順書を作成' },
+      ]},
+      { group: '（６）～（１１）その他の要件', items: [
+        { key: 'f6', label: '（６）かかりつけ薬剤師が服薬管理指導を行う旨の届出' },
+        { key: 'f7', label: '（７）患者毎に服薬指導の実施、薬剤服用歴の作成' },
+        { key: 'f8', label: '（８）管理薬剤師要件（薬局経験５年以上、常勤、当該薬局在籍１年以上）' },
+        { key: 'f9', label: '（９）研修計画の作成、学会発表などの推奨' },
+        { key: 'f10', label: '（１０）患者のプライバシーに配慮、椅子に座った状態での服薬指導' },
+        { key: 'f11a', label: '（１１）ア 一般用医薬品及び要指導医薬品等（48薬効群）の販売' },
+        { key: 'f11b', label: '（１１）イ 健康相談、生活習慣に係る相談の実施' },
+        { key: 'f11c', label: '（１１）ウ 緊急避妊薬の調剤又は販売を含む女性の健康に係る対応' },
+        { key: 'f11d', label: '（１１）エ 当該保険薬局の敷地内における禁煙の取扱い' },
+        { key: 'f11e', label: '（１１）オ たばこの販売禁止（併設する店舗販売業含む）' },
+        { key: 'f11f', label: '（１１）カ セルフメディケーション関連機器の設置（少なくとも３つ）' },
+        { key: 'f11g', label: '（１１）キ 薬事未承認の研究用試薬・検査サービスを提供していないこと' },
+      ]},
+    ]
+    const c2FacilityOk = computed(() => Object.values(c2Facility).every(v => v))
     function c2Next() {
       if (c2Step.value === 1) c2Step.value = 2
-      else if (c2Step.value === 2) { cJudgeHigher(); c2Step.value = 3 }
+      else if (c2Step.value === 2) c2Step.value = 3
+      else if (c2Step.value === 3) { cJudgeHigher(); c2Step.value = 4 }
     }
     function c2Back() { if (c2Step.value > 1) c2Step.value-- }
     function c2Reset() { c2Step.value = 1; cResult.value = null }
@@ -838,9 +893,10 @@ const RequirementsTab = {
         c_ia7: cIndActual.i7, c_ia8: cIndActual.i8, c_ia9: cIndActual.i9,
         c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
+        ...Object.fromEntries(Object.entries(c2Facility).map(([k,v]) => ['c2_'+k, v])),
       }
     }
-    watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cIndRxAnnual, cBase, cInd, cIndActual], saveCJudge, { deep: true })
+    watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cIndRxAnnual, cBase, cInd, cIndActual, c2Facility], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -940,7 +996,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1145,8 +1201,8 @@ const RequirementsTab = {
         <div class="section-title">加算2～5 施設基準判定ツール</div>
         <div v-if="!cBaseOk" style="padding:12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">加算1の要件を先に満たしてください。加算2～5は加算1の要件に加えて実績指標が必要です。</div>
         <template v-if="cBaseOk">
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{c2Step}} / 3</div>
-          <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(c2Step/3*100)+'%'}"></div></div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{c2Step}} / 4</div>
+          <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(c2Step/4*100)+'%'}"></div></div>
 
           <div v-if="c2Step===1" style="font-size:14px;line-height:2">
             <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：調剤基本料の種別</div>
@@ -1191,8 +1247,23 @@ const RequirementsTab = {
             </div>
           </div>
 
-          <div v-if="c2Step===3">
-            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：判定結果</div>
+          <div v-if="c2Step===3" style="font-size:14px;line-height:1.6">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：施設基準の確認</div>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">加算2～5の算定には、加算1の要件に加えて以下の施設基準を全て満たす必要があります。</p>
+            <div v-for="grp in c2FacilityChecks" :key="grp.group" style="margin-bottom:16px">
+              <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text)">{{grp.group}}</div>
+              <ul class="task-list">
+                <li v-for="item in grp.items" :key="item.key" class="task-item">
+                  <input type="checkbox" class="task-check" v-model="c2Facility[item.key]">
+                  <div style="font-size:12px" :style="c2Facility[item.key]?'text-decoration:line-through;opacity:0.5':''">{{item.label}}</div>
+                </li>
+              </ul>
+            </div>
+            <div v-if="!c2FacilityOk" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text)">未チェックの項目があります。全て満たす必要があります。</div>
+          </div>
+
+          <div v-if="c2Step===4">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 4：判定結果</div>
             <div v-if="cResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="cResult.pts>27?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
               <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{cResult.label}}</div>
               <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
@@ -1204,7 +1275,7 @@ const RequirementsTab = {
             </div>
           </div>
 
-          <div v-if="c2Step<3" style="margin-top:20px;display:flex;gap:8px">
+          <div v-if="c2Step<4" style="margin-top:20px;display:flex;gap:8px">
             <button v-if="c2Step>1" class="btn" @click="c2Back()">戻る</button>
             <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="c2Next()">次へ</button>
           </div>
