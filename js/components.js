@@ -1033,7 +1033,7 @@ const RequirementsTab = {
           <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos)">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
           <div v-else>
             <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）</div>
+            <div style="font-size:12px;color:var(--amber);margin-bottom:12px;padding:8px;background:var(--amber-l);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）<strong>【要確認】</strong></div>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
               <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
               <span style="font-weight:600">後発医薬品の使用率が85%以上である</span>
