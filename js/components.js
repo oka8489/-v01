@@ -718,13 +718,13 @@ const RequirementsTab = {
     const cIndLabels = [
       { key: 'i1', label: '①夜間・休日等の対応実績', k1: 40, other: 400, k1s: '40回以上', others: '400回以上' },
       { key: 'i2', label: '②麻薬の調剤実績', k1: 1, other: 10, k1s: '1回以上', others: '10回以上' },
-      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', note2: '※R7実績は「重複投薬・相互作用等防止加算」の算定回数を集計' },
-      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', reqK1: '★加算2必須', reqOther: '★加算4必須', note2: '※R7実績は「かかりつけ薬剤師指導料＋包括管理料」の算定回数を集計' },
-      { key: 'i5', label: '⑤外来服薬支援料1の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上' },
-      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須' },
-      { key: 'i7', label: '⑦服薬情報等提供料の実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
+      { key: 'i3', label: '③調剤時残薬調整加算及び薬学的有害事象等防止加算の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', note2: '※R7実績は「重複投薬・相互作用等防止加算」の算定回数を集計' },
+      { key: 'i4', label: '④服薬管理指導料１のイ及び２のイ（かかりつけ薬剤師）の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', reqK1: '★加算2必須', reqOther: '★加算4必須', note2: '※R7実績は「かかりつけ薬剤師指導料＋包括管理料」の算定回数を集計' },
+      { key: 'i5', label: '⑤外来服薬支援料１の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上' },
+      { key: 'i6', label: '⑥単一建物診療患者が１人の在宅薬剤管理の実績', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須' },
+      { key: 'i7', label: '⑦服薬情報等提供料に相当する実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
       { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上' },
-      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true },
+      { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true },
     ]
     // R7実績から読み込み
     function cIndLoadR7() {
