@@ -665,10 +665,8 @@ const RequirementsTab = {
       henpin: cjd.c_henpin || false,
       renkei: cjd.c_renkei || false,
     })
-    // (4) 掲示要件
-    const cKeiji = ref(cjd.c_keiji || false)
-    // ロの充足: (経過措置該当 or 実際に85%以上) かつ 掲示要件
-    const cRoOk = computed(() => (cKeikaSochi.value === true || cGe85actual.value) && cKeiji.value)
+    // ロの充足: 経過措置該当 or 実際に85%以上
+    const cRoOk = computed(() => cKeikaSochi.value === true || cGe85actual.value)
     // イ: 医薬品の安定供給体制 (1)～(8) ※PDF原文の通り
     const cBaseChecksA = [
       { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行うこと。',
@@ -1031,8 +1029,7 @@ const RequirementsTab = {
         </div>
 
         <div v-if="cStep===3" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：ロ — 後発医薬品使用率・掲示</div>
-          <div style="font-weight:600;margin-bottom:8px">(3) 後発医薬品使用率</div>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：ロ — 後発医薬品使用率</div>
           <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
           <div v-else style="margin-bottom:12px">
             <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
@@ -1043,12 +1040,6 @@ const RequirementsTab = {
             </label>
             <div v-if="!cGe85actual" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text);margin-bottom:8px">85%未満の場合、加算1は算定できません。</div>
           </div>
-          <div style="font-weight:600;margin-bottom:8px">(4) 掲示要件</div>
-          <div style="margin-bottom:8px;font-size:13px">後発医薬品の調剤を積極的に行っている旨を当該保険薬局の内側及び外側の見えやすい場所に掲示すること。</div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
-            <input type="checkbox" v-model="cKeiji" style="width:18px;height:18px">
-            <span style="font-weight:600">内側・外側に掲示している</span>
-          </label>
         </div>
 
         <div v-if="cStep===4">
