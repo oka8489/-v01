@@ -716,16 +716,30 @@ const RequirementsTab = {
       return Math.round(cIndActual[key] / cIndRxAnnual.value * 10000 * 10) / 10
     }
     const cIndLabels = [
-      { key: 'i1', label: '①夜間・休日等の対応実績', k1: 40, other: 400, k1s: '40回以上', others: '400回以上' },
-      { key: 'i2', label: '②麻薬の調剤実績', k1: 1, other: 10, k1s: '1回以上', others: '10回以上' },
-      { key: 'i3', label: '③調剤時残薬調整加算及び薬学的有害事象等防止加算の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', note2: '※R7実績は「重複投薬・相互作用等防止加算」の算定回数を集計' },
-      { key: 'i4', label: '④服薬管理指導料１のイ及び２のイ（かかりつけ薬剤師）の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', reqK1: '★加算2必須', reqOther: '★加算4必須', note2: '※R7実績は「かかりつけ薬剤師指導料＋包括管理料」の算定回数を集計' },
-      { key: 'i5', label: '⑤外来服薬支援料１の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上' },
-      { key: 'i6', label: '⑥単一建物診療患者が１人の在宅薬剤管理の実績', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須' },
-      { key: 'i7', label: '⑦服薬情報等提供料に相当する実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
-      { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上' },
-      { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true, manual: true },
+      { key: 'i1', label: '①夜間・休日等の対応実績', k1: 40, other: 400, k1s: '40回以上', others: '400回以上',
+        help: '<b>対象となる加算:</b>\n・時間外加算\n・夜間・休日等加算\n・休日加算\n・深夜加算\n\nこれらの算定回数の合計。開局時間外に調剤を行った実績。' },
+      { key: 'i2', label: '②麻薬の調剤実績', k1: 1, other: 10, k1s: '1回以上', others: '10回以上',
+        help: '<b>対象:</b>\n・麻薬加算（薬剤調製料の加算）の算定回数\n\n全剤種（内服・外用・注射等）の麻薬加算の合計。麻薬小売業者の免許が前提。' },
+      { key: 'i3', label: '③調剤時残薬調整加算及び薬学的有害事象等防止加算の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', note2: '※R7実績は「重複投薬・相互作用等防止加算」の算定回数を集計',
+        help: '<b>R8での名称変更:</b>\n・旧「重複投薬・相互作用等防止加算」→ R8「残薬調整加算」「有害事象防止加算」に分離\n\n<b>R7実績で集計する項目:</b>\n・重複投薬・相互作用等防止加算（残薬調整）\n・重複投薬・相互作用等防止加算（残薬以外）\n\n処方医への疑義照会により処方変更があった場合に算定。' },
+      { key: 'i4', label: '④服薬管理指導料１のイ及び２のイ（かかりつけ薬剤師）の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', reqK1: '★加算2必須', reqOther: '★加算4必須', note2: '※R7実績は「かかりつけ薬剤師指導料＋包括管理料」の算定回数を集計',
+        help: '<b>R8での名称変更:</b>\n・旧「かかりつけ薬剤師指導料」「かかりつけ薬剤師包括管理料」→ R8「服薬管理指導料1のイ」「服薬管理指導料2のイ」\n\n<b>R7実績で集計する項目:</b>\n・かかりつけ薬剤師指導料の算定回数\n・かかりつけ薬剤師包括管理料の算定回数\n\nかかりつけ薬剤師の同意を得た患者への服薬管理指導の実績。' },
+      { key: 'i5', label: '⑤外来服薬支援料１の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上',
+        help: '<b>対象:</b>\n・外来服薬支援料1の算定回数\n\n自薬局の患者以外も含め、一包化や服薬カレンダーへの整理等、服薬支援を行った実績。処方医の了解を得て実施。' },
+      { key: 'i6', label: '⑥単一建物診療患者が１人の在宅薬剤管理の実績', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須',
+        help: '<b>対象:</b>\n・在宅患者訪問薬剤管理指導料（単一建物診療患者1人）の算定回数\n\n個人宅への訪問薬剤管理指導の実績。施設ではなく個人宅への訪問が対象。' },
+      { key: 'i7', label: '⑦服薬情報等提供料に相当する実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上',
+        help: '<b>対象:</b>\n・服薬情報等提供料1の算定回数\n・服薬情報等提供料2の算定回数\n・服薬情報等提供料3の算定回数\n\n医療機関への情報提供（トレーシングレポート等）の実績。「相当する実績」のため、算定していなくても情報提供の記録があれば含められる可能性あり。' },
+      { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上',
+        help: '<b>対象:</b>\n・小児特定加算の算定回数\n\n6歳未満の乳幼児に対する服薬指導等を行った場合に算定。1回以上あればクリア。' },
+      { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true, manual: true,
+        help: '<b style="color:var(--neg)">※レセコンデータにないため手入力が必要</b>\n\n<b>対象:</b>\n・研修認定薬剤師（CPC認証等）が、地域ケア会議・サービス担当者会議・退院時カンファレンス等の多職種連携会議に出席した回数\n\n<b>注意:</b>\n・処方箋1万枚当たりではなく<b>薬局当たり</b>の年間回数\n・出席記録（日時・会議名・出席者）を保存すること' },
     ]
+    // 9指標モーダル
+    const c2HelpModal = ref(null)
+    function c2OpenHelp(key) { c2HelpModal.value = key }
+    function c2CloseHelp() { c2HelpModal.value = null }
+    function c2GetHelp(key) { return cIndLabels.find(i => i.key === key)?.help || '' }
     // R7実績から読み込み
     function cIndLoadR7() {
       const r6 = props.data.r6 || {}
@@ -925,7 +939,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1159,7 +1173,7 @@ const RequirementsTab = {
             <table style="width:100%;border-collapse:collapse;font-size:12px">
               <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間算定回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
               <tr v-for="ind in cIndLabels" :key="ind.key" style="border-bottom:0.5px solid var(--border)">
-                <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="cKihonType==='kihon1'&&ind.reqK1" style="font-size:10px;color:var(--neg)">{{ind.reqK1}}</span><span v-if="cKihonType!=='kihon1'&&ind.reqOther" style="font-size:10px;color:var(--neg)">{{ind.reqOther}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span><div v-if="ind.note2" style="font-size:10px;color:var(--amber)">{{ind.note2}}</div></td>
+                <td style="padding:6px 4px"><div style="display:flex;align-items:flex-start;gap:4px"><span>{{ind.label}}</span><button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="c2OpenHelp(ind.key)">?</button></div><span v-if="cKihonType==='kihon1'&&ind.reqK1" style="font-size:10px;color:var(--neg)">{{ind.reqK1}}</span><span v-if="cKihonType!=='kihon1'&&ind.reqOther" style="font-size:10px;color:var(--neg)">{{ind.reqOther}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span><div v-if="ind.note2" style="font-size:10px;color:var(--amber)">{{ind.note2}}</div></td>
                 <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" :class="{'empty-input':ind.manual}" :style="'max-width:80px;font-size:11px;height:26px'+(ind.manual?';border-color:var(--neg)':'')" v-model.number="cIndActual[ind.key]"><div v-if="ind.manual" style="font-size:9px;color:var(--neg)">手入力</div></td>
                 <td style="text-align:right;padding:6px 4px;font-family:'IBM Plex Mono',monospace" :style="cIndMet(ind.key)?'color:var(--pos);font-weight:700':'color:var(--text-muted)'">{{cIndPer10k(ind.key)}}</td>
                 <td style="text-align:right;padding:6px 4px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1s : ind.others}}</td>
@@ -1167,6 +1181,13 @@ const RequirementsTab = {
               </tr>
             </table>
             <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
+            <div v-if="c2HelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="c2CloseHelp()">
+              <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+                <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{cIndLabels.find(i=>i.key===c2HelpModal)?.label}}</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="c2GetHelp(c2HelpModal)"></div>
+                <div style="margin-top:16px;text-align:right"><button class="btn" @click="c2CloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+              </div>
+            </div>
           </div>
 
           <div v-if="c2Step===3">
