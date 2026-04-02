@@ -136,3 +136,57 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .kb-move-active:hover { background: var(--text); }
 .kb-empty-col { text-align: center; padding: 32px 12px; font-size: 12px; color: var(--text-faint); border: 2px dashed var(--border); border-radius: 8px; margin: 0 8px; }
 @media (max-width: 768px) { .kpi-grid { grid-template-columns: 1fr 1fr; } .tabs { flex-wrap: nowrap; } .kb-board { grid-template-columns: 1fr; } .kb-col { min-height: auto; } }
+
+/* ── View Toggle ── */
+.view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+.view-toggle-btn { padding: 6px 16px; font-size: 12px; cursor: pointer; border: none; background: white; font-family: inherit; font-weight: 500; color: var(--text-muted); transition: all .15s; }
+.view-toggle-btn:hover { background: var(--surface2); }
+.view-toggle-btn.active { background: var(--text); color: white; }
+
+/* ── Calendar ── */
+.cal-nav { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.cal-nav-btn { padding: 4px 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); cursor: pointer; font-family: inherit; color: var(--text); transition: all .1s; }
+.cal-nav-btn:hover { background: var(--surface2); }
+.cal-month-label { font-size: 15px; font-weight: 600; min-width: 120px; text-align: center; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.cal-header { text-align: center; font-size: 11px; color: var(--text-muted); padding: 8px 0; background: var(--surface2); font-weight: 600; }
+.cal-cell { min-height: 56px; padding: 4px; background: var(--surface); cursor: pointer; transition: background .1s; }
+.cal-cell:hover { background: var(--surface2); }
+.cal-cell.today { background: #eff6ff; }
+.cal-cell.other-month { opacity: 0.3; }
+.cal-cell.selected { box-shadow: inset 0 0 0 2px var(--text); }
+.cal-date { font-size: 12px; font-weight: 500; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.cal-date.today { background: var(--text); color: white; }
+.cal-dots { display: flex; gap: 3px; margin-top: 2px; flex-wrap: wrap; }
+.cal-dot { width: 6px; height: 6px; border-radius: 50%; }
+.cal-dot-todo { background: #9ca3af; }
+.cal-dot-wip { background: var(--amber); }
+.cal-dot-done { background: var(--pos); }
+.cal-dot-overdue { background: var(--neg); }
+
+/* ── Calendar Task List (expanded on date click) ── */
+.cal-task-list { margin-top: 12px; }
+.cal-task-list-header { font-size: 13px; font-weight: 600; margin-bottom: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
+.cal-task-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+.cal-task-title { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.cal-task-meta { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; display: flex; gap: 8px; align-items: center; }
+.cal-task-deadline { font-weight: 600; }
+.cal-task-deadline.overdue { color: var(--neg); }
+.cal-task-deadline.due-today { color: var(--amber); }
+.cal-task-deadline.due-soon { color: #b59f3b; }
+.cal-task-deadline.done { color: var(--text-faint); text-decoration: line-through; }
+
+/* ── Subtask Progress Bar ── */
+.subtask-bar { height: 4px; border-radius: 2px; background: #e5e7eb; margin-top: 4px; }
+.subtask-bar-fill { height: 100%; border-radius: 2px; background: var(--pos); transition: width 0.3s; }
+.subtask-count { font-size: 11px; color: var(--text-muted); }
+.subtask-list { margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+.subtask-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-muted); cursor: pointer; padding: 2px 0; }
+.subtask-item:hover { color: var(--text); }
+.subtask-item input[type="checkbox"] { margin: 0; cursor: pointer; }
+.subtask-item.done-subtask { text-decoration: line-through; opacity: 0.6; }
+
+/* ── Kanban deadline color classes ── */
+.kb-card-dl.overdue { color: var(--neg); }
+.kb-card-dl.due-today { color: var(--amber); }
+.kb-card-dl.due-soon { color: #b59f3b; }

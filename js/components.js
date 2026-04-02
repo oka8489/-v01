@@ -345,6 +345,10 @@ const TasksTab = {
     }
     loadTasks()
 
+    // View mode (calendar / kanban)
+    const viewMode = ref(localStorage.getItem('task-view') || 'kanban')
+    watch(viewMode, v => localStorage.setItem('task-view', v))
+
     // Status
     function status(id) { return store.tasks[id]?.status || 'todo' }
     function setStatus(id, s) { if (store.tasks[id]) { store.tasks[id].status = s; saveTasks() } }
@@ -369,6 +373,146 @@ const TasksTab = {
     const wipTasks = computed(() => allTasks.value.filter(t => status(t.id) === 'wip').length)
     const pct = computed(() => totalTasks.value ? Math.round(doneTasks.value / totalTasks.value * 100) : 0)
     function tasksInColumn(col) { return allTasks.value.filter(t => status(t.id) === col) }
+
+    // ── Calendar logic ──
+    const currentMonth = ref(new Date())
+    const selectedDate = ref(null)
+
+    function prevMonth() {
+      const d = new Date(currentMonth.value)
+      d.setMonth(d.getMonth() - 1)
+      currentMonth.value = d
+      selectedDate.value = null
+    }
+    function nextMonth() {
+      const d = new Date(currentMonth.value)
+      d.setMonth(d.getMonth() + 1)
+      currentMonth.value = d
+      selectedDate.value = null
+    }
+    function goToday() {
+      currentMonth.value = new Date()
+      selectedDate.value = null
+    }
+
+    const monthLabel = computed(() => {
+      const d = currentMonth.value
+      return `${d.getFullYear()}年${d.getMonth() + 1}月`
+    })
+
+    const calendarDays = computed(() => {
+      const y = currentMonth.value.getFullYear()
+      const m = currentMonth.value.getMonth()
+      const firstDay = new Date(y, m, 1)
+      // Monday=0 … Sunday=6 (JS: Sunday=0, so adjust)
+      let startDow = firstDay.getDay() - 1
+      if (startDow < 0) startDow = 6
+      const daysInMonth = new Date(y, m + 1, 0).getDate()
+      const days = []
+      // Previous month padding
+      const prevLast = new Date(y, m, 0).getDate()
+      for (let i = startDow - 1; i >= 0; i--) {
+        const date = new Date(y, m - 1, prevLast - i)
+        days.push({ date, day: prevLast - i, otherMonth: true, dateStr: fmtDate(date) })
+      }
+      // Current month
+      for (let d = 1; d <= daysInMonth; d++) {
+        const date = new Date(y, m, d)
+        days.push({ date, day: d, otherMonth: false, dateStr: fmtDate(date) })
+      }
+      // Next month padding (fill to 42 cells = 6 rows)
+      const remaining = 42 - days.length
+      for (let d = 1; d <= remaining; d++) {
+        const date = new Date(y, m + 1, d)
+        days.push({ date, day: d, otherMonth: true, dateStr: fmtDate(date) })
+      }
+      return days
+    })
+
+    function fmtDate(d) {
+      const y = d.getFullYear()
+      const m = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${y}-${m}-${day}`
+    }
+
+    const todayStr = computed(() => fmtDate(new Date()))
+
+    // Tasks grouped by deadline date
+    const tasksByDate = computed(() => {
+      const map = {}
+      for (const t of allTasks.value) {
+        const dl = t.task.deadline
+        if (!dl) continue
+        if (!map[dl]) map[dl] = []
+        map[dl].push(t)
+      }
+      return map
+    })
+
+    function tasksForDate(dateStr) {
+      return tasksByDate.value[dateStr] || []
+    }
+
+    function dotsForDate(dateStr) {
+      const tasks = tasksForDate(dateStr)
+      return tasks.map(t => {
+        const s = status(t.id)
+        if (s === 'done') return 'cal-dot-done'
+        if (s === 'wip') return 'cal-dot-wip'
+        if (t.task.deadline && t.task.deadline < todayStr.value) return 'cal-dot-overdue'
+        return 'cal-dot-todo'
+      })
+    }
+
+    function selectDate(dateStr) {
+      selectedDate.value = selectedDate.value === dateStr ? null : dateStr
+    }
+
+    // Deadline color class
+    function deadlineClass(task) {
+      if (!task.deadline) return ''
+      const s = task.status || 'todo'
+      if (s === 'done') return 'done'
+      const today = todayStr.value
+      if (task.deadline < today) return 'overdue'
+      if (task.deadline === today) return 'due-today'
+      // 3 days from now
+      const d = new Date()
+      d.setDate(d.getDate() + 3)
+      const soon = fmtDate(d)
+      if (task.deadline <= soon) return 'due-soon'
+      return ''
+    }
+
+    function formatDeadlineShort(dateStr) {
+      if (!dateStr) return ''
+      const parts = dateStr.split('-')
+      return `${parseInt(parts[1])}/${parseInt(parts[2])}`
+    }
+
+    function selectedDateLabel() {
+      if (!selectedDate.value) return ''
+      const parts = selectedDate.value.split('-')
+      const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]))
+      const dow = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()]
+      return `${parseInt(parts[1])}月${parseInt(parts[2])}日（${dow}）`
+    }
+
+    // ── Subtask operations ──
+    function subtaskProgress(task) {
+      const subs = task.subtasks || []
+      if (!subs.length) return null
+      const done = subs.filter(s => s.done).length
+      return { done, total: subs.length, pct: Math.round(done / subs.length * 100) }
+    }
+
+    function toggleSubtask(taskId, subtaskId) {
+      const t = store.tasks[taskId]
+      if (!t || !t.subtasks) return
+      const sub = t.subtasks.find(s => s.id === subtaskId)
+      if (sub) { sub.done = !sub.done; saveTasks() }
+    }
 
     // Drag & drop
     const dragId = ref(null)
@@ -398,18 +542,26 @@ const TasksTab = {
     }
     function cancelEdit() { editingCard.value = null }
 
-    // Add task
+    // Add task (with subtasks support)
     const showAddForm = ref(false)
-    const addForm = reactive({ title: '', detail: '', deadline: '', category: '' })
+    const addForm = reactive({ title: '', detail: '', deadline: '', category: '', newSubtask: '', subtasks: [] })
     function openAddForm() {
-      addForm.title = ''; addForm.detail = ''; addForm.deadline = ''
+      addForm.title = ''; addForm.detail = ''; addForm.deadline = ''; addForm.newSubtask = ''; addForm.subtasks = []
       addForm.category = store.categories.length ? store.categories[0].id : ''
       showAddForm.value = true
     }
+    function addSubtaskToForm() {
+      if (!addForm.newSubtask.trim()) return
+      addForm.subtasks.push({ id: 's' + (addForm.subtasks.length + 1), label: addForm.newSubtask.trim(), done: false })
+      addForm.newSubtask = ''
+    }
+    function removeSubtaskFromForm(idx) { addForm.subtasks.splice(idx, 1) }
     function addTask() {
       if (!addForm.title.trim()) return
       const id = 'u' + Date.now()
-      store.tasks[id] = { title: addForm.title.trim(), detail: addForm.detail.trim(), deadline: addForm.deadline.trim(), status: 'todo' }
+      const task = { title: addForm.title.trim(), detail: addForm.detail.trim(), deadline: addForm.deadline, status: 'todo' }
+      if (addForm.subtasks.length) task.subtasks = addForm.subtasks.map((s, i) => ({ id: 's' + (i + 1), label: s.label, done: false }))
+      store.tasks[id] = task
       let cat = store.categories.find(c => c.id === addForm.category)
       if (!cat) {
         cat = { id: 'custom', label: 'カスタム', keys: [] }
@@ -429,14 +581,18 @@ const TasksTab = {
       saveTasks()
     }
 
-    return { store, loading, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
+    return { store, loading, viewMode, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
-             showAddForm, addForm, openAddForm, addTask, deleteTask }
+             showAddForm, addForm, openAddForm, addTask, addSubtaskToForm, removeSubtaskFromForm, deleteTask,
+             currentMonth, selectedDate, prevMonth, nextMonth, goToday, monthLabel, calendarDays,
+             todayStr, tasksForDate, dotsForDate, selectDate, deadlineClass, formatDeadlineShort, selectedDateLabel,
+             subtaskProgress, toggleSubtask }
   },
   template: `<div>
     <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
     <template v-else>
+    <!-- KPI Cards -->
     <div class="section">
       <div class="section-title">事務タスク進捗</div>
       <div class="kpi-grid" style="margin-bottom:16px">
@@ -447,26 +603,96 @@ const TasksTab = {
       </div>
       <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
     </div>
-    <div style="margin-bottom:12px;text-align:right">
+
+    <!-- View Toggle + Add Button -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="view-toggle">
+        <button class="view-toggle-btn" :class="{active: viewMode==='calendar'}" @click="viewMode='calendar'">カレンダー</button>
+        <button class="view-toggle-btn" :class="{active: viewMode==='kanban'}" @click="viewMode='kanban'">カンバン</button>
+      </div>
       <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
     </div>
+
+    <!-- Add Task Form -->
     <div v-if="showAddForm" class="section" style="margin-bottom:12px">
       <div class="section-title">タスクを追加</div>
       <div style="display:flex;flex-direction:column;gap:8px">
         <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.title" placeholder="タスク名（必須）">
         <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.detail" placeholder="詳細（任意）">
-        <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.deadline" placeholder="期限（例: R8.6.1）">
+        <input type="date" class="fee-input" style="max-width:200px;text-align:left" v-model="addForm.deadline">
         <select class="fee-select" v-model="addForm.category" style="max-width:100%">
           <template v-for="cat in store.categories" :key="cat.id"><option :value="cat.id">{{cat.label}}</option></template>
           <option value="__new__">+ 新しいカテゴリ</option>
         </select>
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-muted)">サブタスク</div>
+          <div v-for="(sub, idx) in addForm.subtasks" :key="idx" style="display:flex;align-items:center;gap:4px;margin-bottom:3px;font-size:12px">
+            <span style="flex:1">{{ sub.label }}</span>
+            <button class="btn" @click="removeSubtaskFromForm(idx)" style="padding:1px 6px;font-size:11px;color:var(--neg)">×</button>
+          </div>
+          <div style="display:flex;gap:4px">
+            <input class="fee-input" style="flex:1;text-align:left" v-model="addForm.newSubtask" placeholder="サブタスク名" @keyup.enter="addSubtaskToForm">
+            <button class="btn" @click="addSubtaskToForm" style="white-space:nowrap">追加</button>
+          </div>
+        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end">
           <button class="btn" @click="showAddForm=false">キャンセル</button>
           <button class="btn" @click="addTask" style="background:var(--pos);color:white;border:none">追加</button>
         </div>
       </div>
     </div>
-    <div class="kb-board">
+
+    <!-- ═══ Calendar View ═══ -->
+    <div v-if="viewMode==='calendar'">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" @click="prevMonth">&lt;</button>
+        <span class="cal-month-label">{{ monthLabel }}</span>
+        <button class="cal-nav-btn" @click="nextMonth">&gt;</button>
+        <button class="cal-nav-btn" @click="goToday" style="margin-left:8px;font-size:11px">今日</button>
+      </div>
+      <div class="cal-grid">
+        <div class="cal-header" v-for="dow in ['月','火','水','木','金','土','日']" :key="dow">{{ dow }}</div>
+        <div v-for="(cell, i) in calendarDays" :key="i"
+             class="cal-cell" :class="{ 'other-month': cell.otherMonth, today: cell.dateStr===todayStr, selected: cell.dateStr===selectedDate }"
+             @click="selectDate(cell.dateStr)">
+          <span class="cal-date" :class="{ today: cell.dateStr===todayStr }">{{ cell.day }}</span>
+          <div v-if="dotsForDate(cell.dateStr).length" class="cal-dots">
+            <span v-for="(dot, di) in dotsForDate(cell.dateStr)" :key="di" class="cal-dot" :class="dot"></span>
+          </div>
+        </div>
+      </div>
+      <!-- Selected Date Task List -->
+      <div v-if="selectedDate && tasksForDate(selectedDate).length" class="cal-task-list">
+        <div class="cal-task-list-header">{{ selectedDateLabel() }}（{{ tasksForDate(selectedDate).length }}件）</div>
+        <div v-for="t in tasksForDate(selectedDate)" :key="t.id" class="cal-task-card">
+          <div class="cal-task-title">{{ t.task.title }}</div>
+          <div class="cal-task-meta">
+            <span class="kb-card-tag">{{ t.cat }}</span>
+            <span class="cal-task-deadline" :class="deadlineClass(t.task)">期限: {{ formatDeadlineShort(t.task.deadline) }}</span>
+            <span class="kb-status-pill" :class="'kb-pill-'+status(t.id)" @click="cycleStatus(t.id)" style="margin-left:auto">{{ statusLabel[status(t.id)] }}</span>
+          </div>
+          <template v-if="subtaskProgress(t.task)">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span class="subtask-count">{{ subtaskProgress(t.task).done }}/{{ subtaskProgress(t.task).total }}</span>
+              <div class="subtask-bar" style="flex:1"><div class="subtask-bar-fill" :style="{width: subtaskProgress(t.task).pct+'%'}"></div></div>
+            </div>
+            <div class="subtask-list">
+              <label v-for="sub in t.task.subtasks" :key="sub.id" class="subtask-item" :class="{'done-subtask': sub.done}">
+                <input type="checkbox" :checked="sub.done" @change="toggleSubtask(t.id, sub.id)">
+                <span>{{ sub.label }}</span>
+              </label>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div v-else-if="selectedDate" class="cal-task-list">
+        <div class="cal-task-list-header">{{ selectedDateLabel() }}</div>
+        <div style="font-size:12px;color:var(--text-faint);padding:12px 0">この日のタスクはありません</div>
+      </div>
+    </div>
+
+    <!-- ═══ Kanban View ═══ -->
+    <div v-if="viewMode==='kanban'" class="kb-board">
       <div v-for="col in columns" :key="col.key" class="kb-col" :class="'kb-col-'+col.key"
            @dragover="onDragOver" @drop="onDrop($event, col.key)">
         <div class="kb-col-head">
@@ -482,7 +708,13 @@ const TasksTab = {
             <div class="kb-card-top">
               <span class="kb-card-title" :class="{'kb-done-text': col.key==='done'}">{{t.task.title}}</span>
             </div>
-            <div v-if="t.task.deadline" class="kb-card-dl">{{t.task.deadline}}</div>
+            <div v-if="t.task.deadline" class="kb-card-dl" :class="deadlineClass(t.task)">{{formatDeadlineShort(t.task.deadline)}}</div>
+            <template v-if="subtaskProgress(t.task)">
+              <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px">
+                <span class="subtask-count">{{subtaskProgress(t.task).done}}/{{subtaskProgress(t.task).total}}</span>
+                <div class="subtask-bar" style="flex:1"><div class="subtask-bar-fill" :style="{width: subtaskProgress(t.task).pct+'%'}"></div></div>
+              </div>
+            </template>
             <div class="kb-card-foot">
               <span class="kb-card-tag">{{t.cat}}</span>
               <span class="kb-status-pill" :class="'kb-pill-'+col.key" @click.stop="cycleStatus(t.id)">{{statusLabel[col.key]}}</span>
@@ -491,7 +723,7 @@ const TasksTab = {
               <template v-if="editingCard===t.id">
                 <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:4px" v-model="editForm.title" placeholder="タスク名">
                 <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:4px" v-model="editForm.detail" placeholder="詳細">
-                <input class="fee-input" style="max-width:100%;text-align:left;margin-bottom:8px" v-model="editForm.deadline" placeholder="期限">
+                <input type="date" class="fee-input" style="max-width:200px;text-align:left;margin-bottom:8px" v-model="editForm.deadline">
                 <div style="display:flex;gap:4px">
                   <button class="kb-move-btn" @click.stop="cancelEdit">キャンセル</button>
                   <button class="kb-move-btn kb-move-active" @click.stop="saveEdit(t.id)">保存</button>
@@ -499,6 +731,14 @@ const TasksTab = {
               </template>
               <template v-else>
                 <div class="kb-card-desc">{{t.task.detail}}</div>
+                <template v-if="t.task.subtasks && t.task.subtasks.length">
+                  <div class="subtask-list" style="margin-bottom:8px">
+                    <label v-for="sub in t.task.subtasks" :key="sub.id" class="subtask-item" :class="{'done-subtask': sub.done}">
+                      <input type="checkbox" :checked="sub.done" @change="toggleSubtask(t.id, sub.id)">
+                      <span>{{ sub.label }}</span>
+                    </label>
+                  </div>
+                </template>
                 <div class="kb-card-move">
                   <button v-for="c in columns" :key="c.key" class="kb-move-btn" :class="{'kb-move-active': col.key===c.key}" @click.stop="setStatus(t.id, c.key)">{{c.label}}</button>
                 </div>
