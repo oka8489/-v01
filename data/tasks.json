@@ -3,24 +3,75 @@
     {
       "id": "todoke",
       "label": "届出の変更・新規・取り下げ",
-      "keys": [
-        "t01",
-        "u1775054800723"
-      ]
+      "keys": ["t01", "t02"]
+    },
+    {
+      "id": "system",
+      "label": "システム・運用",
+      "keys": ["t03", "t04"]
+    },
+    {
+      "id": "monthly",
+      "label": "毎月の業務",
+      "keys": ["t05"]
     }
   ],
   "tasks": {
     "t01": {
       "title": "調剤基本料の届出更新",
       "detail": "受付回数・集中率・グループ規模を再計算し、届出を再提出。様式84・85。",
-      "deadline": "R8.6.1（施行日）",
-      "status": "todo"
+      "deadline": "2026-05-01",
+      "status": "todo",
+      "subtasks": [
+        { "id": "s1", "label": "受付回数・集中率の集計", "done": false },
+        { "id": "s2", "label": "様式84記入", "done": false },
+        { "id": "s3", "label": "様式85記入", "done": false },
+        { "id": "s4", "label": "九州厚生局へ提出", "done": false }
+      ]
     },
-    "u1775054800723": {
+    "t02": {
+      "title": "地域支援体制加算の届出",
+      "detail": "施設基準判定ツールで要件確認後、様式87の3を提出。",
+      "deadline": "2026-05-01",
+      "status": "todo",
+      "subtasks": [
+        { "id": "s1", "label": "施設基準チェックリスト確認", "done": false },
+        { "id": "s2", "label": "実績9指標の集計", "done": false },
+        { "id": "s3", "label": "様式87の3記入", "done": false },
+        { "id": "s4", "label": "九州厚生局へ提出", "done": false }
+      ]
+    },
+    "t03": {
       "title": "レセコンマスター更新",
-      "detail": "",
-      "deadline": "R8.5.31",
-      "status": "todo"
+      "detail": "R8改定に対応したマスターデータの更新。ベンダーへの確認含む。",
+      "deadline": "2026-05-31",
+      "status": "todo",
+      "subtasks": [
+        { "id": "s1", "label": "ベンダーに更新日程確認", "done": false },
+        { "id": "s2", "label": "マスター更新実施", "done": false },
+        { "id": "s3", "label": "テスト入力で動作確認", "done": false }
+      ]
+    },
+    "t04": {
+      "title": "掲示物の更新",
+      "detail": "医療DX推進の掲示事項（電子的調剤要件(8)）およびウェブサイト掲載。",
+      "deadline": "2026-06-01",
+      "status": "todo",
+      "subtasks": [
+        { "id": "s1", "label": "掲示内容の作成", "done": false },
+        { "id": "s2", "label": "薬局内に掲示", "done": false },
+        { "id": "s3", "label": "ウェブサイトに掲載", "done": false }
+      ]
+    },
+    "t05": {
+      "title": "実績集計（4月分）",
+      "detail": "処方箋受付回数・各種加算回数の月次集計。",
+      "deadline": "2026-05-10",
+      "status": "todo",
+      "subtasks": [
+        { "id": "s1", "label": "レセコンから実績データ出力", "done": false },
+        { "id": "s2", "label": "アプリに実績入力", "done": false }
+      ]
     }
   }
 }
