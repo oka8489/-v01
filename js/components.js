@@ -729,7 +729,7 @@ const RequirementsTab = {
     // R7実績から読み込み
     function cIndLoadR7() {
       const r6 = props.data.r6 || {}
-      cIndRxAnnual.value = r6.t_rx_count || 0
+      cIndRxAnnual.value = r6.t_rx_sheets || r6.t_rx_count || 0
       // ①夜間・休日等 = 時間外加算+夜間休日等加算+休日加算+深夜加算
       cIndActual.i1 = (r6.t_jikangai_cnt || 0) + (r6.t_yakan_cnt || 0) + (r6.t_kyujitsu_cnt || 0) + (r6.t_shinya_cnt || 0)
       // ②麻薬 = 麻薬加算の合計（全剤種）
@@ -748,6 +748,11 @@ const RequirementsTab = {
       cIndActual.i8 = r6.t_shoni_cnt || 0
       // ⑨研修認定薬剤師（レセコンデータにないため0）
       cIndActual.i9 = 0
+    }
+    function cIndClear() {
+      cIndRxAnnual.value = 0
+      for (const key of Object.keys(cIndActual)) cIndActual[key] = 0
+      for (const key of Object.keys(cInd)) cInd[key] = false
     }
     // 基準値を超えているか自動判定
     function cIndMet(key) {
@@ -920,7 +925,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1143,13 +1148,16 @@ const RequirementsTab = {
             </div>
             <div style="margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:var(--radius)">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-                <div style="font-weight:600;font-size:13px">年間処方箋受付回数</div>
-                <button class="btn" style="font-size:11px;padding:3px 10px;background:var(--teal);color:white;border:none" @click="cIndLoadR7()">R7実績読込</button>
+                <div style="font-weight:600;font-size:13px">年間処方箋受付枚数</div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn" style="font-size:13px;padding:8px 20px;background:var(--r6);color:white;border:none;font-weight:700;border-radius:var(--radius);box-shadow:0 2px 6px rgba(26,115,232,0.3)" @click="cIndLoadR7()">R7実績読込</button>
+                  <button class="btn" style="font-size:11px;padding:6px 12px" @click="cIndClear()">クリア</button>
+                </div>
               </div>
-              <div style="display:flex;align-items:center;gap:8px"><input type="number" class="fee-input" style="max-width:150px" v-model.number="cIndRxAnnual"> 回/年</div>
+              <div style="display:flex;align-items:center;gap:8px"><input type="number" class="fee-input" style="max-width:150px" v-model.number="cIndRxAnnual"> 枚/年</div>
             </div>
             <table style="width:100%;border-collapse:collapse;font-size:12px">
-              <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
+              <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間算定回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
               <tr v-for="ind in cIndLabels" :key="ind.key" style="border-bottom:0.5px solid var(--border)">
                 <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="ind.req" style="font-size:10px;color:var(--neg)">{{ind.req}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span></td>
                 <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" style="max-width:80px;font-size:11px;height:26px" v-model.number="cIndActual[ind.key]"></td>
