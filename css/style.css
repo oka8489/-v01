@@ -150,7 +150,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .cal-month-label { font-size: 15px; font-weight: 600; min-width: 120px; text-align: center; }
 .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
 .cal-header { text-align: center; font-size: 11px; color: var(--text-muted); padding: 8px 0; background: var(--surface2); font-weight: 600; }
-.cal-cell { min-height: 56px; padding: 4px; background: var(--surface); cursor: pointer; transition: background .1s; }
+.cal-cell { min-height: 72px; padding: 4px; background: var(--surface); cursor: pointer; transition: background .1s; overflow: hidden; }
 .cal-cell:hover { background: var(--surface2); }
 .cal-cell.today { background: #eff6ff; }
 .cal-cell.other-month { opacity: 0.3; }
@@ -163,6 +163,13 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .cal-dot-wip { background: var(--amber); }
 .cal-dot-done { background: var(--pos); }
 .cal-dot-overdue { background: var(--neg); }
+
+/* ── Calendar Pills (task/event titles in cells) ── */
+.cal-pill { font-size: 10px; line-height: 1.3; padding: 1px 4px; margin-top: 2px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.cal-pill-todo { background: #f3f4f6; color: #6b7280; }
+.cal-pill-wip { background: var(--amber-l); color: var(--amber); }
+.cal-pill-done { background: var(--green-l); color: var(--pos); text-decoration: line-through; opacity: 0.7; }
+.cal-pill-event { opacity: 0.9; }
 
 /* ── Calendar Event Card ── */
 .cal-event-card { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: 6px; }

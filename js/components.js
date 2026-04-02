@@ -714,9 +714,8 @@ const TasksTab = {
              class="cal-cell" :class="{ 'other-month': cell.otherMonth, today: cell.dateStr===todayStr, selected: cell.dateStr===selectedDate }"
              @click="selectDate(cell.dateStr)">
           <span class="cal-date" :class="{ today: cell.dateStr===todayStr }">{{ cell.day }}</span>
-          <div v-if="dotsForDate(cell.dateStr).length" class="cal-dots">
-            <span v-for="(dot, di) in dotsForDate(cell.dateStr)" :key="di" class="cal-dot" :class="dot.cls" :style="dot.color ? {background: dot.color} : {}"></span>
-          </div>
+          <div v-for="ev in eventsForDate(cell.dateStr)" :key="'e'+ev.id" class="cal-pill cal-pill-event" :style="{background: eventColorCss(ev.color), color:'white'}">{{ ev.title }}</div>
+          <div v-for="t in tasksForDate(cell.dateStr)" :key="'t'+t.id" class="cal-pill" :class="'cal-pill-'+status(t.id)">{{ t.task.title }}</div>
         </div>
       </div>
       <!-- Selected Date Detail -->
