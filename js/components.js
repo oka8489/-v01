@@ -316,7 +316,7 @@ const TasksTab = {
   setup() {
 
     // Reactive task store (loaded from API)
-    const store = reactive({ categories: [], tasks: {} })
+    const store = reactive({ categories: [], tasks: {}, events: [] })
     const loading = ref(true)
 
     // API helpers
@@ -327,6 +327,7 @@ const TasksTab = {
         const json = await res.json()
         store.categories = json.categories || []
         store.tasks = json.tasks || {}
+        store.events = json.events || []
       } catch (e) {
         console.warn('API未接続、フォールバック使用:', e.message)
         store.categories = window.TASK_CATEGORIES || []
@@ -339,7 +340,7 @@ const TasksTab = {
     function saveTasks() {
       clearTimeout(saveTimer)
       saveTimer = setTimeout(async () => {
-        try { await fetch('/api/tasks', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ categories: store.categories, tasks: store.tasks }) }) }
+        try { await fetch('/api/tasks', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ categories: store.categories, tasks: store.tasks, events: store.events }) }) }
         catch (e) { console.error('保存失敗:', e.message) }
       }, 300)
     }
@@ -456,13 +457,16 @@ const TasksTab = {
 
     function dotsForDate(dateStr) {
       const tasks = tasksForDate(dateStr)
-      return tasks.map(t => {
+      const dots = tasks.map(t => {
         const s = status(t.id)
-        if (s === 'done') return 'cal-dot-done'
-        if (s === 'wip') return 'cal-dot-wip'
-        if (t.task.deadline && t.task.deadline < todayStr.value) return 'cal-dot-overdue'
-        return 'cal-dot-todo'
+        if (s === 'done') return { cls: 'cal-dot-done' }
+        if (s === 'wip') return { cls: 'cal-dot-wip' }
+        if (t.task.deadline && t.task.deadline < todayStr.value) return { cls: 'cal-dot-overdue' }
+        return { cls: 'cal-dot-todo' }
       })
+      const evts = eventsForDate(dateStr)
+      for (const ev of evts) dots.push({ cls: 'cal-dot-event', color: eventColorCss(ev.color) })
+      return dots
     }
 
     function selectDate(dateStr) {
@@ -572,6 +576,37 @@ const TasksTab = {
       saveTasks()
     }
 
+    // ── Calendar events (schedules) ──
+    const showAddEvent = ref(false)
+    const eventForm = reactive({ title: '', date: '', color: 'purple' })
+    const eventColors = [
+      { key: 'purple', label: '紫', css: 'var(--purple)' },
+      { key: 'teal', label: '緑', css: 'var(--teal)' },
+      { key: 'amber', label: '橙', css: 'var(--amber)' },
+      { key: 'red', label: '赤', css: 'var(--red)' },
+    ]
+    function openAddEvent() {
+      eventForm.title = ''; eventForm.date = ''; eventForm.color = 'purple'
+      showAddEvent.value = true
+    }
+    function addEvent() {
+      if (!eventForm.title.trim() || !eventForm.date) return
+      store.events.push({ id: 'ev' + Date.now(), title: eventForm.title.trim(), date: eventForm.date, color: eventForm.color })
+      showAddEvent.value = false
+      saveTasks()
+    }
+    function deleteEvent(id) {
+      const idx = store.events.findIndex(e => e.id === id)
+      if (idx >= 0) { store.events.splice(idx, 1); saveTasks() }
+    }
+    function eventsForDate(dateStr) {
+      return store.events.filter(e => e.date === dateStr)
+    }
+    function eventColorCss(colorKey) {
+      const c = eventColors.find(ec => ec.key === colorKey)
+      return c ? c.css : 'var(--purple)'
+    }
+
     // Delete task
     function deleteTask(id) {
       if (!confirm('このタスクを削除しますか？')) return
@@ -587,7 +622,8 @@ const TasksTab = {
              showAddForm, addForm, openAddForm, addTask, addSubtaskToForm, removeSubtaskFromForm, deleteTask,
              currentMonth, selectedDate, prevMonth, nextMonth, goToday, monthLabel, calendarDays,
              todayStr, tasksForDate, dotsForDate, selectDate, deadlineClass, formatDeadlineShort, selectedDateLabel,
-             subtaskProgress, toggleSubtask }
+             subtaskProgress, toggleSubtask,
+             showAddEvent, eventForm, eventColors, openAddEvent, addEvent, deleteEvent, eventsForDate, eventColorCss }
   },
   template: `<div>
     <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
@@ -610,7 +646,29 @@ const TasksTab = {
         <button class="view-toggle-btn" :class="{active: viewMode==='calendar'}" @click="viewMode='calendar'">カレンダー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='kanban'}" @click="viewMode='kanban'">カンバン</button>
       </div>
-      <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
+      <div style="display:flex;gap:6px">
+        <button v-if="viewMode==='calendar'" class="btn" @click="openAddEvent" style="border-color:var(--purple);color:var(--purple)">+ 予定追加</button>
+        <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
+      </div>
+    </div>
+
+    <!-- Add Event Form (calendar only) -->
+    <div v-if="showAddEvent" class="section" style="margin-bottom:12px">
+      <div class="section-title">予定を追加</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input class="fee-input" style="max-width:100%;text-align:left" v-model="eventForm.title" placeholder="予定名（例: 届出書類公開日）">
+        <input type="date" class="fee-input" style="max-width:200px;text-align:left" v-model="eventForm.date">
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:12px;color:var(--text-muted)">色:</span>
+          <button v-for="c in eventColors" :key="c.key" @click="eventForm.color=c.key"
+                  style="width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .1s"
+                  :style="{background: c.css, borderColor: eventForm.color===c.key ? 'var(--text)' : 'transparent'}"></button>
+        </div>
+        <div style="display:flex;gap:8px;justify-content:flex-end">
+          <button class="btn" @click="showAddEvent=false">キャンセル</button>
+          <button class="btn" @click="addEvent" style="background:var(--purple);color:white;border:none">追加</button>
+        </div>
+      </div>
     </div>
 
     <!-- Add Task Form -->
@@ -657,13 +715,20 @@ const TasksTab = {
              @click="selectDate(cell.dateStr)">
           <span class="cal-date" :class="{ today: cell.dateStr===todayStr }">{{ cell.day }}</span>
           <div v-if="dotsForDate(cell.dateStr).length" class="cal-dots">
-            <span v-for="(dot, di) in dotsForDate(cell.dateStr)" :key="di" class="cal-dot" :class="dot"></span>
+            <span v-for="(dot, di) in dotsForDate(cell.dateStr)" :key="di" class="cal-dot" :class="dot.cls" :style="dot.color ? {background: dot.color} : {}"></span>
           </div>
         </div>
       </div>
-      <!-- Selected Date Task List -->
-      <div v-if="selectedDate && tasksForDate(selectedDate).length" class="cal-task-list">
-        <div class="cal-task-list-header">{{ selectedDateLabel() }}（{{ tasksForDate(selectedDate).length }}件）</div>
+      <!-- Selected Date Detail -->
+      <div v-if="selectedDate && (tasksForDate(selectedDate).length || eventsForDate(selectedDate).length)" class="cal-task-list">
+        <div class="cal-task-list-header">{{ selectedDateLabel() }}（{{ tasksForDate(selectedDate).length + eventsForDate(selectedDate).length }}件）</div>
+        <!-- Events -->
+        <div v-for="ev in eventsForDate(selectedDate)" :key="ev.id" class="cal-event-card" :style="{'border-left-color': eventColorCss(ev.color)}">
+          <span class="cal-event-dot" :style="{background: eventColorCss(ev.color)}"></span>
+          <span class="cal-event-title">{{ ev.title }}</span>
+          <button class="cal-event-del" @click="deleteEvent(ev.id)">×</button>
+        </div>
+        <!-- Tasks -->
         <div v-for="t in tasksForDate(selectedDate)" :key="t.id" class="cal-task-card">
           <div class="cal-task-title">{{ t.task.title }}</div>
           <div class="cal-task-meta">
@@ -687,7 +752,7 @@ const TasksTab = {
       </div>
       <div v-else-if="selectedDate" class="cal-task-list">
         <div class="cal-task-list-header">{{ selectedDateLabel() }}</div>
-        <div style="font-size:12px;color:var(--text-faint);padding:12px 0">この日のタスクはありません</div>
+        <div style="font-size:12px;color:var(--text-faint);padding:12px 0">この日の予定はありません</div>
       </div>
     </div>
 
