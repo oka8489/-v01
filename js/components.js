@@ -918,21 +918,13 @@ const RequirementsTab = {
     const rkApplied = ref(cjd.rk_applied || false)
     const rkChecks = reactive({
       kyotei: cjd.rk_kyotei || false,
-      kenshu: cjd.rk_kenshu || false,
-      kunren: cjd.rk_kunren || false,
-      dis_plan: cjd.rk_dis_plan || false,
-      dis_renkei: cjd.rk_dis_renkei || false,
-      shuuchi: cjd.rk_shuuchi || false,
-      saigai_mode: cjd.rk_saigai_mode || false,
+      hijoji: cjd.rk_hijoji || false,
+      ict: cjd.rk_ict || false,
     })
     const rkCheckLabels = [
-      { key: 'kyotei', label: '第二種協定指定医療機関の指定を受けている', help: '<b>必要な対応:</b>\n・都道府県知事に<b>第二種協定指定医療機関</b>の申請・指定を受ける\n・感染症法に基づく指定で、新興感染症発生時に医療提供を行う協定を締結\n・都道府県の担当部署に確認・申請' },
-      { key: 'kenshu', label: '年1回以上、感染症に係る研修を実施している', help: '<b>必要な対応:</b>\n・感染症に係る最新の科学的知見に基づいた研修を<b>年1回以上</b>実施\n・薬局内研修でも外部研修への参加でも可\n・<b style="color:var(--r6);text-decoration:underline">研修記録（日時・内容・参加者）を保存</b>' },
-      { key: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している', help: '<b>必要な対応:</b>\n・新型インフルエンザ等感染症に係る医療提供の<b>訓練を年1回以上</b>実施\n・自治体や関係団体との合同訓練への参加でも可\n・<b style="color:var(--r6);text-decoration:underline">訓練記録（日時・内容・参加者）を保存</b>' },
-      { key: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している', help: '<b>必要な対応:</b>\n・災害発生時の医薬品供給体制の計画書を作成\n・被災状況に応じた対応手順の整備\n・地域の衛生管理への協力体制' },
-      { key: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している', help: '<b>必要な対応:</b>\n・地域の災害対策協議会への参加\n・自治体・薬剤師会主催の研修・訓練への参加\n・<b style="color:var(--r6);text-decoration:underline">参加記録の保存</b>' },
-      { key: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している', help: '<b>必要な対応:</b>\n・災害時・感染症発生時に対応可能であることを<b>ホームページ等で公開</b>\n・行政機関や薬剤師会のHP経由での周知でも可\n・薬局内の掲示も併せて行う' },
-      { key: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある', help: '<b>必要な対応:</b>\n・オンライン資格確認等システムの<b>災害時モード（緊急時医療情報閲覧）</b>の操作方法を習得\n・電子処方箋管理サービスへの調剤情報の登録\n・平時からこれらシステムの活用に努めること' },
+      { key: 'kyotei', label: '(1) 第二種協定指定医療機関の指定を受けていること', help: '<b>告示第71号 第十五の四の二(1)</b>\n\n感染症の予防及び感染症の患者に対する医療に関する法律第六条第十七項に規定する第二種協定指定医療機関であること。\n\n<b>必要な対応:</b>\n・都道府県知事に<b>第二種協定指定医療機関</b>の申請・指定を受ける\n・感染症法に基づく指定で、新興感染症発生時に医療提供を行う協定を締結' },
+      { key: 'hijoji', label: '(2) 災害の発生時等において、他の保険薬局等との連携により非常時における対応につき必要な体制が整備されていること', help: '<b>告示第71号 第十五の四の二(2)</b>\n\n<b>必要な対応:</b>\n・災害発生時の医薬品供給体制の計画書を作成\n・他の保険薬局等との連携体制の整備\n・地域の協議会、研修又は訓練等への参加\n・対応可能な体制を行政機関・薬剤師会等のHP等で周知\n・災害時モード（オンライン資格確認等システム）の活用体制' },
+      { key: 'ict', label: '(3) 情報通信機器を用いた服薬指導を行う体制が整備されていること', help: '<b>告示第71号 第十五の四の二(3)</b>\n\n<b>必要な対応:</b>\n・オンライン服薬指導に対応できる通信環境の整備\n・ビデオ通話等の機器・ソフトウェアの準備\n・オンライン服薬指導に関する研修の実施\n・サイバーセキュリティ対策' },
     ]
     const rkHelpModal = ref(null)
     function rkOpenHelp(key) { rkHelpModal.value = key }
@@ -942,7 +934,7 @@ const RequirementsTab = {
     function rkNext() {
       if (rkStep.value === 1) {
         if (rkR7.value === null) return
-        if (rkR7.value === true) { rkResult.value = { pts: 5, label: '加算（5点）', reason: 'R7算定済み → 届出不要、引き続き算定可能' }; rkStep.value = 3 }
+        if (rkR7.value === true) { rkResult.value = { pts: 5, label: '加算（5点）', reason: 'R7算定済み → 変更がなければ、引き続き算定可能' }; rkStep.value = 3 }
         else rkStep.value = 2
       }
       else if (rkStep.value === 2) {
@@ -1366,7 +1358,7 @@ const RequirementsTab = {
         <div v-if="rkStep===1" style="font-size:14px;line-height:2">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：加算算定状況</div>
           <div style="font-weight:600;margin-bottom:8px">令和7年度に連携強化加算を届出していましたか？</div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="rkR7" :value="true">はい → 届出不要、引き続き算定可能</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="rkR7" :value="true">はい → 変更がなければ、引き続き算定可能</label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="rkR7" :value="false">いいえ → 施設基準を確認</label>
         </div>
 
