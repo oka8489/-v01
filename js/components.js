@@ -934,18 +934,20 @@ const RequirementsTab = {
     function rkNext() {
       if (rkStep.value === 1) {
         if (rkR7.value === null) return
-        if (rkR7.value === true) { rkResult.value = { pts: 5, label: '加算（5点）', reason: 'R7算定済み → 変更がなければ、引き続き算定可能' }; rkStep.value = 3 }
-        else rkStep.value = 2
+        if (rkR7.value === true) { for (const k of Object.keys(rkChecks)) rkChecks[k] = true }
+        rkStep.value = 2
       }
       else if (rkStep.value === 2) {
-        rkResult.value = rkAllOk.value ? { pts: 5, label: '加算（5点）', reason: '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
-        rkStep.value = 3
+        if (rkR7.value === true) {
+          rkResult.value = { pts: 5, label: '加算（5点）', reason: '施設基準に変更なし。届出不要、引き続き算定可能。' }
+          rkStep.value = 3
+        } else {
+          rkResult.value = rkAllOk.value ? { pts: 5, label: '加算（5点）', reason: '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
+          rkStep.value = 3
+        }
       }
     }
-    function rkBack() {
-      if (rkStep.value === 3 && rkR7.value === true) rkStep.value = 1
-      else if (rkStep.value > 1) rkStep.value--
-    }
+    function rkBack() { if (rkStep.value > 1) rkStep.value-- }
     function rkReset() { rkStep.value = 1; rkR7.value = null; rkResult.value = null; rkApplied.value = false }
     function rkApplyToR8() {
       if (!rkResult.value) return
@@ -986,8 +988,8 @@ const RequirementsTab = {
     function dxNext() {
       if (dxStep.value === 1) {
         if (dxR7.value === null) return
-        if (dxR7.value === true) dxStep.value = 2 // 届出済み→変更要件チェックへ
-        else dxStep.value = 2 // 新規→全要件チェックへ
+        if (dxR7.value === true) { for (const k of Object.keys(dxChecks)) dxChecks[k] = true }
+        dxStep.value = 2
       }
       else if (dxStep.value === 2) {
         dxResult.value = dxAllOk.value ? { pts: 8, label: '加算（8点）', reason: dxR7.value ? '届出済み＋変更要件クリア。届出不要。' : '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
@@ -1405,7 +1407,8 @@ const RequirementsTab = {
 
         <div v-if="rkStep===2" style="font-size:14px;line-height:1.8">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認</div>
-          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
+          <div v-if="rkR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。R8改定で施設基準の変更はありません。以下の要件に変更がないことを確認してください。</div>
+          <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in rkCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="rkChecks[chk.key]">
@@ -1463,7 +1466,7 @@ const RequirementsTab = {
 
         <div v-if="dxStep===2" style="font-size:14px;line-height:1.8">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認（告示第71号 五の四）</div>
-          <p v-if="dxR7" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:12px">※R7で届出済み。変更された要件を中心に確認してください。</p>
+          <div v-if="dxR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。施設基準に変更がないことを確認してください。変更がなければ届出不要です。</div>
           <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in dxCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
