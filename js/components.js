@@ -914,16 +914,21 @@ const RequirementsTab = {
     const JUDGE_PAGES = {
       k_renkei: {
         title: '連携強化加算',
-        source: 'docu/ 改定概要',
+        source: 'docu/ 届出資料 p.18（表３）、別添3 p.4',
+        desc: 'R8改定で施設基準の変更なし。R7で算定済みの場合、届出不要（表３）。新規算定の場合は届出が必要。',
         options: [
           { value: 0, label: '算定なし' },
           { value: 5, label: '加算（5点）' },
         ],
         checks: [
-          { id: 'dis_plan', label: '災害や新興感染症発生時における対応に係る地域の協議会、研修等への参加' },
-          { id: 'dis_stock', label: '災害時等における医薬品供給等に関する情報のリスト整備' },
-          { id: 'dis_train', label: '自治体や関係団体等との合同訓練への参加' },
-          { id: 'pct_report', label: 'PCR等検査無料化事業の実施体制' },
+          { id: 'r7_santei', label: '【Step①】R7（令和7年度）で連携強化加算を算定していた', highlight: true },
+          { id: 'kyotei', label: '第二種協定指定医療機関の指定を受けている' },
+          { id: 'kenshu', label: '年1回以上、感染症に係る研修を実施している' },
+          { id: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している' },
+          { id: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している' },
+          { id: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している' },
+          { id: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している' },
+          { id: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある' },
         ],
       },
       k_dx8: {
@@ -1307,14 +1312,16 @@ const RequirementsTab = {
     <template v-for="pid in judgePageIds" :key="pid"><div v-if="sub===pid">
       <div class="section">
         <div class="section-title">{{JUDGE_PAGES[pid].title}}</div>
-        <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px">出典：{{JUDGE_PAGES[pid].source}}</p>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">出典：{{JUDGE_PAGES[pid].source}}</p>
+        <div v-if="JUDGE_PAGES[pid].desc" style="font-size:12px;color:var(--text-muted);margin-bottom:16px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">{{JUDGE_PAGES[pid].desc}}</div>
         <div style="font-weight:700;margin-bottom:8px">施設基準の要件</div>
         <ul class="task-list">
           <li v-for="chk in JUDGE_PAGES[pid].checks" :key="chk.id" class="task-item">
             <input type="checkbox" class="task-check" :checked="jpChecked(pid, chk.id)" @change="jpToggle(pid, chk.id)">
-            <div style="font-size:13px" :style="jpChecked(pid, chk.id)?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+            <div style="font-size:13px" :style="(jpChecked(pid, chk.id)?'text-decoration:line-through;opacity:0.5;':'') + (chk.highlight?'color:var(--r6);font-weight:700':'')">{{chk.label}}</div>
           </li>
         </ul>
+        <div v-if="JUDGE_PAGES[pid].checks.some(c=>c.id==='r7_santei') && jpChecked(pid,'r7_santei')" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-top:8px">R7で算定済み → R8改定で施設基準の変更なし。届出不要（表３）。引き続き算定可能。</div>
         <div v-if="JUDGE_PAGES[pid].indicators" style="margin-top:16px">
           <div style="font-weight:700;margin-bottom:8px">実績指標（処方箋1万枚当たり/年）</div>
           <ul class="task-list">
