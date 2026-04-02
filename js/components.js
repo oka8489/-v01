@@ -802,7 +802,7 @@ const RequirementsTab = {
         { key: 'f2c', label: 'ウ 医療材料及び衛生材料を供給できる体制' },
         { key: 'f2d', label: 'エ 麻薬小売業者の免許' },
         { key: 'f2e', label: 'オ 取り扱う医薬品に係る情報提供体制' },
-        { key: 'f2f', label: 'カ 調剤室の面積が16平方メートル以上（R8.6以降に開設・改築・増築する場合のみ）' },
+        { key: 'f2f', label: 'カ 調剤室の面積が16平方メートル以上（R8.6以降に開設・改築・増築する場合のみ）', isNew: true },
       ]},
       { group: '（３）休日、夜間を含む薬局における調剤・相談応需体制', items: [
         { key: 'f3a', label: 'ア 一定時間以上の開局' },
@@ -829,11 +829,11 @@ const RequirementsTab = {
         { key: 'f10', label: '（１０）患者のプライバシーに配慮、椅子に座った状態での服薬指導' },
         { key: 'f11a', label: '（１１）ア 一般用医薬品及び要指導医薬品等（48薬効群）の販売' },
         { key: 'f11b', label: '（１１）イ 健康相談、生活習慣に係る相談の実施' },
-        { key: 'f11c', label: '（１１）ウ 緊急避妊薬の調剤又は販売を含む女性の健康に係る対応' },
+        { key: 'f11c', label: '（１１）ウ 緊急避妊薬の調剤又は販売を含む女性の健康に係る対応', isNew: true },
         { key: 'f11d', label: '（１１）エ 当該保険薬局の敷地内における禁煙の取扱い' },
         { key: 'f11e', label: '（１１）オ たばこの販売禁止（併設する店舗販売業含む）' },
-        { key: 'f11f', label: '（１１）カ セルフメディケーション関連機器の設置（少なくとも３つ）' },
-        { key: 'f11g', label: '（１１）キ 薬事未承認の研究用試薬・検査サービスを提供していないこと' },
+        { key: 'f11f', label: '（１１）カ セルフメディケーション関連機器の設置（少なくとも３つ）', isNew: true },
+        { key: 'f11g', label: '（１１）キ 薬事未承認の研究用試薬・検査サービスを提供していないこと', isNew: true },
       ]},
     ]
     const c2FacilityOk = computed(() => Object.values(c2Facility).every(v => v))
@@ -1255,7 +1255,7 @@ const RequirementsTab = {
               <ul class="task-list">
                 <li v-for="item in grp.items" :key="item.key" class="task-item">
                   <input type="checkbox" class="task-check" v-model="c2Facility[item.key]">
-                  <div style="font-size:12px" :style="c2Facility[item.key]?'text-decoration:line-through;opacity:0.5':''">{{item.label}}</div>
+                  <div style="font-size:12px" :style="(c2Facility[item.key]?'text-decoration:line-through;opacity:0.5;':'') + (item.isNew?'color:var(--r6);font-weight:600':'')">{{item.label}}<span v-if="item.isNew" class="badge badge-new" style="margin-left:6px">新規</span></div>
                 </li>
               </ul>
             </div>
