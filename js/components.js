@@ -718,8 +718,8 @@ const RequirementsTab = {
     const cIndLabels = [
       { key: 'i1', label: '①夜間・休日等の対応実績', k1: 40, other: 400, k1s: '40回以上', others: '400回以上' },
       { key: 'i2', label: '②麻薬の調剤実績', k1: 1, other: 10, k1s: '1回以上', others: '10回以上' },
-      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: 20, other: 40, k1s: '20回以上', others: '40回以上' },
-      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', req: '★加算2・4必須' },
+      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', note2: '※R7実績は「重複投薬・相互作用等防止加算」の算定回数で記入' },
+      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', req: '★加算2・4必須', note2: '※R7実績は「かかりつけ薬剤師指導料＋包括管理料」の算定回数で記入' },
       { key: 'i5', label: '⑤外来服薬支援料1の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上' },
       { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', req: '★加算4必須' },
       { key: 'i7', label: '⑦服薬情報等提供料の実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
@@ -734,8 +734,8 @@ const RequirementsTab = {
       cIndActual.i1 = (r6.t_jikangai_cnt || 0) + (r6.t_yakan_cnt || 0) + (r6.t_kyujitsu_cnt || 0) + (r6.t_shinya_cnt || 0)
       // ②麻薬 = 麻薬加算の合計（全剤種）
       cIndActual.i2 = (r6.t_kaz_nai_mayaku || 0) + (r6.t_kaz_gai_mayaku || 0) + (r6.t_kaz_ton_mayaku || 0) + (r6.t_kaz_chu_mayaku || 0) + (r6.t_kaz_sin_mayaku || 0) + (r6.t_kaz_yu_mayaku || 0) + (r6.t_kaz_col_mayaku || 0) + (r6.t_kaz_mat_mayaku || 0)
-      // ③残薬調整加算 + 有害事象防止加算（R7にはまだないので残薬調整のみ）
-      cIndActual.i3 = r6.t_zanryaku_cnt || r6.k_zanryaku_cnt || 0
+      // ③重複投薬・相互作用等防止加算（R7での名称）= 残薬以外 + 残薬
+      cIndActual.i3 = (r6.t_jufuku_other_cnt || 0) + (r6.t_jufuku_zan_cnt || 0)
       // ④かかりつけ薬剤師指導料 + 包括管理料
       cIndActual.i4 = (r6.t_kakaritsuke_shido_cnt || r6.k_kakaritsuke_shido_cnt || 0) + (r6.t_kakaritsuke_hokatsu_cnt || 0)
       // ⑤外来服薬支援料1
@@ -1159,7 +1159,7 @@ const RequirementsTab = {
             <table style="width:100%;border-collapse:collapse;font-size:12px">
               <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間算定回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
               <tr v-for="ind in cIndLabels" :key="ind.key" style="border-bottom:0.5px solid var(--border)">
-                <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="ind.req" style="font-size:10px;color:var(--neg)">{{ind.req}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span></td>
+                <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="ind.req" style="font-size:10px;color:var(--neg)">{{ind.req}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span><div v-if="ind.note2" style="font-size:10px;color:var(--amber)">{{ind.note2}}</div></td>
                 <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" style="max-width:80px;font-size:11px;height:26px" v-model.number="cIndActual[ind.key]"></td>
                 <td style="text-align:right;padding:6px 4px;font-family:'IBM Plex Mono',monospace" :style="cIndMet(ind.key)?'color:var(--pos);font-weight:700':'color:var(--text-muted)'">{{cIndPer10k(ind.key)}}</td>
                 <td style="text-align:right;padding:6px 4px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1s : ind.others}}</td>
