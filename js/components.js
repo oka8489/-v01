@@ -1262,7 +1262,8 @@ const RequirementsTab = {
 
           <div v-if="c2Step===3" style="font-size:14px;line-height:1.6">
             <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：施設基準の確認</div>
-            <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">加算2～5の算定には、加算1の要件に加えて以下の施設基準を全て満たす必要があります。</p>
+            <p style="font-size:12px;color:var(--text-muted);margin-bottom:8px">加算2～5の算定には、加算1の要件に加えて以下の施設基準を全て満たす必要があります。</p>
+            <p style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:12px">※令和７年度に地域支援体制加算を取っている場合は、青字（新規・変更）のみチェック</p>
             <div v-for="grp in c2FacilityChecks" :key="grp.group" style="margin-bottom:16px">
               <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--text)">{{grp.group}}</div>
               <ul class="task-list">
