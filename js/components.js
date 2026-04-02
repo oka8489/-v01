@@ -911,26 +911,61 @@ const RequirementsTab = {
     }
     watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cIndRxAnnual, cBase, cInd, cIndActual, c2Facility], saveCJudge, { deep: true })
 
+    // 連携強化加算 ステップ式
+    const rkStep = ref(cjd.rk_step || 1)
+    const rkR7 = ref(cjd.rk_r7 ?? null)
+    const rkResult = ref(cjd.rk_result || null)
+    const rkApplied = ref(cjd.rk_applied || false)
+    const rkChecks = reactive({
+      kyotei: cjd.rk_kyotei || false,
+      kenshu: cjd.rk_kenshu || false,
+      kunren: cjd.rk_kunren || false,
+      dis_plan: cjd.rk_dis_plan || false,
+      dis_renkei: cjd.rk_dis_renkei || false,
+      shuuchi: cjd.rk_shuuchi || false,
+      saigai_mode: cjd.rk_saigai_mode || false,
+    })
+    const rkCheckLabels = [
+      { key: 'kyotei', label: '第二種協定指定医療機関の指定を受けている' },
+      { key: 'kenshu', label: '年1回以上、感染症に係る研修を実施している' },
+      { key: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している' },
+      { key: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している' },
+      { key: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している' },
+      { key: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している' },
+      { key: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある' },
+    ]
+    const rkAllOk = computed(() => Object.values(rkChecks).every(v => v))
+    function rkNext() {
+      if (rkStep.value === 1) {
+        if (rkR7.value === null) return
+        if (rkR7.value === true) { rkResult.value = { pts: 5, label: '加算（5点）', reason: 'R7算定済み → 届出不要、引き続き算定可能' }; rkStep.value = 3 }
+        else rkStep.value = 2
+      }
+      else if (rkStep.value === 2) {
+        rkResult.value = rkAllOk.value ? { pts: 5, label: '加算（5点）', reason: '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
+        rkStep.value = 3
+      }
+    }
+    function rkBack() {
+      if (rkStep.value === 3 && rkR7.value === true) rkStep.value = 1
+      else if (rkStep.value > 1) rkStep.value--
+    }
+    function rkReset() { rkStep.value = 1; rkR7.value = null; rkResult.value = null; rkApplied.value = false }
+    function rkApplyToR8() {
+      if (!rkResult.value) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_renkei'] = rkResult.value.pts; rkApplied.value = true }
+    }
+    function saveRkJudge() {
+      props.data.judge = {
+        ...(props.data.judge || {}),
+        rk_step: rkStep.value, rk_r7: rkR7.value, rk_result: rkResult.value, rk_applied: rkApplied.value,
+        ...Object.fromEntries(Object.entries(rkChecks).map(([k,v]) => ['rk_'+k, v])),
+      }
+    }
+    watch([rkStep, rkR7, rkResult, rkApplied, rkChecks], saveRkJudge, { deep: true })
+
     const JUDGE_PAGES = {
-      k_renkei: {
-        title: '連携強化加算',
-        source: 'docu/ 届出資料 p.18（表３）、別添3 p.4',
-        desc: 'R8改定で施設基準の変更なし。R7で算定済みの場合、届出不要（表３）。新規算定の場合は届出が必要。',
-        options: [
-          { value: 0, label: '算定なし' },
-          { value: 5, label: '加算（5点）' },
-        ],
-        checks: [
-          { id: 'r7_santei', label: '【Step①】R7（令和7年度）で連携強化加算を算定していた', highlight: true },
-          { id: 'kyotei', label: '第二種協定指定医療機関の指定を受けている' },
-          { id: 'kenshu', label: '年1回以上、感染症に係る研修を実施している' },
-          { id: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している' },
-          { id: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している' },
-          { id: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している' },
-          { id: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している' },
-          { id: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある' },
-        ],
-      },
+      k_renkei: null, // 専用ステップ式に移行
       k_dx8: {
         title: '電子的調剤情報連携体制整備加算',
         source: 'docu/ 改定概要 p.15',
@@ -1010,12 +1045,13 @@ const RequirementsTab = {
       }
     }
     function jpApplied(pageId) { return !!props.data.judge?.[pageId + '_applied'] }
-    const judgePageIds = Object.keys(JUDGE_PAGES)
+    const judgePageIds = Object.keys(JUDGE_PAGES).filter(k => JUDGE_PAGES[k] !== null)
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
+             rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -1023,6 +1059,7 @@ const RequirementsTab = {
       <button class="btn" :class="{active:sub==='checklist'}" :style="sub==='checklist'?'background:var(--text);color:white':''" @click="sub='checklist'" style="font-size:12px;padding:6px 12px">チェックリスト</button>
       <button class="btn" :class="{active:sub==='k_kihon'}" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
       <button class="btn" :style="sub==='k_chiiki'?'background:var(--teal);color:white':''" @click="sub='k_chiiki'" style="font-size:12px;padding:6px 12px">地域支援・医薬品供給対応体制</button>
+      <button class="btn" :style="sub==='k_renkei'?'background:var(--teal);color:white':''" @click="sub='k_renkei'" style="font-size:12px;padding:6px 12px">連携強化</button>
       <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
     </div>
     <div v-if="sub==='checklist'">
@@ -1309,6 +1346,56 @@ const RequirementsTab = {
         </template>
       </div>
     </div>
+    <div v-if="sub==='k_renkei'">
+      <div class="section">
+        <div class="section-title">連携強化加算</div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div>R8改定で施設基準の変更なし。</div>
+          <div>R7で算定済みの場合、届出不要（表３）。新規算定の場合は届出が必要。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{rkStep}} / 3</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(rkStep/3*100)+'%'}"></div></div>
+
+        <div v-if="rkStep===1" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：R7での算定状況</div>
+          <div style="font-weight:600;margin-bottom:8px">R7（令和7年度）で連携強化加算を算定していましたか？</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="rkR7" :value="true">はい → 届出不要、引き続き算定可能</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="rkR7" :value="false">いいえ → 施設基準を確認</label>
+        </div>
+
+        <div v-if="rkStep===2" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
+          <ul class="task-list">
+            <li v-for="chk in rkCheckLabels" :key="chk.key" class="task-item">
+              <input type="checkbox" class="task-check" v-model="rkChecks[chk.key]">
+              <div style="font-size:13px" :style="rkChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+            </li>
+          </ul>
+        </div>
+
+        <div v-if="rkStep===3">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：判定結果</div>
+          <div v-if="rkResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="rkResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{rkResult.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted)">{{rkResult.reason}}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="rkApplyToR8()">R8予測に反映</button>
+            <button class="btn" @click="rkReset()">最初からやり直す</button>
+            <span v-if="rkApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+        </div>
+
+        <div v-if="rkStep<3" style="margin-top:20px;display:flex;gap:8px">
+          <button v-if="rkStep>1" class="btn" @click="rkBack()">戻る</button>
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="rkNext()">次へ</button>
+        </div>
+      </div>
+    </div>
     <template v-for="pid in judgePageIds" :key="pid"><div v-if="sub===pid">
       <div class="section">
         <div class="section-title">{{JUDGE_PAGES[pid].title}}</div>
@@ -1321,7 +1408,6 @@ const RequirementsTab = {
             <div style="font-size:13px" :style="(jpChecked(pid, chk.id)?'text-decoration:line-through;opacity:0.5;':'') + (chk.highlight?'color:var(--r6);font-weight:700':'')">{{chk.label}}</div>
           </li>
         </ul>
-        <div v-if="JUDGE_PAGES[pid].checks.some(c=>c.id==='r7_santei') && jpChecked(pid,'r7_santei')" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-top:8px">R7で算定済み → R8改定で施設基準の変更なし。届出不要（表３）。引き続き算定可能。</div>
         <div v-if="JUDGE_PAGES[pid].indicators" style="margin-top:16px">
           <div style="font-weight:700;margin-bottom:8px">実績指標（処方箋1万枚当たり/年）</div>
           <ul class="task-list">
