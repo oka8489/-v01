@@ -821,7 +821,7 @@ const RequirementsTab = {
         { key: 'f5b', label: '（５）イ 医療安全に資する取組実績の報告', help: '<b>必要な対応:</b>\n・ヒヤリ・ハット事例の収集・報告\n・薬局ヒヤリ・ハット事例収集・分析事業等への参加' },
         { key: 'f5c', label: '（５）ウ 副作用報告に係る手順書を作成', help: '<b>必要な対応:</b>\n・PMDA（医薬品医療機器総合機構）への<b>副作用報告の手順書</b>を作成\n・手順書に基づく報告体制の整備\n・スタッフへの周知' },
       ]},
-      { group: '（６）～（１０）その他の要件', items: [
+      { group: '（６）～（１０）', items: [
         { key: 'f6', label: '（６）かかりつけ薬剤師が服薬管理指導を行う旨の届出', help: '<b>必要な対応:</b>\n・地方厚生局への届出\n・かかりつけ薬剤師の要件を満たす薬剤師が在籍していること' },
         { key: 'f7', label: '（７）患者毎に服薬指導の実施、薬剤服用歴の作成', help: '<b>必要な対応:</b>\n・全患者に対する服薬指導の実施\n・薬剤服用歴（薬歴）の作成・記録・保存' },
         { key: 'f8', label: '（８）管理薬剤師要件（薬局経験５年以上、常勤、当該薬局在籍１年以上）', help: '<b>管理薬剤師の要件:</b>\n・保険薬剤師として<b>5年以上</b>の薬局勤務経験\n・当該薬局に<b>常勤</b>で勤務\n・当該薬局に<b>1年以上</b>在籍' },
@@ -831,7 +831,7 @@ const RequirementsTab = {
       { group: '（１１）地域医療に関連する取組の実施', items: [
         { key: 'f11a', label: '（１１）ア 一般用医薬品及び要指導医薬品等（48薬効群）の販売', help: '<b>必要な対応:</b>\n・基本的な<b>48薬効群</b>の一般用医薬品・要指導医薬品を取り扱い\n・店舗販売業の許可（必要な場合）' },
         { key: 'f11b', label: '（１１）イ 健康相談、生活習慣に係る相談の実施', help: '<b>必要な対応:</b>\n・健康相談・生活習慣に関する相談対応\n・相談実績の記録' },
-        { key: 'f11c', label: '（１１）ウ 緊急避妊薬の調剤又は販売を含む女性の健康に係る対応', isChanged: true, help: '<b style="color:var(--r6)">【変更】「又は販売」が追加</b>\n・緊急避妊薬（アフターピル）の調剤又はOTC販売に対応\n・女性の健康に関する相談対応体制\n・プライバシーに配慮した対応' },
+        { key: 'f11c', label: '（１１）ウ 緊急避妊薬の調剤', labelBlue: '又は販売', labelAfter: 'を含む女性の健康に係る対応', isChanged: true, help: '<b style="color:var(--r6)">【変更】「又は販売」が追加</b>\n・緊急避妊薬（アフターピル）の調剤又はOTC販売に対応\n・女性の健康に関する相談対応体制\n・プライバシーに配慮した対応' },
         { key: 'f11d', label: '（１１）エ 当該保険薬局の敷地内における禁煙の取扱い', help: '<b>必要な対応:</b>\n・薬局敷地内の全面禁煙\n・禁煙の掲示' },
         { key: 'f11e', label: '（１１）オ たばこの販売禁止（併設する店舗販売業含む）', help: '<b>必要な対応:</b>\n・薬局及び併設店舗でのたばこ販売を行わないこと\n・自動販売機の設置もNG' },
         { key: 'f11f', label: '（１１）カ セルフメディケーション関連機器の設置（少なくとも３つ）', isNew: true, help: '<b style="color:var(--r6)">【新規要件】</b>\n<b>以下から少なくとも3つを設置:</b>\n①体重計\n②体温計\n③血圧測定器\n④体組成計（体脂肪率、BMI等）\n⑤血中酸素飽和度測定器（パルスオキシメータ）\n⑥握力計\n⑦骨密度測定器' },
@@ -1268,7 +1268,7 @@ const RequirementsTab = {
               <ul class="task-list">
                 <li v-for="item in grp.items" :key="item.key" class="task-item" style="align-items:center">
                   <input type="checkbox" class="task-check" v-model="c2Facility[item.key]">
-                  <div style="font-size:12px;flex:1" :style="(c2Facility[item.key]?'text-decoration:line-through;opacity:0.5;':'') + (item.isNew||item.isChanged?'color:var(--r6);font-weight:600':'')">{{item.label}}<span v-if="item.isNew" class="badge badge-new" style="margin-left:6px">新規</span><span v-if="item.isChanged" class="badge badge-modified" style="margin-left:6px">変更</span></div>
+                  <div style="font-size:12px;flex:1" :style="(c2Facility[item.key]?'text-decoration:line-through;opacity:0.5;':'') + (item.isNew?'color:var(--r6);font-weight:600':'')">{{item.label}}<span v-if="item.labelBlue" style="color:var(--r6);font-weight:700">{{item.labelBlue}}</span><span v-if="item.labelAfter">{{item.labelAfter}}</span><span v-if="item.isNew" class="badge badge-new" style="margin-left:6px">新規</span><span v-if="item.isChanged" class="badge badge-modified" style="margin-left:6px">変更</span></div>
                   <button v-if="item.help" class="btn" style="font-size:10px;padding:2px 8px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="c2FacOpenHelp(item.key)">チェック！</button>
                 </li>
               </ul>
@@ -1299,7 +1299,6 @@ const RequirementsTab = {
           <div v-if="c2Step<4" style="margin-top:20px;display:flex;gap:8px">
             <button v-if="c2Step>1" class="btn" @click="c2Back()">戻る</button>
             <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="c2Next()">次へ</button>
-            <button class="btn" @click="c2Reset()">最初からやり直す</button>
           </div>
         </template>
       </div>
