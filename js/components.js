@@ -726,6 +726,29 @@ const RequirementsTab = {
       { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上' },
       { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true },
     ]
+    // R7実績から読み込み
+    function cIndLoadR7() {
+      const r6 = props.data.r6 || {}
+      cIndRxAnnual.value = r6.t_rx_count || 0
+      // ①夜間・休日等 = 時間外加算+夜間休日等加算+休日加算+深夜加算
+      cIndActual.i1 = (r6.t_jikangai_cnt || 0) + (r6.t_yakan_cnt || 0) + (r6.t_kyujitsu_cnt || 0) + (r6.t_shinya_cnt || 0)
+      // ②麻薬 = 麻薬加算の合計（全剤種）
+      cIndActual.i2 = (r6.t_kaz_nai_mayaku || 0) + (r6.t_kaz_gai_mayaku || 0) + (r6.t_kaz_ton_mayaku || 0) + (r6.t_kaz_chu_mayaku || 0) + (r6.t_kaz_sin_mayaku || 0) + (r6.t_kaz_yu_mayaku || 0) + (r6.t_kaz_col_mayaku || 0) + (r6.t_kaz_mat_mayaku || 0)
+      // ③残薬調整加算 + 有害事象防止加算（R7にはまだないので残薬調整のみ）
+      cIndActual.i3 = r6.t_zanryaku_cnt || r6.k_zanryaku_cnt || 0
+      // ④かかりつけ薬剤師指導料 + 包括管理料
+      cIndActual.i4 = (r6.t_kakaritsuke_shido_cnt || r6.k_kakaritsuke_shido_cnt || 0) + (r6.t_kakaritsuke_hokatsu_cnt || 0)
+      // ⑤外来服薬支援料1
+      cIndActual.i5 = r6.t_gairai_1_cnt || 0
+      // ⑥単一建物1人の在宅薬剤管理
+      cIndActual.i6 = r6.t_zaitaku_houmon_1_cnt || r6.k_zaitaku_houmon_1_cnt || 0
+      // ⑦服薬情報等提供料
+      cIndActual.i7 = r6.t_fukuyaku_joho_cnt || r6.k_fukuyaku_joho_cnt || 0
+      // ⑧小児特定加算
+      cIndActual.i8 = r6.t_shoni_cnt || 0
+      // ⑨研修認定薬剤師（レセコンデータにないため0）
+      cIndActual.i9 = 0
+    }
     // 基準値を超えているか自動判定
     function cIndMet(key) {
       const ind = cIndLabels.find(i => i.key === key)
@@ -897,7 +920,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1119,7 +1142,10 @@ const RequirementsTab = {
               <div style="margin-top:4px">※①～⑧は処方箋1万枚当たりの年間回数、⑨は薬局当たりの年間回数</div>
             </div>
             <div style="margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:var(--radius)">
-              <div style="font-weight:600;margin-bottom:6px;font-size:13px">年間処方箋受付回数</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+                <div style="font-weight:600;font-size:13px">年間処方箋受付回数</div>
+                <button class="btn" style="font-size:11px;padding:3px 10px;background:var(--teal);color:white;border:none" @click="cIndLoadR7()">R7実績読込</button>
+              </div>
               <div style="display:flex;align-items:center;gap:8px"><input type="number" class="fee-input" style="max-width:150px" v-model.number="cIndRxAnnual"> 回/年</div>
             </div>
             <table style="width:100%;border-collapse:collapse;font-size:12px">
