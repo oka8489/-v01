@@ -116,6 +116,7 @@ const OverviewTab = {
     <a href="https://www.youtube.com/playlist?list=PLMG33RKISnWjFBIQEEGRuzwFbGAsk7uLD" target="_blank" style="color:var(--teal);text-decoration:underline">説明会動画（薬局：リスト番号1、18、21）</a><br>
     <a href="https://www.mhlw.go.jp/stf/newpage_71068.html" target="_blank" style="color:var(--teal);text-decoration:underline">説明会資料（薬局：資料番号0、18、19）</a><br>
     <a href="https://kouseikyoku.mhlw.go.jp/kyushu/000456078.pdf" target="_blank" style="color:var(--teal);text-decoration:underline">九州厚生局：令和8年度調剤報酬改定に伴う施設基準の届出等について</a><br>
+    <a href="https://ika.shaho.co.jp/r06_ika_kaishaku/tokkei_todokede/" target="_blank" style="color:var(--teal);text-decoration:underline">施設基準等に係る届出書・届出様式（社会保険研究所）</a><br>
     <a href="https://kouseikyoku.mhlw.go.jp/kyushu/shinsei/online-shinsei.html" target="_blank" style="color:var(--teal);text-decoration:underline">電子申請について（九州厚生局）</a><br>
     <a href="https://kouseikyoku.mhlw.go.jp/kyushu/about/jimushoichiran.html" target="_blank" style="color:var(--teal);text-decoration:underline">お問合せ（九州厚生局事務所一覧）</a>
   </p>
@@ -716,6 +717,14 @@ const RequirementsTab = {
     const cBase1Result = computed(() => cBaseOk.value ? { pts: 27, label: '加算1（27点）', ok: true } : { pts: 0, label: '算定なし', ok: false })
     // 加算2～5の判定
     const cAimHigher = ref(cjd.c_aimHigher !== false) // 加算2～5を目指すか
+    // 加算2～5 ステップ
+    const c2Step = ref(cjd.c2_step || 1)
+    function c2Next() {
+      if (c2Step.value === 1) c2Step.value = 2
+      else if (c2Step.value === 2) { cJudgeHigher(); c2Step.value = 3 }
+    }
+    function c2Back() { if (c2Step.value > 1) c2Step.value-- }
+    function c2Reset() { c2Step.value = 1; cResult.value = null }
     function cJudgeHigher() {
       const cnt = cIndCount.value
       const has4 = cInd.i4, has6 = cInd.i6
@@ -759,11 +768,12 @@ const RequirementsTab = {
         c_aimHigher: cAimHigher.value,
         c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
         c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
+        c2_step: c2Step.value,
         c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -863,7 +873,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1033,10 +1043,10 @@ const RequirementsTab = {
           <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
           <div v-else style="margin-bottom:12px">
             <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
-            <div style="font-size:12px;color:var(--amber);margin-bottom:12px;padding:8px;background:var(--amber-l);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）</div>
+            <div style="font-size:12px;color:var(--amber);margin-bottom:12px;padding:8px;background:var(--amber-l);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）<br>※後発医薬品の調剤数量割合が<strong>50%以下</strong>の薬局は調剤基本料を<strong style="color:var(--neg)">5点減算</strong>（注8、月600回以下の薬局は除く）</div>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
               <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
-              <span style="font-weight:600">後発医薬品の使用率が85%以上である</span>
+              <span style="font-weight:600">直近3か月の後発医薬品の使用率が85%以上である</span>
             </label>
             <div v-if="!cGe85actual" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text);margin-bottom:8px">85%未満の場合、加算1は算定できません。</div>
           </div>
@@ -1068,35 +1078,50 @@ const RequirementsTab = {
         <div class="section-title">加算2～5 施設基準判定ツール</div>
         <div v-if="!cBaseOk" style="padding:12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">加算1の要件を先に満たしてください。加算2～5は加算1の要件に加えて実績指標が必要です。</div>
         <template v-if="cBaseOk">
-          <div style="margin-bottom:12px">
-            <div style="font-weight:600;margin-bottom:6px;font-size:14px">Step 1：調剤基本料の種別</div>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px;font-size:13px"><input type="radio" v-model="cKihonType" value="kihon1">調剤基本料1 → 加算2（59点）/ 加算3（67点）</label>
-            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外 → 加算4（37点）/ 加算5（59点）</label>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{c2Step}} / 3</div>
+          <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(c2Step/3*100)+'%'}"></div></div>
+
+          <div v-if="c2Step===1" style="font-size:14px;line-height:2">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：調剤基本料の種別</div>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKihonType" value="kihon1">調剤基本料1 → 加算2（59点）/ 加算3（67点）</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外 → 加算4（37点）/ 加算5（59点）</label>
           </div>
-          <div style="font-weight:600;margin-bottom:6px;font-size:14px">Step 2：実績9指標（処方箋1万枚当たり/年）</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">
-            <div v-if="cKihonType==='kihon1'"><strong>加算2（59点）:</strong> ④を含む3つ以上 / <strong>加算3（67点）:</strong> 7つ以上</div>
-            <div v-else><strong>加算4（37点）:</strong> ④⑥を含む3つ以上 / <strong>加算5（59点）:</strong> 7つ以上</div>
-            <div style="margin-top:4px">※①～⑧は処方箋1万枚当たりの年間回数、⑨は薬局当たりの年間回数</div>
+
+          <div v-if="c2Step===2" style="font-size:14px;line-height:1.8">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：実績9指標（処方箋1万枚当たり/年）</div>
+            <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">
+              <div v-if="cKihonType==='kihon1'"><strong>加算2（59点）:</strong> ④を含む3つ以上 / <strong>加算3（67点）:</strong> 7つ以上</div>
+              <div v-else><strong>加算4（37点）:</strong> ④⑥を含む3つ以上 / <strong>加算5（59点）:</strong> 7つ以上</div>
+              <div style="margin-top:4px">※①～⑧は処方箋1万枚当たりの年間回数、⑨は薬局当たりの年間回数</div>
+            </div>
+            <ul class="task-list">
+              <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
+                <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px" :style="cInd[ind.key]?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
+                  <div style="font-size:11px;color:var(--text-muted)">{{ind.note}}</div>
+                </div>
+              </li>
+            </ul>
+            <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
           </div>
-          <ul class="task-list">
-            <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
-              <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
-              <div style="flex:1;min-width:0">
-                <div style="font-size:13px" :style="cInd[ind.key]?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
-                <div style="font-size:11px;color:var(--text-muted)">{{ind.note}}</div>
-              </div>
-            </li>
-          </ul>
-          <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
-          <div style="margin-top:12px;padding:12px;border-radius:var(--radius)" :style="cResult&&cResult.pts>27?'background:var(--new-bg);border:1px solid #b3d4f7':'background:var(--surface2);border:1px solid var(--border)'">
-            <div style="font-size:16px;font-weight:700">{{cResult ? cResult.label : '判定ボタンを押してください'}}</div>
-            <div v-if="cResult" style="font-size:13px;color:var(--text-muted)">{{cResult.reason}}</div>
+
+          <div v-if="c2Step===3">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：判定結果</div>
+            <div v-if="cResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="cResult.pts>27?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+              <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{cResult.label}}</div>
+              <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <button v-if="cResult&&cResult.pts>27" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">{{cResult.label}}をR8予測に反映</button>
+              <button class="btn" @click="c2Reset()">最初からやり直す</button>
+              <span v-if="cApplied && cResult && cResult.pts>27" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;align-items:center;margin-top:8px">
-            <button class="btn" @click="cJudgeHigher()" style="background:var(--teal);color:white;font-weight:600;padding:6px 16px">判定する</button>
-            <button v-if="cResult&&cResult.pts>27" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">{{cResult.label}}をR8予測に反映</button>
-            <span v-if="cApplied && cResult && cResult.pts>27" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+
+          <div v-if="c2Step<3" style="margin-top:20px;display:flex;gap:8px">
+            <button v-if="c2Step>1" class="btn" @click="c2Back()">戻る</button>
+            <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="c2Next()">次へ</button>
           </div>
         </template>
       </div>
