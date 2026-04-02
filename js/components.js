@@ -724,7 +724,7 @@ const RequirementsTab = {
       { key: 'i6', label: '⑥単一建物診療患者が１人の在宅薬剤管理の実績', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須' },
       { key: 'i7', label: '⑦服薬情報等提供料に相当する実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
       { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上' },
-      { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true },
+      { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true, manual: true },
     ]
     // R7実績から読み込み
     function cIndLoadR7() {
@@ -742,8 +742,8 @@ const RequirementsTab = {
       cIndActual.i5 = r6.t_gairai_1_cnt || 0
       // ⑥単一建物1人の在宅薬剤管理
       cIndActual.i6 = r6.t_zaitaku_houmon_1_cnt || r6.k_zaitaku_houmon_1_cnt || 0
-      // ⑦服薬情報等提供料
-      cIndActual.i7 = r6.t_fukuyaku_joho_cnt || r6.k_fukuyaku_joho_cnt || 0
+      // ⑦服薬情報等提供料 = 1+2+3の合計
+      cIndActual.i7 = (r6.t_joho_1_cnt || 0) + (r6.t_joho_2_cnt || 0) + (r6.t_joho_3_cnt || 0)
       // ⑧小児特定加算
       cIndActual.i8 = r6.t_shoni_cnt || 0
       // ⑨研修認定薬剤師（レセコンデータにないため0）
@@ -1160,7 +1160,7 @@ const RequirementsTab = {
               <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間算定回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
               <tr v-for="ind in cIndLabels" :key="ind.key" style="border-bottom:0.5px solid var(--border)">
                 <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="cKihonType==='kihon1'&&ind.reqK1" style="font-size:10px;color:var(--neg)">{{ind.reqK1}}</span><span v-if="cKihonType!=='kihon1'&&ind.reqOther" style="font-size:10px;color:var(--neg)">{{ind.reqOther}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span><div v-if="ind.note2" style="font-size:10px;color:var(--amber)">{{ind.note2}}</div></td>
-                <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" style="max-width:80px;font-size:11px;height:26px" v-model.number="cIndActual[ind.key]"></td>
+                <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" :class="{'empty-input':ind.manual}" :style="'max-width:80px;font-size:11px;height:26px'+(ind.manual?';border-color:var(--neg)':'')" v-model.number="cIndActual[ind.key]"><div v-if="ind.manual" style="font-size:9px;color:var(--neg)">手入力</div></td>
                 <td style="text-align:right;padding:6px 4px;font-family:'IBM Plex Mono',monospace" :style="cIndMet(ind.key)?'color:var(--pos);font-weight:700':'color:var(--text-muted)'">{{cIndPer10k(ind.key)}}</td>
                 <td style="text-align:right;padding:6px 4px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1s : ind.others}}</td>
                 <td style="text-align:center;padding:6px 4px"><input type="checkbox" v-model="cInd[ind.key]" style="width:16px;height:16px"></td>
