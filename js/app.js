@@ -45,6 +45,11 @@ const app = createApp({
 
     // R8用の独立したリアクティブオブジェクト（.r6にR8データを格納）
     const r8Data = reactive({ r6: {} })
+    // R8データをlocalStorageから復元
+    const r8Saved = localStorage.getItem('houshu-r8-data')
+    if (r8Saved) { try { const p = JSON.parse(r8Saved); if (p.r6) r8Data.r6 = p.r6 } catch{} }
+    // R8データをlocalStorageに自動保存
+    watch(r8Data, ()=>{ localStorage.setItem('houshu-r8-data', JSON.stringify(r8Data)) }, {deep:true})
 
     async function loadR8Data() {
       try {
@@ -64,6 +69,7 @@ const app = createApp({
     function clearR8Data() {
       if (!confirm('R8予測データをクリアしますか？')) return
       r8Data.r6 = {}
+      localStorage.removeItem('houshu-r8-data')
     }
 
     provide('storage', { data })
