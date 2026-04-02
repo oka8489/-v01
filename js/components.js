@@ -715,7 +715,7 @@ const TasksTab = {
              @click="selectDate(cell.dateStr)">
           <span class="cal-date" :class="{ today: cell.dateStr===todayStr }">{{ cell.day }}</span>
           <div v-for="ev in eventsForDate(cell.dateStr)" :key="'e'+ev.id" class="cal-pill cal-pill-event" :style="{background: eventColorCss(ev.color), color:'white'}">{{ ev.title }}</div>
-          <div v-for="t in tasksForDate(cell.dateStr)" :key="'t'+t.id" class="cal-pill" :class="'cal-pill-'+status(t.id)">{{ t.task.title }}</div>
+          <div v-for="t in tasksForDate(cell.dateStr)" :key="'t'+t.id" class="cal-task-label" :class="'cal-task-label-'+status(t.id)"><span class="cal-task-label-dot" :class="'cal-dot-'+(status(t.id)==='done'?'done':status(t.id)==='wip'?'wip':(t.task.deadline && t.task.deadline < todayStr ? 'overdue':'todo'))"></span>{{ t.task.title }}</div>
         </div>
       </div>
       <!-- Selected Date Detail -->
