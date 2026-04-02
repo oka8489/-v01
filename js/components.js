@@ -701,17 +701,38 @@ const RequirementsTab = {
       i4: cjd.c_i4 || false, i5: cjd.c_i5 || false, i6: cjd.c_i6 || false,
       i7: cjd.c_i7 || false, i8: cjd.c_i8 || false, i9: cjd.c_i9 || false,
     })
+    // 年間処方箋受付回数（1万枚当たり計算用）
+    const cIndRxAnnual = ref(cjd.c_indRxAnnual || 0)
+    // 各指標の年間実績回数
+    const cIndActual = reactive({
+      i1: cjd.c_ia1 || 0, i2: cjd.c_ia2 || 0, i3: cjd.c_ia3 || 0,
+      i4: cjd.c_ia4 || 0, i5: cjd.c_ia5 || 0, i6: cjd.c_ia6 || 0,
+      i7: cjd.c_ia7 || 0, i8: cjd.c_ia8 || 0, i9: cjd.c_ia9 || 0,
+    })
+    // 1万枚当たりの回数を計算（⑨は薬局当たりなのでそのまま）
+    function cIndPer10k(key) {
+      if (key === 'i9') return cIndActual[key]
+      if (!cIndRxAnnual.value || cIndRxAnnual.value <= 0) return 0
+      return Math.round(cIndActual[key] / cIndRxAnnual.value * 10000 * 10) / 10
+    }
     const cIndLabels = [
-      { key: 'i1', label: '①夜間・休日等の対応実績', k1: '40回以上', other: '400回以上' },
-      { key: 'i2', label: '②麻薬の調剤実績', k1: '1回以上', other: '10回以上' },
-      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: '20回以上', other: '40回以上' },
-      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: '20回以上', other: '40回以上', req: '★加算2・4必須' },
-      { key: 'i5', label: '⑤外来服薬支援料1の実績', k1: '1回以上', other: '12回以上' },
-      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', k1: '24回以上', other: '24回以上', req: '★加算4必須' },
-      { key: 'i7', label: '⑦服薬情報等提供料の実績', k1: '30回以上', other: '60回以上' },
-      { key: 'i8', label: '⑧小児特定加算の算定実績', k1: '1回以上', other: '1回以上' },
-      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', k1: '1回以上', other: '5回以上' },
+      { key: 'i1', label: '①夜間・休日等の対応実績', k1: 40, other: 400, k1s: '40回以上', others: '400回以上' },
+      { key: 'i2', label: '②麻薬の調剤実績', k1: 1, other: 10, k1s: '1回以上', others: '10回以上' },
+      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: 20, other: 40, k1s: '20回以上', others: '40回以上' },
+      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: 20, other: 40, k1s: '20回以上', others: '40回以上', req: '★加算2・4必須' },
+      { key: 'i5', label: '⑤外来服薬支援料1の実績', k1: 1, other: 12, k1s: '1回以上', others: '12回以上' },
+      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', req: '★加算4必須' },
+      { key: 'i7', label: '⑦服薬情報等提供料の実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上' },
+      { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上' },
+      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true },
     ]
+    // 基準値を超えているか自動判定
+    function cIndMet(key) {
+      const ind = cIndLabels.find(i => i.key === key)
+      if (!ind) return false
+      const threshold = cKihonType.value === 'kihon1' ? ind.k1 : ind.other
+      return cIndPer10k(key) >= threshold
+    }
     const cIndCount = computed(() => Object.values(cInd).filter(v => v).length)
     // 加算1の判定結果
     const cBase1Result = computed(() => cBaseOk.value ? { pts: 27, label: '加算1（27点）', ok: true } : { pts: 0, label: '算定なし', ok: false })
@@ -768,12 +789,15 @@ const RequirementsTab = {
         c_aimHigher: cAimHigher.value,
         c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
         c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
-        c2_step: c2Step.value,
+        c2_step: c2Step.value, c_indRxAnnual: cIndRxAnnual.value,
+        c_ia1: cIndActual.i1, c_ia2: cIndActual.i2, c_ia3: cIndActual.i3,
+        c_ia4: cIndActual.i4, c_ia5: cIndActual.i5, c_ia6: cIndActual.i6,
+        c_ia7: cIndActual.i7, c_ia8: cIndActual.i8, c_ia9: cIndActual.i9,
         c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cIndRxAnnual, cBase, cInd, cIndActual], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -873,7 +897,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
+             cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1087,22 +1111,27 @@ const RequirementsTab = {
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKihonType" value="other">調剤基本料1以外 → 加算4（37点）/ 加算5（59点）</label>
           </div>
 
-          <div v-if="c2Step===2" style="font-size:14px;line-height:1.8">
-            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：実績9指標（処方箋1万枚当たり/年）</div>
+          <div v-if="c2Step===2" style="font-size:14px;line-height:1.6">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：実績9指標</div>
             <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:8px;background:var(--surface2);border-radius:var(--radius)">
               <div v-if="cKihonType==='kihon1'"><strong>加算2（59点）:</strong> ④を含む3つ以上 / <strong>加算3（67点）:</strong> 7つ以上</div>
               <div v-else><strong>加算4（37点）:</strong> ④⑥を含む3つ以上 / <strong>加算5（59点）:</strong> 7つ以上</div>
               <div style="margin-top:4px">※①～⑧は処方箋1万枚当たりの年間回数、⑨は薬局当たりの年間回数</div>
             </div>
-            <ul class="task-list">
-              <li v-for="ind in cIndLabels" :key="ind.key" class="task-item">
-                <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
-                <div style="flex:1;min-width:0">
-                  <div style="font-size:13px" :style="cInd[ind.key]?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
-                  <div style="font-size:11px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1 : ind.other}}<span v-if="ind.req" style="color:var(--neg);margin-left:6px">{{ind.req}}</span></div>
-                </div>
-              </li>
-            </ul>
+            <div style="margin-bottom:16px;padding:12px;background:var(--surface2);border-radius:var(--radius)">
+              <div style="font-weight:600;margin-bottom:6px;font-size:13px">年間処方箋受付回数</div>
+              <div style="display:flex;align-items:center;gap:8px"><input type="number" class="fee-input" style="max-width:150px" v-model.number="cIndRxAnnual"> 回/年</div>
+            </div>
+            <table style="width:100%;border-collapse:collapse;font-size:12px">
+              <tr style="border-bottom:1px solid var(--border)"><th style="text-align:left;padding:6px 4px;color:var(--text-muted)">指標</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:90px">年間回数</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:80px">1万枚当たり</th><th style="text-align:right;padding:6px 4px;color:var(--text-muted);width:70px">基準値</th><th style="text-align:center;padding:6px 4px;width:50px">判定</th></tr>
+              <tr v-for="ind in cIndLabels" :key="ind.key" style="border-bottom:0.5px solid var(--border)">
+                <td style="padding:6px 4px"><div>{{ind.label}}</div><span v-if="ind.req" style="font-size:10px;color:var(--neg)">{{ind.req}}</span><span v-if="ind.isPerPharmacy" style="font-size:10px;color:var(--text-muted)">（薬局当たり）</span></td>
+                <td style="text-align:right;padding:6px 4px"><input type="number" class="fee-input" style="max-width:80px;font-size:11px;height:26px" v-model.number="cIndActual[ind.key]"></td>
+                <td style="text-align:right;padding:6px 4px;font-family:'IBM Plex Mono',monospace" :style="cIndMet(ind.key)?'color:var(--pos);font-weight:700':'color:var(--text-muted)'">{{cIndPer10k(ind.key)}}</td>
+                <td style="text-align:right;padding:6px 4px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1s : ind.others}}</td>
+                <td style="text-align:center;padding:6px 4px"><input type="checkbox" v-model="cInd[ind.key]" style="width:16px;height:16px"></td>
+              </tr>
+            </table>
             <div style="margin-top:8px;padding:8px;background:var(--surface2);border-radius:var(--radius);font-size:13px">クリア: <strong>{{cIndCount}}</strong> / 9指標</div>
           </div>
 
