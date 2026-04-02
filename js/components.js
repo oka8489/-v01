@@ -702,15 +702,15 @@ const RequirementsTab = {
       i7: cjd.c_i7 || false, i8: cjd.c_i8 || false, i9: cjd.c_i9 || false,
     })
     const cIndLabels = [
-      { key: 'i1', label: '①夜間・休日等の対応実績', note: '基本料1: 40回 / それ以外: 400回以上' },
-      { key: 'i2', label: '②麻薬の調剤実績', note: '基本料1: 1回 / それ以外: 10回以上' },
-      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', note: '基本料1: 20回 / それ以外: 40回以上' },
-      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', note: '基本料1: 20回 / それ以外: 40回以上 ★加算2・4必須' },
-      { key: 'i5', label: '⑤外来服薬支援料1の実績', note: '基本料1: 1回 / それ以外: 12回以上' },
-      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', note: '24回以上 ★加算4必須' },
-      { key: 'i7', label: '⑦服薬情報等提供料の実績', note: '基本料1: 30回 / それ以外: 60回以上' },
-      { key: 'i8', label: '⑧小児特定加算の算定実績', note: '1回以上' },
-      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', note: '基本料1: 1回 / それ以外: 5回以上' },
+      { key: 'i1', label: '①夜間・休日等の対応実績', k1: '40回以上', other: '400回以上' },
+      { key: 'i2', label: '②麻薬の調剤実績', k1: '1回以上', other: '10回以上' },
+      { key: 'i3', label: '③残薬調整加算・有害事象防止加算', k1: '20回以上', other: '40回以上' },
+      { key: 'i4', label: '④かかりつけ薬剤師の算定実績', k1: '20回以上', other: '40回以上', req: '★加算2・4必須' },
+      { key: 'i5', label: '⑤外来服薬支援料1の実績', k1: '1回以上', other: '12回以上' },
+      { key: 'i6', label: '⑥単一建物1人の在宅薬剤管理', k1: '24回以上', other: '24回以上', req: '★加算4必須' },
+      { key: 'i7', label: '⑦服薬情報等提供料の実績', k1: '30回以上', other: '60回以上' },
+      { key: 'i8', label: '⑧小児特定加算の算定実績', k1: '1回以上', other: '1回以上' },
+      { key: 'i9', label: '⑨研修認定薬剤師の多職種連携会議出席', k1: '1回以上', other: '5回以上' },
     ]
     const cIndCount = computed(() => Object.values(cInd).filter(v => v).length)
     // 加算1の判定結果
@@ -1099,7 +1099,7 @@ const RequirementsTab = {
                 <input type="checkbox" class="task-check" v-model="cInd[ind.key]">
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13px" :style="cInd[ind.key]?'text-decoration:line-through;opacity:0.5':''">{{ind.label}}</div>
-                  <div style="font-size:11px;color:var(--text-muted)">{{ind.note}}</div>
+                  <div style="font-size:11px;color:var(--teal);font-weight:600">{{cKihonType==='kihon1' ? ind.k1 : ind.other}}<span v-if="ind.req" style="color:var(--neg);margin-left:6px">{{ind.req}}</span></div>
                 </div>
               </li>
             </ul>
