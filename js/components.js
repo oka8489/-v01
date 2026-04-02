@@ -759,11 +759,11 @@ const RequirementsTab = {
         c_aimHigher: cAimHigher.value,
         c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
         c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
-        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei, c_keiji: cKeiji.value,
+        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cKeiji, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -863,7 +863,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, cKihonType, cKeikaSochi, cGe85actual, cKeiji, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
+             cStep, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
