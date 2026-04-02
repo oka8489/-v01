@@ -554,6 +554,7 @@ const RequirementsTab = {
     // 判定データをdata.judgeに自動保存
     function saveJudge() {
       props.data.judge = {
+        ...(props.data.judge || {}),
         step: jStep.value, result: jResult.value,
         todokede: j1Todokede.value, shikichi: j1Shikichi.value,
         isChain: j2IsChain.value, groupTotal: j2GroupTotal.value,
@@ -825,8 +826,8 @@ const RequirementsTab = {
       if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_chiiki'] = cResult.value.pts; cApplied.value = true }
     }
     function saveCJudge() {
-      if (!props.data.judge) props.data.judge = {}
-      Object.assign(props.data.judge, {
+      props.data.judge = {
+        ...(props.data.judge || {}),
         c_step: cStep.value, c_result: cResult.value, c_kihonType: cKihonType.value, c_applied: cApplied.value,
         c_aimHigher: cAimHigher.value,
         c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
@@ -837,7 +838,7 @@ const RequirementsTab = {
         c_ia7: cIndActual.i7, c_ia8: cIndActual.i8, c_ia9: cIndActual.i9,
         c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
-      })
+      }
     }
     watch([cStep, c2Step, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cIndRxAnnual, cBase, cInd, cIndActual], saveCJudge, { deep: true })
 
