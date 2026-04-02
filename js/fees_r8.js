@@ -5,6 +5,16 @@
 
 const R8_BASIC_FEES = [
   {
+    id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
+    changeType: 'new',
+    r8: { fixedPoints: 1 },
+  },
+  {
+    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'fixed',
+    changeType: 'new',
+    r8: { fixedPoints: 4 },
+  },
+  {
     id: 'k_kihon', label: '調剤基本料', category: 'basic', inputType: 'select',
     changeType: 'modified',
     r8: { options: [
@@ -71,9 +81,15 @@ const R8_BASIC_FEES = [
     r8: { options: [
       { value: 0, label: '算定なし' },
       { value: 30, label: '加算1（30点）' },
-      { value: 100, label: '加算2イ（100点）' },
-      { value: 50, label: '加算2ロ（50点）' },
+      { value: 'zt2', label: '加算2' },
     ]},
+    subRows: {
+      trigger: 'zt2',
+      items: [
+        { id: 'k_zaitaku_taisei2i', label: '　イ（個人宅）', pts: 100 },
+        { id: 'k_zaitaku_taisei2ro', label: '　ロ（施設等）', pts: 50 },
+      ],
+    },
   },
   {
     id: 'k_jikangai', label: '時間外加算', category: 'basic', inputType: 'count-only', isSub: true,
@@ -84,16 +100,6 @@ const R8_BASIC_FEES = [
     id: 'k_yakan', label: '夜間・休日等加算', category: 'basic', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r8: { fixedPoints: 40 },
-  },
-  {
-    id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
-    changeType: 'new',
-    r8: { fixedPoints: 1 },
-  },
-  {
-    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'fixed',
-    changeType: 'new',
-    r8: { fixedPoints: 4 },
   },
   {
     id: 'k_bio', label: 'バイオ後続品調剤体制加算', category: 'basic', inputType: 'select', isSub: true,
@@ -301,7 +307,8 @@ const R8_MANAGEMENT_FEES = [
   },
   {
     id: 't_tokutei_2', label: '特定薬剤管理指導加算2（抗悪性腫瘍）', category: 'management', inputType: 'select', isSub: true,
-    changeType: 'same',
+    changeType: 'same', judgeCategory: 'sonota',
+    judgeInfo: { title: '特定薬剤管理指導加算2', desc: '届出が必要（様式92）', checks: ['保険薬剤師として5年以上の勤務経験を有する薬剤師が勤務', 'プライバシーに配慮した独立したカウンター', '麻薬小売業者の免許を取得', '抗悪性腫瘍剤の化学療法に係る研修に年1回以上参加'] },
     r8: { options: [{ value: 0, label: '算定なし' }, { value: 100, label: '加算（100点）' }] },
   },
   {
@@ -320,9 +327,9 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 12 },
   },
   {
-    id: 't_shoni', label: '小児特定加算', category: 'management', inputType: 'select', isSub: true,
+    id: 't_shoni', label: '小児特定加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
-    r8: { options: [{ value: 0, label: '算定なし' }, { value: 350, label: '加算（350点）' }] },
+    r8: { fixedPoints: 350 },
   },
   {
     id: 't_kyunyu', label: '吸入薬指導加算', category: 'management', inputType: 'fixed', isSub: true,
@@ -386,14 +393,14 @@ const R8_MANAGEMENT_FEES = [
   },
   // R8 新設
   {
-    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'select',
+    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'fixed',
     changeType: 'new',
-    r8: { options: [{ value: 0, label: '算定なし' }, { value: 30, label: '加算1（30点）' }, { value: 50, label: '加算2（50点）' }] },
+    r8: { pointsNote: '加算1: 30点 / 加算2: 50点' },
   },
   {
-    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'select',
+    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'fixed',
     changeType: 'new',
-    r8: { options: [{ value: 0, label: '算定なし' }, { value: 30, label: '加算1（30点）' }, { value: 50, label: '加算2（50点）' }] },
+    r8: { pointsNote: '加算1: 30点 / 加算2: 50点' },
   },
   {
     id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
@@ -449,9 +456,9 @@ const R8_HOMECARE_FEES = [
     r8: { fixedPoints: 100 },
   },
   {
-    id: 't_zaitaku_shoni', label: '小児特定加算（在宅）', category: 'homecare', inputType: 'select', isSub: true,
+    id: 't_zaitaku_shoni', label: '小児特定加算（在宅）', category: 'homecare', inputType: 'fixed', isSub: true,
     changeType: 'same',
-    r8: { options: [{ value: 0, label: '算定なし' }, { value: 350, label: '加算（350点）' }] },
+    r8: { fixedPoints: 350 },
   },
   {
     id: 't_zaitaku_mayaku_chu', label: '医療用麻薬持続注射療法加算', category: 'homecare', inputType: 'fixed', isSub: true,

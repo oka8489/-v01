@@ -122,9 +122,9 @@ const OverviewTab = {
   </p>
   <div class="kpi-grid" style="margin-bottom:20px">
     <div class="kpi-card positive"><div class="kpi-label">診療報酬全体</div><div class="kpi-value" style="font-size:18px">+3.09%</div><div style="font-size:11px;color:var(--text-muted)">2年度平均</div></div>
-    <div class="kpi-card positive"><div class="kpi-label">調剤改定率</div><div class="kpi-value" style="font-size:18px">+0.08%</div></div>
-    <div class="kpi-card negative"><div class="kpi-label">薬価改定率</div><div class="kpi-value" style="font-size:18px">▲0.86%</div><div style="font-size:11px;color:var(--text-muted)">R8年4月施行</div></div>
+    <div class="kpi-card negative"><div class="kpi-label">薬価改定率</div><div class="kpi-value" style="font-size:18px">▲0.86%</div><div style="font-size:11px;color:var(--text-muted)">R8年4月施行</div><div style="font-size:11px;color:var(--text-muted)">材料価格 ▲0.01% R8年6月施行</div></div>
     <div class="kpi-card"><div class="kpi-label">経過措置期限</div><div class="kpi-value" style="font-size:18px">R9.5.31</div></div>
+    <div class="kpi-card"><div class="kpi-label">施設基準の届出書受付期間</div><div class="kpi-value" style="font-size:16px">R8.5.7〜6.1</div><div style="font-size:11px;color:var(--text-muted)">届出が必要なもの</div></div>
   </div>
 </div>
 
@@ -521,7 +521,8 @@ const RequirementsTab = {
   props:['data','r8Data','activeSub'],
   emits:['update:activeSub'],
   setup(props, { emit }) {
-    const sub = computed({ get:()=>props.activeSub||'checklist', set:v=>emit('update:activeSub',v) })
+    const sub = computed({ get:()=>props.activeSub||'k_kihon', set:v=>emit('update:activeSub',v) })
+    const subCategory = ref('taisei')
     const groups = window.REQUIREMENT_DEFINITIONS || []
     function isChecked(id) { return !!props.data.requirements?.[id] }
     function toggle(id) { if (!props.data.requirements) props.data.requirements = {}; props.data.requirements[id] = !props.data.requirements[id] }
@@ -680,7 +681,7 @@ const RequirementsTab = {
       { key: 'stock', highlight: true, label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。',
         help: '<b>必要な対応:</b>\n・厚労省が指定する<b>「重要供給確保医薬品」</b>リストの確認\n・該当する内用薬・外用薬の1ヶ月分の在庫確保\n・備蓄状況の定期的な確認・記録\n\n※努力義務（「努めること」）だが、届出時に体制整備が必要' },
       { key: 'tanpin', highlight: true, label: '(5) 原則として、単品単価交渉の実施をしていること。',
-        help: '<b>必要な対応:</b>\n・卸売業者との価格交渉を<b style="color:var(--r6)">品目ごと</b>に実施（総価交渉ではなく単品単価）\n・<b style="color:var(--r6);text-decoration:underline">交渉記録の保存</b>\n・<b style="color:var(--r6);text-decoration:underline">様式85「妥結率等に係る報告書」を提出していること</b>\n・<b style="color:var(--neg)">【重要】直近に提出した報告書で、様式85の「単品単価交渉を行っていない」に非該当であること。該当（＝行っていない）の場合、本要件を満たさないものとして取り扱われる</b>\n・妥結率の管理（未妥結減算の回避にも関連）\n\n※「医療用医薬品の流通改善に関する懇談会」の流通改善ガイドラインに基づく' },
+        help: '<b>通知 第92 留意点(2):</b>\n地域差や取引条件等を踏まえ、取引先と<b>個別品目ごと</b>に取引価格を決める交渉。\n\n<b>判定方法:</b>\n直近に提出した<b style="color:var(--r6)">様式85「妥結率等に係る報告書」</b>の3(1)で「単品単価交渉を行っていない」に<b style="color:var(--neg)">非該当</b>であること。\n※様式85を未提出の場合は本要件を満たさない\n※開設1年未満で提出経験がない場合は満たすとみなす\n\n<b style="color:var(--neg)">以下は単品単価交渉に該当しない：</b>\nア 総価値引率を用いた交渉（総価交渉含む）\nイ 全国最低価格をベンチマークとした交渉\nウ 配送コスト等の地域差を考慮しないベンチマーク交渉\nエ 加盟施設ごとの条件を考慮しない一括受託業者の交渉' },
       { key: 'haibin', label: '(6) 卸売販売業者への頻回配送・休日夜間配送・急配に係る過度な依頼を慎むこと。',
         help: '<b>必要な対応:</b>\n・発注の計画性を高め、緊急配送の頻度を減らす\n・配送回数の記録と振り返り\n・卸との配送スケジュールの取り決め\n\n※流通改善ガイドラインに基づく。「過度な」依頼が対象であり、合理的な緊急配送は可' },
       { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整を目的とした卸売販売業者への医薬品の返品は慎むこと。',
@@ -730,7 +731,7 @@ const RequirementsTab = {
       { key: 'i6', label: '⑥単一建物診療患者が１人の在宅薬剤管理の実績', k1: 24, other: 24, k1s: '24回以上', others: '24回以上', reqOther: '★加算4必須',
         help: '<b>対象:</b>\n・在宅患者訪問薬剤管理指導料（単一建物診療患者1人）の算定回数\n\n個人宅への訪問薬剤管理指導の実績。施設ではなく個人宅への訪問が対象。' },
       { key: 'i7', label: '⑦服薬情報等提供料に相当する実績', k1: 30, other: 60, k1s: '30回以上', others: '60回以上',
-        help: '<b>対象:</b>\n・服薬情報等提供料1の算定回数\n・服薬情報等提供料2の算定回数\n・服薬情報等提供料3の算定回数\n\n医療機関への情報提供（トレーシングレポート等）の実績。「相当する実績」のため、算定していなくても情報提供の記録があれば含められる可能性あり。' },
+        help: '<b>対象:</b>\n・服薬情報等提供料1・2・3の算定回数\n\n<b>通知 第92(5)「併算定不可で相当する業務」:</b>\n以下も回数に含められる：\n・特定薬剤管理指導加算2（文書による情報提供に限る）\n・吸入薬指導加算（文書による情報提供に限る）\n・調剤後薬剤管理指導料\n・服用薬剤調整支援料2\n\n<b style="color:var(--neg)">※特別調剤基本料Aの薬局で、注6の保険医療機関への情報提供は除く</b>' },
       { key: 'i8', label: '⑧小児特定加算の算定実績', k1: 1, other: 1, k1s: '1回以上', others: '1回以上',
         help: '<b>対象:</b>\n・小児特定加算の算定回数\n\n6歳未満の乳幼児に対する服薬指導等を行った場合に算定。1回以上あればクリア。' },
       { key: 'i9', label: '⑨薬剤師認定制度認証機構が認証している研修認定制度等の研修認定を取得した保険薬剤師が地域の多職種と連携する会議への出席', k1: 1, other: 5, k1s: '1回以上', others: '5回以上', isPerPharmacy: true, manual: true,
@@ -853,7 +854,10 @@ const RequirementsTab = {
     function c2Next() {
       if (c2Step.value === 1) c2Step.value = 2
       else if (c2Step.value === 2) c2Step.value = 3
-      else if (c2Step.value === 3) { cJudgeHigher(); c2Step.value = 4 }
+      else if (c2Step.value === 3) {
+        if (!c2FacilityOk.value) { cResult.value = { pts: 27, label: '加算1（27点）止まり', reason: '施設基準（２）～（１１）に未チェック項目があります。' }; c2Step.value = 4; return }
+        cJudgeHigher(); c2Step.value = 4
+      }
     }
     function c2Back() { if (c2Step.value > 1) c2Step.value-- }
     function c2Reset() { c2Step.value = 1; cResult.value = null }
@@ -922,9 +926,9 @@ const RequirementsTab = {
       ict: cjd.rk_ict || false,
     })
     const rkCheckLabels = [
-      { key: 'kyotei', label: '(1) 第二種協定指定医療機関の指定を受けていること', help: '<b>告示第71号 第十五の四の二(1)</b>\n\n感染症の予防及び感染症の患者に対する医療に関する法律第六条第十七項に規定する第二種協定指定医療機関であること。\n\n<b>必要な対応:</b>\n・都道府県知事に<b>第二種協定指定医療機関</b>の申請・指定を受ける\n・感染症法に基づく指定で、新興感染症発生時に医療提供を行う協定を締結' },
-      { key: 'hijoji', label: '(2) 災害の発生時等において、他の保険薬局等との連携により非常時における対応につき必要な体制が整備されていること', help: '<b>告示第71号 第十五の四の二(2)</b>\n\n<b>必要な対応:</b>\n・災害発生時の医薬品供給体制の計画書を作成\n・他の保険薬局等との連携体制の整備\n・地域の協議会、研修又は訓練等への参加\n・対応可能な体制を行政機関・薬剤師会等のHP等で周知\n・災害時モード（オンライン資格確認等システム）の活用体制' },
-      { key: 'ict', label: '(3) 情報通信機器を用いた服薬指導を行う体制が整備されていること', help: '<b>告示第71号 第十五の四の二(3)</b>\n\n<b>必要な対応:</b>\n・オンライン服薬指導に対応できる通信環境の整備\n・ビデオ通話等の機器・ソフトウェアの準備\n・オンライン服薬指導に関する研修の実施\n・サイバーセキュリティ対策' },
+      { key: 'kyotei', label: '(1) 第二種協定指定医療機関の指定を受けていること', help: '<b>告示 四の二(1)／通知 第92の2(1)</b>\n\n都道府県知事より<b>第二種協定指定医療機関</b>の指定を受け、以下の体制を整備：\n\n<b>ア</b> 感染症に係る研修を<b>年1回以上</b>実施（外部研修への参加でも可）\n<b>イ</b> 新型インフルエンザ等感染症等に係る<b>訓練を年1回以上</b>実施\n<b>ウ</b> 都道府県知事の要請を受け、自宅療養者等への調剤・オンライン服薬指導・薬剤交付（配送含む）の体制\n<b>エ</b> <b>個人防護具の備蓄</b>\n<b>オ</b> OTC医薬品・検査キット・マスク等の衛生材料の提供体制を平時から整備' },
+      { key: 'hijoji', label: '(2) 災害の発生時等における非常時対応の体制', help: '<b>告示 四の二(2)／通知 第92の2(2)〜(5)</b>\n\n<b>(2) 災害時の連携体制：</b>\n<b>ア</b> 避難所・救護所等への医薬品供給・人員派遣の体制\n<b>イ</b> 災害対応の研修計画を作成・実施（<b>年1回程度</b>の参加が望ましい）\n<b>ウ</b> 夜間・休日等の開局時間外でも調剤・在宅業務に対応できる体制（近隣薬局との連携含む）\n\n<b>(3) 周知：</b>\n対応可能な体制を自局・グループのほか、<b>行政機関・薬剤師会等のウェブサイト</b>で広く周知\n※厚生局届出サイトへのリンク掲載のみでは不可\n\n<b>(4) 手順書：</b>\n災害・新興感染症発生時の対応手順書を作成し、<b>職員に共有</b>\n\n<b>(5) 災害時モード：</b>\nオンライン資格確認等システムの「緊急時医療情報・資格確認機能（災害時モード）」を平時より活用に努める' },
+      { key: 'ict', label: '(3) 情報通信機器を用いた服薬指導を行う体制が整備されていること', help: '<b>告示 四の二(3)／通知 第92の2(6)〜(7)</b>\n\n<b>(6) オンライン服薬指導の体制：</b>\n<b>ア</b> オンライン服薬指導の実施要領に基づく<b>通信環境の確保</b>\n<b>イ</b> 薬局内の保険薬剤師に対する<b>研修の実施</b>\n<b>ウ</b> 「医療情報システムの安全管理に関するガイドライン」及び「薬局におけるサイバーセキュリティ対策チェックリスト」を活用した<b>サイバーセキュリティ対策</b>\n\n<b>(7) OTC医薬品等の販売：</b>\n要指導医薬品及び一般用医薬品を販売していること。感染症発生時に必要な医薬品・検査キットを取り扱うこと。\n※健康増進支援薬局の届出要件の<b>48薬効群</b>を参考に品揃え' },
     ]
     const rkHelpModal = ref(null)
     function rkOpenHelp(key) { rkHelpModal.value = key }
@@ -974,22 +978,22 @@ const RequirementsTab = {
       d7: cjd.dx_d7 || false, d8: cjd.dx_d8 || false, d9: cjd.dx_d9 || false, d10: cjd.dx_d10 || false,
     })
     const dxCheckLabels = [
-      { key: 'd1', label: '(1) 電子情報処理組織の使用による請求を行っていること', help: '<b>告示第71号 五の四(1)</b>\n\nレセプトの電子請求（オンライン請求）を行っていること。' },
-      { key: 'd2', label: '(2) 電子資格確認を行う体制を有していること', help: '<b>告示第71号 五の四(2)</b>\n\nオンライン資格確認の導入・運用。マイナ保険証による資格確認が可能であること。' },
-      { key: 'd3', label: '(3) 電子資格確認を利用して取得した診療情報等を閲覧・活用して調剤を行う体制', help: '<b>告示第71号 五の四(3)</b>\n\n薬剤情報・特定健診情報等を閲覧し、調剤・服薬指導に活用する体制。' },
-      { key: 'd4', label: '(4) 電子処方箋の受付・調剤情報の登録・重複等チェックの体制', help: '<b>告示第71号 五の四(4)</b>\n\n・電子処方箋を受け付ける体制\n・調剤した薬剤の情報を電子的に登録する体制\n・<b style="color:var(--r6)">有効成分の重複・不適切な組合せを電子的に確認する体制</b>' },
-      { key: 'd5', label: '(5) 電子的な調剤録及び薬剤服用歴の管理体制', help: '<b>告示第71号 五の四(5)</b>\n\n調剤録・薬歴を電磁的記録で管理する体制（電子薬歴）。' },
-      { key: 'd6', label: '(6) 電磁的方法により診療情報を共有・活用する体制', help: '<b>告示第71号 五の四(6)</b>\n\n医療機関等との電子的な情報共有体制。' },
-      { key: 'd7', label: '(7) 電子資格確認に係る十分な実績', help: '<b>告示第71号 五の四(7)</b>\n\nマイナ保険証の利用実績。一定以上の利用率が求められる。' },
-      { key: 'd8', label: '(8) 医療DX推進の体制に関する事項を薬局内の見やすい場所に掲示', help: '<b>告示第71号 五の四(8)</b>\n\n医療DX推進の体制・質の高い調剤のための情報活用について薬局内に掲示。' },
-      { key: 'd9', label: '(9) (8)の掲示事項をウェブサイトに掲載', help: '<b>告示第71号 五の四(9)</b>\n\n原則としてウェブサイトへの掲載が必要。' },
-      { key: 'd10', label: '(10) マイナポータルの医療情報等に基づく健康管理相談に応じる体制', help: '<b>告示第71号 五の四(10)</b>\n\n患者がマイナポータルで確認した医療情報等に基づく健康管理の相談に対応できる体制。' },
+      { key: 'd1', label: '(1) 電子情報処理組織の使用による請求を行っていること', help: '<b>告示 五の四(1)／通知 第95の2(1)</b>\n\n電子情報処理組織を使用した<b>調剤報酬請求（オンライン請求）</b>を行っていること。' },
+      { key: 'd2', label: '(2) 電子資格確認を行う体制を有していること', help: '<b>告示 五の四(2)／通知 第95の2(2)</b>\n\n健康保険法第3条第13項に規定する<b>電子資格確認（オンライン資格確認）</b>を行う体制を有していること。\n\n医療機関等向けポータルサイトにおいて、<b>運用開始日の登録</b>を行うこと。' },
+      { key: 'd3', label: '(3) 電子資格確認を利用して取得した診療情報等を閲覧・活用して調剤を行う体制', help: '<b>告示 五の四(3)／通知 第95の2(3)</b>\n\nオンライン資格確認等システムを通じて患者の<b>診療情報・薬剤情報等を取得</b>し、調剤・服薬指導等を行う際に当該情報を<b>閲覧し、活用</b>できる体制を有していること。' },
+      { key: 'd4', highlight: true, badge: '変更', label: '(4) 電子処方箋の受付・調剤情報の登録・重複等チェックの体制', help: '<b>告示 五の四(4)／通知 第95の2(4)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7では加算1（10点）のみ重複投薬等チェックが必須だったが、R8では<b>全体で必須</b>に。\n\n<b>具体的な要件：</b>\n・<b>電子処方箋</b>を受け付け、調剤する体制\n・紙の処方箋を含め、原則<b>全ての調剤結果</b>を速やかに電子処方箋管理サービスに登録\n・電子処方箋管理サービスの<b>重複投薬等チェック機能</b>を用いて、有効成分の重複・不適切な組合せの有無を確認できる体制' },
+      { key: 'd5', label: '(5) 電子的な調剤録及び薬剤服用歴の管理体制', help: '<b>告示 五の四(5)／通知 第95の2(5)</b>\n\n電磁的記録による<b>調剤録及び薬剤服用歴</b>の管理体制を有していること。\n\n※紙媒体で受け付けた処方箋・情報提供文書等を紙のまま保管することは差し支えない\n※オンライン資格確認、薬歴管理、レセプト請求等の<b>システム間で情報連携</b>されていることが望ましい' },
+      { key: 'd6', highlight: true, badge: '新設', label: '(6) 電磁的方法により診療情報を共有・活用する体制', help: '<b>告示 五の四(6)／通知 第95の2(6)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\n電子カルテ情報共有サービスによる診療情報の共有・活用。R7にはなかった要件。\n\n<b>具体的な要件：</b>\n国等が提供する<b>電子カルテ情報共有サービス</b>により取得される診療情報等を活用する体制。\n\n※当面の間、基準を満たしているものとみなす。ただし全国運用開始時には<b>速やかに導入</b>に努めること。' },
+      { key: 'd7', highlight: true, badge: '変更', label: '(7) 電子資格確認に係る十分な実績を有していること', help: '<b>告示 五の四(7)／通知 第95の2(7)(8)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7は加算1=30%、加算2=20%、加算3=10%だったが、R8では一本化で<b>30%</b>に統一。旧加算2・3から移行する場合は利用率の引き上げが必要。\n\n<b>具体的な要件：</b>\n算定する月の<b>3月前</b>のレセプト件数ベース<b>マイナ保険証利用率が30%以上</b>であること。\n（＝同月のマイナ保険証利用者数÷同月の患者数。支払基金から報告される数値）\n\n※3月前に代えて、<b>その前月又は前々月</b>の利用率を用いることも可\n※届出不要（基準を満たしていればよい）' },
+      { key: 'd8', label: '(8) 医療DX推進の体制に関する事項を薬局内の見やすい場所に掲示', help: '<b>告示 五の四(8)／通知 第95の2(9)</b>\n\n以下の事項を薬局内の<b>見やすい場所に掲示</b>すること：\n\n<b>(イ)</b> オンライン資格確認等システムを通じて診療情報・薬剤情報等を取得・活用している薬局であること\n<b>(ロ)</b> マイナンバーカードの健康保険証利用を促進する等、<b>医療DXを通じて質の高い医療</b>を提供できるよう取り組んでいること\n<b>(ハ)</b> 電子処方箋や電子カルテ情報共有サービスを活用するなど、<b>医療DXに係る取組</b>を実施していること' },
+      { key: 'd9', label: '(9) (8)の掲示事項をウェブサイトに掲載', help: '<b>告示 五の四(9)／通知 第95の2(10)</b>\n\n(8)の掲示事項について、原則として<b>ウェブサイトに掲載</b>していること。\n\n※ホームページ等を有しない保険薬局はこの限りではない。' },
+      { key: 'd10', highlight: true, badge: '新設', label: '(10) マイナポータルの医療情報等に基づく健康管理相談に応じる体制', help: '<b>告示 五の四(10)／通知 第95の2(11)(12)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\nR7にはなかった要件。マイナポータルの医療情報に基づく健康管理相談への対応体制が新たに求められる。\n\n<b>具体的な要件：</b>\nマイナポータルの医療情報等に基づき、患者からの<b>健康管理に係る相談に応じる体制</b>を有していること。\n※届出不要（基準を満たしていればよい）\n\nまた、「医療情報システムの安全管理に関するガイドライン」及び「薬局におけるサイバーセキュリティ対策チェックリスト」を活用した<b>サイバーセキュリティ対策</b>を含めセキュリティ全般について適切な対応を行うこと。' },
     ]
     const dxAllOk = computed(() => Object.values(dxChecks).every(v => v))
     function dxNext() {
       if (dxStep.value === 1) {
         if (dxR7.value === null) return
-        if (dxR7.value === true) { for (const k of Object.keys(dxChecks)) dxChecks[k] = true }
+        if (dxR7.value === true) { const hl = new Set(dxCheckLabels.filter(c => c.highlight).map(c => c.key)); for (const k of Object.keys(dxChecks)) dxChecks[k] = !hl.has(k) }
         else { for (const k of Object.keys(dxChecks)) dxChecks[k] = false }
         dxStep.value = 2
       }
@@ -1017,50 +1021,136 @@ const RequirementsTab = {
     }
     watch([dxStep, dxR7, dxResult, dxApplied, dxChecks], saveDxJudge, { deep: true })
 
+    // バイオ後続品調剤体制加算 ステップ式
+    const bioStep = ref(cjd.bio_step || 1)
+    const bioResult = ref(cjd.bio_result || null)
+    const bioApplied = ref(cjd.bio_applied || false)
+    const bioChecks = reactive({
+      b1: cjd.bio_b1 || false,
+    })
+    const bioCheckLabels = [
+      { key: 'b1', label: 'バイオ医薬品の適切な保管及び患者への適切な説明を行うことができ、バイオ後続品の調剤を行うにつき必要な体制が整備されていること', help: '<b>告示 五</b>\n\nバイオ医薬品の適切な保管及び患者への適切な説明を行うことができる保険薬局であって、バイオ後続品の調剤を行うにつき必要な体制が整備されているものであること。\n\n<b>通知 第93(1):</b>\nバイオ医薬品（バイオ後続品のあるものに限る）の規格単位数量に占めるバイオ後続品の割合が<b>80%以上</b>となる成分数が、調剤実績のあるバイオ医薬品の成分数の<b>60%以上</b>であること。\n<b style="color:var(--amber)">※「望ましい」＝努力義務</b>\n\n<b>通知 第93(2):</b>\nバイオ後続品の調剤を積極的に行っている旨を、当該保険薬局の<b>内側及び外側</b>の見えやすい場所に掲示すること。' },
+    ]
+    const bioAllOk = computed(() => Object.values(bioChecks).every(v => v))
+    function bioNext() {
+      if (bioStep.value === 1) {
+        bioResult.value = bioAllOk.value ? { pts: 50, label: '加算（50点）', reason: '施設基準を満たしています。新規届出が必要です（様式87の3の7）。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
+        bioStep.value = 2
+      }
+    }
+    function bioReset() { bioStep.value = 1; bioResult.value = null; bioApplied.value = false; for (const k of Object.keys(bioChecks)) bioChecks[k] = false }
+    function bioApplyToR8() {
+      if (!bioResult.value) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_bio'] = bioResult.value.pts; bioApplied.value = true }
+    }
+    const bioHelpModal = ref(null)
+    function bioOpenHelp(key) { bioHelpModal.value = key }
+    function bioCloseHelp() { bioHelpModal.value = null }
+    function bioGetHelp(key) { return bioCheckLabels.find(c => c.key === key)?.help || '' }
+    function saveBioJudge() {
+      props.data.judge = {
+        ...(props.data.judge || {}),
+        bio_step: bioStep.value, bio_result: bioResult.value, bio_applied: bioApplied.value,
+        ...Object.fromEntries(Object.entries(bioChecks).map(([k,v]) => ['bio_'+k, v])),
+      }
+    }
+    watch([bioStep, bioResult, bioApplied, bioChecks], saveBioJudge, { deep: true })
+
+    // 在宅薬学総合体制加算 ステップ式
+    const ztStep = ref(cjd.zt_step || 1)
+    const ztR7 = ref(cjd.zt_r7 ?? null)
+    const ztResult = ref(cjd.zt_result || null)
+    const ztApplied = ref(cjd.zt_applied || false)
+    // 加算1 施設基準チェック
+    const ztChecks = reactive({
+      z1: cjd.zt_z1 || false, z2: cjd.zt_z2 || false, z3: cjd.zt_z3 || false, z4: cjd.zt_z4 || false,
+      z5: cjd.zt_z5 || false, z6: cjd.zt_z6 || false, z7: cjd.zt_z7 || false, z8: cjd.zt_z8 || false,
+    })
+    const ztCheckLabels = [
+      { key: 'z1', label: '(1) 在宅患者訪問薬剤管理指導を行う旨の届出', help: '<b>通知 第95(1)</b>\n\n地方厚生（支）局長に対して在宅患者訪問薬剤管理指導を行う旨の届出を行っていること。' },
+      { key: 'z2', label: '(2) 訪問薬剤管理指導等の実績 48回以上/年', partialHighlight: '48回', badge: '変更', help: '<b>通知 第95(2)</b>\n\n直近1年間に、在宅患者訪問薬剤管理指導料・緊急訪問・緊急時共同指導料・居宅療養管理指導費等の算定回数の合計が<b>48回以上</b>。\n\n※在宅協力薬局として連携した場合も含む（同一グループ除く）\n※算定上限を超えて業務を行った場合も含む' },
+      { key: 'z3', label: '(3) 開局時間外における在宅業務対応（在宅協力薬局との連携含む）', help: '<b>通知 第95(3)</b>\n\n緊急時等の開局時間以外の時間における在宅業務に対応できる体制。\n\n※在宅協力薬局の保険薬剤師と連携して対応する方法も可。' },
+      { key: 'z4', label: '(4) 在宅業務実施体制の地域への周知', help: '<b>通知 第95(4)</b>\n\n行政機関・保険医療機関・訪問看護ステーション・福祉関係者等に対し、<b>開局時間外の在宅業務対応体制</b>（麻薬対応含む）を周知。\n\n自局・同一グループでの周知に加え、<b>行政機関又は薬剤師会等を通じて</b>も十分に周知すること。\n\n※実施可能な在宅業務の内容についても周知が望ましい。' },
+      { key: 'z5', label: '(5) 在宅業務に関する研修（認知症・緩和医療・ターミナルケア）及び学会等への参加', help: '<b>通知 第95(5)</b>\n\n研修実施計画を作成し、在宅業務に関わる保険薬剤師に対して研修を実施。定期的に外部の学術研修を受けさせること。\n\n<b>望ましい内容：</b>\n・認知症\n・緩和医療\n・意思決定支援（人生の最終段階ガイドライン）\n・研修認定の取得、学会参加・発表、論文投稿等' },
+      { key: 'z6', label: '(6) 医療材料及び衛生材料の供給体制', help: '<b>通知 第95(6)</b>\n\n医療材料及び衛生材料を供給できる体制。\n\n保険医療機関から衛生材料の提供を指示された場合は、原則として患者に供給すること。費用は保険医療機関に請求（価格は合議）。' },
+      { key: 'z7', label: '(7) 麻薬小売業者の免許', help: '<b>通知 第95(7)</b>\n\n麻薬及び向精神薬取締法第3条の規定による<b>麻薬小売業者の免許</b>を取得し、必要な指導を行うことができること。' },
+      { key: 'z8', highlight: true, badge: '新設', label: '(8) 服薬管理指導料の「注1」に規定する服薬管理指導を行う旨の届出', help: '<b>通知 第95(8)</b>\n\n地方厚生（支）局長に対して、服薬管理指導料の「注1」に規定する<b>服薬管理指導</b>を行う旨の届出を行っていること。' },
+    ]
+    const ztAllOk = computed(() => Object.values(ztChecks).every(v => v))
+    function ztNext() {
+      if (ztStep.value === 1) {
+        if (ztR7.value === null) return
+        ztStep.value = 2
+      } else if (ztStep.value === 2) {
+        ztResult.value = ztAllOk.value
+          ? { pts: 30, label: '加算1（30点）', reason: '加算1の施設基準を満たしています。' + (ztR7.value !== 'none' ? '区分変更がなければ届出不要。' : '新規届出が必要（様式87の3の5）。') }
+          : { pts: 0, label: '算定なし', reason: '加算1の施設基準に未達の項目があります。' }
+        // 加算2チェックの初期化: R7で加算2届出済みなら全ON
+        if (ztR7.value === 'zt2') { for (const k of Object.keys(zt2Checks)) zt2Checks[k] = true }
+        else { for (const k of Object.keys(zt2Checks)) zt2Checks[k] = false }
+        ztStep.value = 3
+      }
+    }
+    function ztBack() { if (ztStep.value > 1) ztStep.value-- }
+    function ztReset() { ztStep.value = 1; ztR7.value = null; ztResult.value = null; ztApplied.value = false; for (const k of Object.keys(ztChecks)) ztChecks[k] = false }
+    function ztApplyToR8() {
+      if (!ztResult.value) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = ztResult.value.pts; ztApplied.value = true }
+    }
+    // 加算2 判定（2段目）
+    const zt2Step = ref(cjd.zt2_step || 1)
+    const zt2Result = ref(cjd.zt2_result || null)
+    const zt2Checks = reactive({
+      z2a: cjd.zt_z2a || false, z2b: cjd.zt_z2b || false, z2c: cjd.zt_z2c || false, z2d: cjd.zt_z2d || false, z2e: cjd.zt_z2e || false,
+    })
+    const zt2CheckLabels = [
+      { key: 'z2a', label: '(1) 加算1の施設基準を全て満たすこと', help: '<b>通知 第95 2(1)</b>\n\n在宅薬学総合体制加算1の基準を全て満たすこと。' },
+      { key: 'z2b', highlight: true, badge: '新設', label: '(2) ア又はイのいずれかを満たすこと', help: '<b>通知 第95 2(2)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\nR7にはなかった要件。加算2イ（個人宅100点）とロ（施設50点）の区分新設に伴い、個人宅の訪問実績が求められる。\n\n※在宅協力薬局として連携した場合も含む',
+        table: '<table style="width:100%;font-size:12px;border-collapse:collapse;margin:8px 0"><tr style="background:var(--surface2)"><th style="padding:4px 8px;border:1px solid var(--border)"></th><th style="padding:4px 8px;border:1px solid var(--border)">個人宅の訪問薬剤指導実績</th><th style="padding:4px 8px;border:1px solid var(--border)">訪問薬剤指導の実績のうち、個人宅の占める割合</th></tr><tr><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">ア</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center;font-weight:700">240回以上</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center;font-weight:700">2割以上</td></tr><tr><td style="padding:4px 8px;border:1px solid var(--border);text-align:center">イ</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center;font-weight:700">480回以上</td><td style="padding:4px 8px;border:1px solid var(--border);text-align:center;font-weight:700">1割以上</td></tr></table>' },
+      { key: 'z2c', badge: '変更', label: '(3) ア、イ又はウの要件への適合', help: '<b>通知 第95 2(3)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7は「麻薬管理指導加算10回以上」のみだったが、R8では「無菌製剤処理1回以上」「小児在宅6回以上」が追加され、いずれかを満たせばよい形に拡大。',
+        subItems: [
+          { text: 'ア　訪問時の医療用麻薬に関する指導実績10回／年', highlight: true },
+          { text: 'イ　無菌製剤処理加算の算定実績1回／年', highlight: true },
+          { text: 'ウ　小児在宅患者に対する体制（在宅訪問薬剤管理指導等に係る小児特定加算及び乳幼児加算の算定回数の合計　6回以上／年）' },
+        ] },
+      { key: 'z2d', highlight: true, badge: '新設', label: '(4) 常勤換算で3名以上の保険薬剤師が勤務しており、開局時間中は原則2名以上の薬剤師が常駐', help: '<b>通知 第95 2(4)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\nR7にはなかった要件。加算2の薬局には十分な人員体制が求められる。\n\n常勤換算で<b>3名以上</b>の保険薬剤師が勤務。原則として開局時間中は<b>2名以上</b>が常駐し、調剤応需及び在宅患者の急変等に対応可能な体制。' },
+      { key: 'z2e', label: '(5) 高度管理医療機器販売業の許可', help: '<b>通知 第95 2(5)</b>\n\n医薬品医療機器等法第39条第1項の規定による<b>高度管理医療機器の販売業の許可</b>を受けていること。' },
+    ]
+    const zt2AllOk = computed(() => Object.values(zt2Checks).every(v => v))
+    function zt2Next() {
+      if (zt2Step.value === 1) {
+        zt2Result.value = zt2AllOk.value
+          ? { pts: 100, label: '加算2（イ100点／ロ50点）', reason: '加算2の施設基準を満たしています。' + (ztR7.value === 'zt2' ? '区分変更がなければ届出不要。' : '届出が必要（様式87の3の5）。') }
+          : { pts: 0, label: '加算2は算定不可', reason: '加算2の追加要件に未達の項目があります。加算1（30点）で算定可能です。' }
+        zt2Step.value = 2
+      }
+    }
+    function zt2Back() { if (zt2Step.value > 1) zt2Step.value-- }
+    function zt2Reset() { zt2Step.value = 1; zt2Result.value = null; for (const k of Object.keys(zt2Checks)) zt2Checks[k] = false }
+    function zt2ApplyToR8() {
+      if (!zt2Result.value || zt2Result.value.pts === 0) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = 'zt2'; ztApplied.value = true }
+    }
+    const ztHelpModal = ref(null)
+    function ztOpenHelp(key) { ztHelpModal.value = key }
+    function ztCloseHelp() { ztHelpModal.value = null }
+    function ztGetHelp(key) { return [...ztCheckLabels, ...zt2CheckLabels].find(c => c.key === key)?.help || '' }
+    function saveZtJudge() {
+      props.data.judge = {
+        ...(props.data.judge || {}),
+        zt_step: ztStep.value, zt_r7: ztR7.value, zt_result: ztResult.value, zt_applied: ztApplied.value,
+        zt2_step: zt2Step.value, zt2_result: zt2Result.value,
+        ...Object.fromEntries(Object.entries(ztChecks).map(([k,v]) => ['zt_'+k, v])),
+        ...Object.fromEntries(Object.entries(zt2Checks).map(([k,v]) => ['zt_'+k, v])),
+      }
+    }
+    watch([ztStep, zt2Step, ztR7, ztResult, zt2Result, ztApplied, ztChecks, zt2Checks], saveZtJudge, { deep: true })
+
     const JUDGE_PAGES = {
       k_renkei: null, // 専用ステップ式に移行
       k_dx8: null, // 専用ステップ式に移行
-      k_zaitaku_taisei: {
-        title: '在宅薬学総合体制加算',
-        source: 'docu/ 改定概要 p.24',
-        options: [
-          { value: 0, label: '算定なし' },
-          { value: 30, label: '加算1（30点）' },
-          { value: 100, label: '加算2イ（100点）— 単一建物1人' },
-          { value: 50, label: '加算2ロ（50点）— イ以外' },
-        ],
-        checks: [
-          { id: 'zt_todoke', label: '在宅患者訪問薬剤管理指導を行う旨の届出' },
-          { id: 'zt_48', label: '訪問薬剤管理指導の実績 48回以上/年' },
-          { id: 'zt_offhour', label: '開局時間外における在宅業務対応体制' },
-          { id: 'zt_shuuchi', label: '在宅業務実施体制に係る地域への周知' },
-          { id: 'zt_kenshu', label: '在宅業務に関する研修（認知症・緩和・ターミナル）' },
-          { id: 'zt_zairyo', label: '医療材料及び衛生材料の供給体制' },
-          { id: 'zt_mayaku', label: '麻薬小売業者の免許' },
-          { id: 'zt_kakaritsuke', label: '服薬管理指導料の届出' },
-        ],
-        checks2: [
-          { id: 'zt2_all1', label: '加算1の施設基準を全て満たす' },
-          { id: 'zt2_240', label: '個人宅の訪問薬剤指導実績 240回以上かつ2割以上、又は480回以上かつ1割以上' },
-          { id: 'zt2_mayaku10', label: '訪問時の医療用麻薬に関する指導実績10回/年、又は無菌製剤処理加算1回/年、又は小児在宅6回/年' },
-          { id: 'zt2_3nin', label: '常勤換算3名以上の薬剤師、開局時間中2名以上常駐' },
-          { id: 'zt2_kodo', label: '高度管理医療機器販売業の許可' },
-        ],
-      },
-      k_bio: {
-        title: 'バイオ後続品調剤体制加算',
-        source: 'docu/ 改定概要 p.25',
-        options: [
-          { value: 0, label: '算定なし' },
-          { value: 50, label: '加算（50点）' },
-        ],
-        checks: [
-          { id: 'bio_hokan', label: 'バイオ医薬品の適切な保管体制が整備されている' },
-          { id: 'bio_setsu', label: '患者への適切な説明体制が整備されている' },
-          { id: 'bio_80', label: 'バイオ後続品の使用割合が80%以上の成分が、調剤実績のある成分数の60%以上（望ましい）' },
-          { id: 'bio_keiji', label: 'バイオ後続品の調剤を積極的に行っている旨の掲示' },
-        ],
-      },
+      k_zaitaku_taisei: null, // 専用ステップ式に移行
+      k_bio: null, // 専用ステップ式に移行
     }
     // 汎用判定のチェック状態
     if (!props.data.judge) props.data.judge = {}
@@ -1086,43 +1176,36 @@ const RequirementsTab = {
     function jpApplied(pageId) { return !!props.data.judge?.[pageId + '_applied'] }
     const judgePageIds = Object.keys(JUDGE_PAGES).filter(k => JUDGE_PAGES[k] !== null)
 
-    return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
+    return { sub, subCategory, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8, rkHelpModal, rkOpenHelp, rkCloseHelp, rkGetHelp,
              dxStep, dxR7, dxResult, dxApplied, dxChecks, dxCheckLabels, dxAllOk, dxNext, dxBack, dxReset, dxApplyToR8, dxHelpModal, dxOpenHelp, dxCloseHelp, dxGetHelp,
+             bioStep, bioResult, bioApplied, bioChecks, bioCheckLabels, bioAllOk, bioNext, bioReset, bioApplyToR8, bioHelpModal, bioOpenHelp, bioCloseHelp, bioGetHelp,
+             ztStep, ztR7, ztResult, ztApplied, ztChecks, ztCheckLabels, ztAllOk, ztNext, ztBack, ztReset, ztApplyToR8,
+             zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
+             ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
-    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
-      <button class="btn" :class="{active:sub==='checklist'}" :style="sub==='checklist'?'background:var(--text);color:white':''" @click="sub='checklist'" style="font-size:12px;padding:6px 12px">チェックリスト</button>
-      <button class="btn" :class="{active:sub==='k_kihon'}" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
+    <div style="display:flex;gap:4px;margin-bottom:8px">
+      <button class="btn" :style="subCategory==='taisei'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='taisei'" style="font-size:13px;padding:8px 16px">体制加算</button>
+      <button class="btn" :style="subCategory==='sonota'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='sonota'" style="font-size:13px;padding:8px 16px">その他</button>
+    </div>
+    <div v-if="subCategory==='taisei'" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+      <button class="btn" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
       <button class="btn" :style="sub==='k_chiiki'?'background:var(--teal);color:white':''" @click="sub='k_chiiki'" style="font-size:12px;padding:6px 12px">地域支援・医薬品供給対応体制</button>
       <button class="btn" :style="sub==='k_renkei'?'background:var(--teal);color:white':''" @click="sub='k_renkei'" style="font-size:12px;padding:6px 12px">連携強化</button>
       <button class="btn" :style="sub==='k_dx8'?'background:var(--teal);color:white':''" @click="sub='k_dx8'" style="font-size:12px;padding:6px 12px">電子的調剤情報連携体制整備</button>
-      <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
+      <button class="btn" :style="sub==='k_zaitaku'?'background:var(--teal);color:white':''" @click="sub='k_zaitaku'" style="font-size:12px;padding:6px 12px">在宅薬学総合体制</button>
+      <button class="btn" :style="sub==='k_bio'?'background:var(--teal);color:white':''" @click="sub='k_bio'" style="font-size:12px;padding:6px 12px">バイオ後続品調剤体制</button>
     </div>
-    <div v-if="sub==='checklist'">
-      <div class="section">
-        <div class="section-title">施設基準 達成状況</div>
-        <div class="kpi-grid" style="margin-bottom:16px">
-          <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成</div><div class="kpi-value" style="font-size:18px">{{doneItems}} / {{totalItems}}</div></div>
-          <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">達成率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
-        </div>
-        <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
+    <div v-if="subCategory==='sonota'" style="margin-bottom:12px">
+      <div v-if="judgePageIds.length" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+        <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
       </div>
-      <div v-for="group in groups" :key="group.id" class="section">
-        <div class="section-title">{{group.label}} <span style="font-size:12px;font-weight:400;color:var(--text-muted);margin-left:8px">{{groupDone(group)}}/{{group.items.length}}</span></div>
-        <p v-if="group.description" style="font-size:12px;color:var(--text-muted);margin-bottom:8px">{{group.description}}</p>
-        <ul class="task-list">
-          <li v-for="item in group.items" :key="item.id" class="task-item">
-            <input type="checkbox" class="task-check" :checked="isChecked(item.id)" @change="toggle(item.id)">
-            <div style="font-size:13px" :style="isChecked(item.id)?'text-decoration:line-through;opacity:0.5':''">{{item.label}}</div>
-          </li>
-        </ul>
-        <div class="req-progress" style="margin-top:4px"><div class="req-progress-bar" :style="{width:groupPct(group)+'%'}"></div></div>
-      </div>
+      <div v-else style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px">準備中</div>
     </div>
     <div v-if="sub==='k_kihon'">
       <div class="section">
@@ -1414,7 +1497,7 @@ const RequirementsTab = {
           <ul class="task-list">
             <li v-for="chk in rkCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="rkChecks[chk.key]">
-              <div style="font-size:13px;flex:1" :style="rkChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <div style="font-size:13px;flex:1" :style="(rkChecks[chk.key]?'text-decoration:line-through;opacity:0.5;':'') + (chk.highlight?'color:var(--r6);font-weight:700':'')">{{chk.label}}</div>
               <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="rkOpenHelp(chk.key)">?</button>
             </li>
           </ul>
@@ -1449,10 +1532,18 @@ const RequirementsTab = {
     <div v-if="sub==='k_dx8'">
       <div class="section">
         <div class="section-title">電子的調剤情報連携体制整備加算 <span class="badge badge-modified">改定</span></div>
-        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
-          <div>旧「医療DX推進体制整備加算」から名称・要件変更。</div>
-          <div>R7でDX加算を算定済みの場合、届出不要（表３）。ただし変更要件の確認が必要。</div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
+          <div>医療DX推進体制整備加算（3区分）を廃止し、電子的調剤情報連携体制整備加算（8点）に一本化。</div>
+          <div>医療情報取得加算も廃止・統合。</div>
         </div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:12px">
+          <tr style="background:var(--surface2)"><th style="padding:6px 8px;text-align:left;border:1px solid var(--border)"></th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">現行</th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">改定後</th></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">イ 医療DX推進体制整備加算1</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">10点</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--r6);font-weight:700" rowspan="3">電子的調剤情報連携体制整備加算<br>8点（月1回）</td></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">ロ 医療DX推進体制整備加算2</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">8点</td></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">ハ 医療DX推進体制整備加算3</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">6点</td></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">医療情報取得加算</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">1点（年1回）</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--neg)">削除</td></tr>
+        </table>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">R7でDX加算を算定済みの場合、届出不要（表3）。ただし変更要件の確認が必要。</div>
       </div>
       <div class="section">
         <div class="section-title">判定ツール</div>
@@ -1468,12 +1559,12 @@ const RequirementsTab = {
 
         <div v-if="dxStep===2" style="font-size:14px;line-height:1.8">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認（告示第71号 五の四）</div>
-          <div v-if="dxR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。施設基準に変更がないことを確認してください。変更がなければ届出不要です。</div>
+          <div v-if="dxR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。施設基準に変更がないことを確認してください。変更がなければ届出不要です。<div style="margin-top:6px;color:var(--r6);font-weight:700;font-size:12px">※青字（新規・変更）を中心にチェック</div></div>
           <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in dxCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="dxChecks[chk.key]">
-              <div style="font-size:12px;flex:1" :style="dxChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <div style="font-size:12px;flex:1" :style="(dxChecks[chk.key]?'text-decoration:line-through;opacity:0.5;':'') + (chk.highlight?'color:var(--r6);font-weight:700':'')">{{chk.label}} <span v-if="chk.badge" class="badge" :class="chk.badge==='新設'?'badge-new':'badge-modified'" style="font-size:10px;vertical-align:middle">{{chk.badge}}</span></div>
               <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="dxOpenHelp(chk.key)">?</button>
             </li>
           </ul>
@@ -1505,6 +1596,180 @@ const RequirementsTab = {
         </div>
       </div>
     </div>
+
+    <div v-if="sub==='k_zaitaku'">
+      <div class="section">
+        <div class="section-title">在宅薬学総合体制加算 <span class="badge badge-modified">改定</span></div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
+          <div>在宅薬学総合体制加算の要件を見直すとともに、加算2について単一建物診療患者又は単一建物居住者が1人（個人宅）の場合とそれ以外の訪問薬剤指導時の評価を区分。</div>
+        </div>
+        <table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:12px">
+          <tr style="background:var(--surface2)"><th style="padding:6px 8px;text-align:left;border:1px solid var(--border)"></th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">現行</th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">改定後</th></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">加算1</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">15点</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--r6);font-weight:700">30点</td></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">加算2イ <span style="color:var(--r6);font-weight:600">（新）</span><br><span style="font-size:11px">単一建物1人（個人宅）</span></td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)" rowspan="2">50点</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--r6);font-weight:700">100点</td></tr>
+          <tr><td style="padding:6px 8px;border:1px solid var(--border)">加算2ロ <span style="color:var(--r6);font-weight:600">（新）</span><br><span style="font-size:11px">イ以外（施設等）</span></td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">50点</td></tr>
+        </table>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">施設基準が改正。区分変更がない場合は届出不要。</div>
+      </div>
+      <div class="section">
+        <div class="section-title">加算1 判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{Math.min(ztStep,3)}} / 3</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(Math.min(ztStep,3)/3*100)+'%'}"></div></div>
+
+        <div v-if="ztStep===1" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：R7の届出状況</div>
+          <div>令和7年度の在宅薬学総合体制加算の届出状況を選択してください。</div>
+          <label style="cursor:pointer;display:block;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px" :style="ztR7==='zt1'?'border-color:var(--pos);background:var(--green-l)':''"><input type="radio" value="zt1" v-model="ztR7" style="margin-right:8px">加算1を届出していた</label>
+          <label style="cursor:pointer;display:block;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px" :style="ztR7==='zt2'?'border-color:var(--pos);background:var(--green-l)':''"><input type="radio" value="zt2" v-model="ztR7" style="margin-right:8px">加算2を届出していた</label>
+          <label style="cursor:pointer;display:block;padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:6px" :style="ztR7==='none'?'border-color:var(--amber);background:var(--amber-l)':''"><input type="radio" value="none" v-model="ztR7" style="margin-right:8px">届出していない → 施設基準を確認</label>
+        </div>
+
+        <div v-if="ztStep===2" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算1の施設基準</div>
+          <div v-if="ztR7!=='none'" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で{{ztR7==='zt2'?'加算2':'加算1'}}を届出済み。以下の要件に変更がないことを確認してください。<div style="margin-top:6px;color:var(--r6);font-weight:700;font-size:12px">※青字（新規・変更）を中心にチェック</div></div>
+          <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">以下の施設基準を全て満たす必要があります。</p>
+          <ul class="task-list">
+            <li v-for="chk in ztCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="ztChecks[chk.key]">
+              <div style="font-size:13px;flex:1" :style="ztChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''"><span v-if="chk.partialHighlight" v-html="chk.label.replace(chk.partialHighlight, '&lt;b style=&quot;color:var(--r6)&quot;&gt;'+chk.partialHighlight+'&lt;/b&gt;')"></span><span v-else :style="chk.highlight?'color:var(--r6);font-weight:700':''">{{chk.label}}</span> <span v-if="chk.badge" class="badge" :class="chk.badge==='新設'?'badge-new':'badge-modified'" style="font-size:10px;vertical-align:middle">{{chk.badge}}</span></div>
+              <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="ztOpenHelp(chk.key)">?</button>
+            </li>
+          </ul>
+          <div v-if="ztHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="ztCloseHelp()">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{[...ztCheckLabels,...zt2CheckLabels].find(c=>c.key===ztHelpModal)?.label}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="ztGetHelp(ztHelpModal)"></div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" @click="ztCloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="ztStep===3">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：加算1の判定結果</div>
+          <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="ztAllOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{ztAllOk ? '加算1（30点）算定可能' : '算定不可'}}</div>
+            <div v-if="ztAllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7!=='none' ? '区分変更がなければ届出不要。' : '新規届出が必要（様式87の3の5）。'}}</div>
+            <div v-else style="font-size:13px;color:var(--del-text)">施設基準に未チェック項目があります。</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button v-if="ztAllOk" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="ztApplyToR8()">加算1（30点）をR8予測に反映</button>
+            <button class="btn" @click="ztReset()">最初からやり直す</button>
+            <span v-if="ztApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+        </div>
+
+        <div v-if="ztStep<3" style="margin-top:20px;display:flex;gap:8px">
+          <button v-if="ztStep>1" class="btn" @click="ztBack()">戻る</button>
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="ztNext()">次へ</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">加算2 判定ツール</div>
+        <div v-if="!ztAllOk" style="padding:12px;background:#fee;border:1px solid #f5c6c6;border-radius:var(--radius);font-size:13px;color:var(--del-text)">加算1の要件を先に満たしてください。加算2は加算1の要件に加えて追加要件が必要です。</div>
+        <template v-if="ztAllOk">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{zt2Step}} / 2</div>
+          <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(zt2Step/2*100)+'%'}"></div></div>
+
+          <div v-if="zt2Step===1" style="font-size:14px;line-height:1.8">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：加算2の追加要件</div>
+            <div v-if="ztR7==='zt2'" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で加算2を届出済み。以下の要件に変更がないことを確認してください。<div style="margin-top:6px;color:var(--r6);font-weight:700;font-size:12px">※青字（新規・変更）を中心にチェック</div></div>
+            <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">加算1の基準に加え、以下の全てを満たす必要があります。</p>
+            <ul class="task-list">
+              <li v-for="chk in zt2CheckLabels" :key="chk.key" class="task-item" style="align-items:center">
+                <input type="checkbox" class="task-check" v-model="zt2Checks[chk.key]">
+                <div style="font-size:13px;flex:1" :style="zt2Checks[chk.key]?'text-decoration:line-through;opacity:0.5':''">
+                  <span :style="chk.highlight?'color:var(--r6);font-weight:700':''">{{chk.label}}</span>
+                  <span v-if="chk.badge" class="badge" :class="chk.badge==='新設'?'badge-new':'badge-modified'" style="font-size:10px;vertical-align:middle;margin-left:4px">{{chk.badge}}</span>
+                  <div v-if="chk.table" v-html="chk.table"></div>
+                  <div v-if="chk.subItems" style="margin-top:4px;padding-left:12px">
+                    <div v-for="(si,idx) in chk.subItems" :key="idx" :style="si.highlight?'color:var(--r6);font-weight:700;text-decoration:underline':''">{{si.text}}</div>
+                  </div>
+                </div>
+                <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="ztOpenHelp(chk.key)">?</button>
+              </li>
+            </ul>
+            <div v-if="ztHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="ztCloseHelp()">
+              <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+                <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{[...ztCheckLabels,...zt2CheckLabels].find(c=>c.key===ztHelpModal)?.label}}</div>
+                <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="ztGetHelp(ztHelpModal)"></div>
+                <div style="margin-top:16px;text-align:right"><button class="btn" @click="ztCloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div v-if="zt2Step===2">
+            <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算2の判定結果</div>
+            <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="zt2AllOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+              <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{zt2AllOk ? '加算2（イ100点／ロ50点）算定可能' : '加算2は算定不可'}}</div>
+              <div v-if="zt2AllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7==='zt2' ? '区分変更がなければ届出不要。' : '届出が必要（様式87の3の5）。'}}</div>
+              <div v-else style="font-size:13px;color:var(--del-text)">追加要件に未チェック項目があります。加算1（30点）で算定可能です。</div>
+            </div>
+            <div v-if="zt2AllOk" style="display:flex;gap:8px;align-items:center">
+              <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="zt2ApplyToR8()">加算2でR8予測に反映</button>
+              <span v-if="ztApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+            </div>
+            <button class="btn" style="margin-top:12px;font-size:12px" @click="zt2Reset()">加算2をやり直す</button>
+          </div>
+
+          <div v-if="zt2Step<2" style="margin-top:20px;display:flex;gap:8px">
+            <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="zt2Next()">次へ</button>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <div v-if="sub==='k_bio'">
+      <div class="section">
+        <div class="section-title">バイオ後続品調剤体制加算 <span class="badge badge-new">新設</span></div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
+          <div>R8新設。バイオ後続品の使用促進のための体制評価（50点・バイオ後続品調剤時）。</div>
+          <div style="color:var(--neg);font-weight:600">※新設のため、届出が必要（様式87の3の7）</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{bioStep}} / 2</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(bioStep/2*100)+'%'}"></div></div>
+
+        <div v-if="bioStep===1" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：施設基準の確認（告示第71号 五）</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">以下の施設基準を全て満たす必要があります。</p>
+          <ul class="task-list">
+            <li v-for="chk in bioCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="bioChecks[chk.key]">
+              <div style="font-size:13px;flex:1" :style="bioChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="bioOpenHelp(chk.key)">?</button>
+            </li>
+          </ul>
+          <div v-if="bioHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="bioCloseHelp()">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{bioCheckLabels.find(c=>c.key===bioHelpModal)?.label}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="bioGetHelp(bioHelpModal)"></div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" @click="bioCloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="bioStep===2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：判定結果</div>
+          <div v-if="bioResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="bioResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{bioResult.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted)">{{bioResult.reason}}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="bioApplyToR8()">R8予測に反映</button>
+            <span v-if="bioApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+          <button class="btn" style="margin-top:12px;font-size:12px" @click="bioReset()">最初からやり直す</button>
+        </div>
+
+        <div v-if="bioStep<2" style="margin-top:20px;display:flex;gap:8px">
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="bioNext()">次へ</button>
+        </div>
+      </div>
+    </div>
+
     <template v-for="pid in judgePageIds" :key="pid"><div v-if="sub===pid">
       <div class="section">
         <div class="section-title">{{JUDGE_PAGES[pid].title}}</div>

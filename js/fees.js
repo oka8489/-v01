@@ -98,11 +98,12 @@ const BASIC_FEES = [
   },
   {
     id: 'k_zaitaku_taisei', label: '在宅薬学総合体制加算', category: 'basic', inputType: 'select', isSub: true,
-    changeType: 'modified', changeNote: '加算1: 15→30点に倍増、加算2イ（個人宅）: 50→100点に倍増、加算2ロ（施設）: 50点据置。在宅訪問を十分に行うための体制整備を実績に基づき評価する方式に強化。実績要件も引上げ。',
-    changePurpose: '薬局による在宅医療提供体制の整備を促進し、個人宅への訪問薬剤管理を重点的に評価することで在宅薬学の質向上を推進。',
+    changeType: 'modified', changeNote: '加算1: 15→30点に倍増、加算2イ（個人宅）: 50→100点に倍増、加算2ロ（施設）: 50点据置。',
+    changePurpose: '薬局による在宅医療提供体制の整備を促進し、個人宅への訪問薬剤管理を重点的に評価。',
     r6: { options: [
       { value: 0, label: '算定なし' },
-      { value: 15, label: '加算（15点）' },
+      { value: 15, label: '加算1（15点）' },
+      { value: 50, label: '加算2（50点）' },
     ]},
   },
   {

@@ -33,7 +33,8 @@ class APIHandler(http.server.SimpleHTTPRequestHandler):
             # index.htmlにキャッシュバスターを自動付与
             import time, re
             ts = str(int(time.time()))
-            with open('index.html', 'r', encoding='utf-8') as f:
+            index_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'index.html')
+            with open(index_path, 'r', encoding='utf-8') as f:
                 html = f.read()
             html = re.sub(r'(src|href)="((?:js|css)/[^"]+)"', lambda m: f'{m.group(1)}="{m.group(2)}?t={ts}"', html)
             body = html.encode('utf-8')
