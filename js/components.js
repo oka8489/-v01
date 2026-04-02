@@ -1364,8 +1364,8 @@ const RequirementsTab = {
         <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(rkStep/3*100)+'%'}"></div></div>
 
         <div v-if="rkStep===1" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：R7での算定状況</div>
-          <div style="font-weight:600;margin-bottom:8px">R7（令和7年度）で連携強化加算を算定していましたか？</div>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：加算算定状況</div>
+          <div style="font-weight:600;margin-bottom:8px">令和7年度に連携強化加算を届出していましたか？</div>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="rkR7" :value="true">はい → 届出不要、引き続き算定可能</label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="rkR7" :value="false">いいえ → 施設基準を確認</label>
         </div>
