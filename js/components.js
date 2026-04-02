@@ -665,20 +665,22 @@ const RequirementsTab = {
       henpin: cjd.c_henpin || false,
       renkei: cjd.c_renkei || false,
     })
-    // ロの充足: 経過措置該当 or 実際に85%以上
-    const cRoOk = computed(() => cKeikaSochi.value === true || cGe85actual.value)
+    // (4) 掲示要件
+    const cKeiji = ref(cjd.c_keiji || false)
+    // ロの充足: (経過措置該当 or 実際に85%以上) かつ 掲示要件
+    const cRoOk = computed(() => (cKeikaSochi.value === true || cGe85actual.value) && cKeiji.value)
     // イ: 医薬品の安定供給体制 (1)～(8) ※PDF原文の通り
     const cBaseChecksA = [
       { key: 'supply', label: '(1) 医薬品の安定供給に向けた計画的な調達や在庫管理を行うこと。',
         help: '<b>必要な対応:</b>\n・発注・在庫管理システムの運用（不動在庫・期限切れの定期チェック）\n・需要予測に基づく適正在庫の維持\n・欠品時の代替品確保手順の整備\n・在庫管理に関する手順書の作成' },
-      { key: 'share', label: '(2) 直近1年間に他の保険薬局に医薬品を分譲した実績（同一グループは含めない）があること。',
-        help: '<b>別添3 通知の規定（保医発0305第6号）:</b>\n分譲に係る伝票、医療用医薬品の譲渡書又は<b style="color:var(--r6);text-decoration:underline">別紙様式4-1</b>を用いて行い、<b style="color:var(--r6);text-decoration:underline">分譲後2年間保存</b>すること。\n\n<b>必要な対応:</b>\n・近隣の他薬局（自グループ外）への医薬品融通の実績を1回以上確保\n・分譲記録（日付・品名・数量・相手先）を別紙様式4-1等で保存\n・地域の薬局間連携ネットワークへの参加' },
-      { key: 'supply_alt', label: '(3) 医薬品供給不安等により、迅速な医薬品入手が困難な場合は、入手可能な保険薬局を探し、在庫を確認の上、患者を紹介や、処方医に処方変更の可否を照会する等適切な対応をすること。',
-        help: '<b>別添3 通知の規定（保医発0305第6号）:</b>\n医薬品の供給不安等により、患者が持参した処方箋に記載された医薬品が入手困難な場合に、当該医薬品の在庫を持つ保険薬局を探し、当該保険薬局に予め連絡して在庫を確認した上で、当該患者に当該保険薬局を案内する場合は、<b style="color:var(--r6);text-decoration:underline">別紙様式4-2</b>を用いること。また、患者から別紙様式4-2を受け取った保険薬局は<b style="color:var(--r6);text-decoration:underline">2年間これを保存</b>すること。\n\n<b>必要な対応:</b>\n・別紙様式4-2の準備・印刷\n・近隣薬局の在庫確認ルートを整備（電話・FAX・システム）\n・処方医への処方変更照会フローの整備\n・患者への説明と他薬局紹介の体制' },
-      { key: 'stock', label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。',
+      { key: 'share', highlight: true, label: '(2) 直近1年間に他の保険薬局に医薬品を分譲した実績（同一グループは含めない）があること。',
+        help: '<b>別添3 通知の規定（保医発0305第6号）:</b>\n分譲に係る伝票、医療用医薬品の譲渡書又は<b style="color:var(--r6);text-decoration:underline">別紙様式4-1</b>を用いて行い、<b style="color:var(--r6);text-decoration:underline">分譲後2年間保存</b>すること。\n\n<b>必要な対応:</b>\n・<b style="color:var(--r6);text-decoration:underline">近隣の他薬局（自グループ外）への医薬品融通の実績を1回以上確保</b>\n・<b style="color:var(--r6);text-decoration:underline">分譲記録（日付・品名・数量・相手先）を別紙様式4-1等で保存</b>\n・地域の薬局間連携ネットワークへの参加' },
+      { key: 'supply_alt', highlight: true, label: '(3) 医薬品供給不安等により、迅速な医薬品入手が困難な場合は、入手可能な保険薬局を探し、在庫を確認の上、患者を紹介や、処方医に処方変更の可否を照会する等適切な対応をすること。',
+        help: '<b>別添3 通知の規定（保医発0305第6号）:</b>\n医薬品の供給不安等により、患者が持参した処方箋に記載された医薬品が入手困難な場合に、当該医薬品の在庫を持つ保険薬局を探し、当該保険薬局に予め連絡して在庫を確認した上で、当該患者に当該保険薬局を案内する場合は、<b style="color:var(--r6);text-decoration:underline">別紙様式4-2</b>を用いること。また、患者から別紙様式4-2を受け取った保険薬局は<b style="color:var(--r6);text-decoration:underline">2年間これを保存</b>すること。\n\n<b>必要な対応:</b>\n・<b style="color:var(--r6);text-decoration:underline">別紙様式4-2の準備・印刷（※必ずこの様式を用いること）</b>\n・近隣薬局の在庫確認ルートを整備（電話・FAX・システム）\n・処方医への処方変更照会フローの整備\n・患者への説明と他薬局紹介の体制' },
+      { key: 'stock', highlight: true, label: '(4) 重要供給確保医薬品のうち内用薬及び外用薬であるものは１ヶ月程度の備蓄をするよう努めること。',
         help: '<b>必要な対応:</b>\n・厚労省が指定する<b>「重要供給確保医薬品」</b>リストの確認\n・該当する内用薬・外用薬の1ヶ月分の在庫確保\n・備蓄状況の定期的な確認・記録\n\n※努力義務（「努めること」）だが、届出時に体制整備が必要' },
-      { key: 'tanpin', label: '(5) 原則として、単品単価交渉の実施をしていること。',
-        help: '<b>必要な対応:</b>\n・卸売業者との価格交渉を<b>品目ごと</b>に実施（総価交渉ではなく単品単価）\n・交渉記録の保存\n・妥結率の管理（未妥結減算の回避にも関連）\n\n※「医療用医薬品の流通改善に関する懇談会」の流通改善ガイドラインに基づく' },
+      { key: 'tanpin', highlight: true, label: '(5) 原則として、単品単価交渉の実施をしていること。',
+        help: '<b>必要な対応:</b>\n・卸売業者との価格交渉を<b style="color:var(--r6)">品目ごと</b>に実施（総価交渉ではなく単品単価）\n・<b style="color:var(--r6);text-decoration:underline">交渉記録の保存</b>\n・<b style="color:var(--r6);text-decoration:underline">様式85「妥結率等に係る報告書」を提出していること</b>\n・<b style="color:var(--neg)">【重要】直近に提出した報告書で、様式85の「単品単価交渉を行っていない」に非該当であること。該当（＝行っていない）の場合、本要件を満たさないものとして取り扱われる</b>\n・妥結率の管理（未妥結減算の回避にも関連）\n\n※「医療用医薬品の流通改善に関する懇談会」の流通改善ガイドラインに基づく' },
       { key: 'haibin', label: '(6) 卸売販売業者への頻回配送・休日夜間配送・急配に係る過度な依頼を慎むこと。',
         help: '<b>必要な対応:</b>\n・発注の計画性を高め、緊急配送の頻度を減らす\n・配送回数の記録と振り返り\n・卸との配送スケジュールの取り決め\n\n※流通改善ガイドラインに基づく。「過度な」依頼が対象であり、合理的な緊急配送は可' },
       { key: 'henpin', label: '(7) 温度管理を要する医薬品や在庫調整を目的とした卸売販売業者への医薬品の返品は慎むこと。',
@@ -759,11 +761,11 @@ const RequirementsTab = {
         c_aimHigher: cAimHigher.value,
         c_keikaSochi: cKeikaSochi.value, c_ge85actual: cGe85actual.value,
         c_supply: cBase.supply, c_share: cBase.share, c_supply_alt: cBase.supply_alt, c_stock: cBase.stock,
-        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei,
+        c_tanpin: cBase.tanpin, c_haibin: cBase.haibin, c_henpin: cBase.henpin, c_renkei: cBase.renkei, c_keiji: cKeiji.value,
         c_i1: cInd.i1, c_i2: cInd.i2, c_i3: cInd.i3, c_i4: cInd.i4, c_i5: cInd.i5, c_i6: cInd.i6, c_i7: cInd.i7, c_i8: cInd.i8, c_i9: cInd.i9,
       })
     }
-    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cBase, cInd], saveCJudge, { deep: true })
+    watch([cStep, cResult, cKihonType, cApplied, cKeikaSochi, cGe85actual, cKeiji, cBase, cInd], saveCJudge, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: {
@@ -863,7 +865,7 @@ const RequirementsTab = {
 
     return { sub, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
-             cStep, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
+             cStep, cKihonType, cKeikaSochi, cGe85actual, cKeiji, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cResult, cApplied, cError, cNext, cBack, cReset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
@@ -1004,8 +1006,8 @@ const RequirementsTab = {
           <ul class="task-list">
             <li v-for="chk in cBaseChecksA" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="cBase[chk.key]">
-              <div style="font-size:13px;flex:1" :style="cBase[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
-              <button class="btn" style="font-size:10px;padding:2px 8px;flex-shrink:0;background:var(--surface2);color:var(--text-muted)" @click.stop="openHelp(chk.key)">?</button>
+              <div style="font-size:13px;flex:1" :style="(cBase[chk.key]?'text-decoration:line-through;opacity:0.5;':'') + (chk.highlight?'color:var(--r6);font-weight:700':'')">{{chk.label}}</div>
+              <button class="btn" style="font-size:10px;padding:2px 8px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="openHelp(chk.key)">チェック！</button>
             </li>
           </ul>
           <div v-if="cHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="closeHelp()">
@@ -1021,25 +1023,32 @@ const RequirementsTab = {
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：ロの経過措置の確認</div>
           <div style="padding:12px;background:var(--amber-l);border:1px solid var(--amber);border-radius:var(--radius);margin-bottom:12px;font-size:13px;line-height:1.8">
             <div style="font-weight:700;color:var(--amber);margin-bottom:4px">〔経過措置〕</div>
-            <div>R8.3.31時点で後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（後発品85%以上）を満たしているとみなす。</div>
+            <div>後発医薬品調剤体制加算1、2又は3の届出を行っている薬局は、<strong>R9.5.31まで</strong>ロの要件（後発品85%以上）を満たしているとみなす。</div>
           </div>
-          <div style="font-weight:600;margin-bottom:8px">R7（R8.3.31時点）で後発医薬品調剤体制加算1～3の届出をしていましたか？</div>
+          <div style="font-weight:600;margin-bottom:8px">後発医薬品調剤体制加算1～3の届出をしていましたか？</div>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="cKeikaSochi" :value="true">はい → R9.5.31まで85%要件みなし（経過措置適用）</label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="cKeikaSochi" :value="false">いいえ</label>
         </div>
 
         <div v-if="cStep===3" style="font-size:14px;line-height:2">
-          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：ロ — 後発医薬品使用率</div>
-          <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos)">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
-          <div v-else>
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：ロ — 後発医薬品使用率・掲示</div>
+          <div style="font-weight:600;margin-bottom:8px">(3) 後発医薬品使用率</div>
+          <div v-if="cKeikaSochi" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">経過措置適用: R9.5.31まで85%要件を満たしているとみなされます。</div>
+          <div v-else style="margin-bottom:12px">
             <div style="margin-bottom:12px">後発医薬品のある先発医薬品及び後発医薬品を合算した規格単位数量に占める後発医薬品の規格単位数量の割合が<strong>85%以上</strong>であること。</div>
-            <div style="font-size:12px;color:var(--amber);margin-bottom:12px;padding:8px;background:var(--amber-l);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）<strong>【要確認】</strong></div>
+            <div style="font-size:12px;color:var(--amber);margin-bottom:12px;padding:8px;background:var(--amber-l);border-radius:var(--radius)">※算出期間: 届出前<strong>直近3か月</strong>の実績（R8年6月届出の場合: <strong>R8年2月～4月</strong>）</div>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
               <input type="checkbox" v-model="cGe85actual" style="width:18px;height:18px">
               <span style="font-weight:600">後発医薬品の使用率が85%以上である</span>
             </label>
             <div v-if="!cGe85actual" style="padding:8px;background:#fee;border-radius:var(--radius);font-size:12px;color:var(--del-text);margin-bottom:8px">85%未満の場合、加算1は算定できません。</div>
           </div>
+          <div style="font-weight:600;margin-bottom:8px">(4) 掲示要件</div>
+          <div style="margin-bottom:8px;font-size:13px">後発医薬品の調剤を積極的に行っている旨を当該保険薬局の内側及び外側の見えやすい場所に掲示すること。</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;margin-bottom:8px">
+            <input type="checkbox" v-model="cKeiji" style="width:18px;height:18px">
+            <span style="font-weight:600">内側・外側に掲示している</span>
+          </label>
         </div>
 
         <div v-if="cStep===4">
