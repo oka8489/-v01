@@ -935,6 +935,7 @@ const RequirementsTab = {
       if (rkStep.value === 1) {
         if (rkR7.value === null) return
         if (rkR7.value === true) { for (const k of Object.keys(rkChecks)) rkChecks[k] = true }
+        else { for (const k of Object.keys(rkChecks)) rkChecks[k] = false }
         rkStep.value = 2
       }
       else if (rkStep.value === 2) {
@@ -989,6 +990,7 @@ const RequirementsTab = {
       if (dxStep.value === 1) {
         if (dxR7.value === null) return
         if (dxR7.value === true) { for (const k of Object.keys(dxChecks)) dxChecks[k] = true }
+        else { for (const k of Object.keys(dxChecks)) dxChecks[k] = false }
         dxStep.value = 2
       }
       else if (dxStep.value === 2) {
