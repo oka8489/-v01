@@ -926,14 +926,18 @@ const RequirementsTab = {
       saigai_mode: cjd.rk_saigai_mode || false,
     })
     const rkCheckLabels = [
-      { key: 'kyotei', label: '第二種協定指定医療機関の指定を受けている' },
-      { key: 'kenshu', label: '年1回以上、感染症に係る研修を実施している' },
-      { key: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している' },
-      { key: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している' },
-      { key: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している' },
-      { key: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している' },
-      { key: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある' },
+      { key: 'kyotei', label: '第二種協定指定医療機関の指定を受けている', help: '<b>必要な対応:</b>\n・都道府県知事に<b>第二種協定指定医療機関</b>の申請・指定を受ける\n・感染症法に基づく指定で、新興感染症発生時に医療提供を行う協定を締結\n・都道府県の担当部署に確認・申請' },
+      { key: 'kenshu', label: '年1回以上、感染症に係る研修を実施している', help: '<b>必要な対応:</b>\n・感染症に係る最新の科学的知見に基づいた研修を<b>年1回以上</b>実施\n・薬局内研修でも外部研修への参加でも可\n・<b style="color:var(--r6);text-decoration:underline">研修記録（日時・内容・参加者）を保存</b>' },
+      { key: 'kunren', label: '年1回以上、新興感染症対応訓練を実施している', help: '<b>必要な対応:</b>\n・新型インフルエンザ等感染症に係る医療提供の<b>訓練を年1回以上</b>実施\n・自治体や関係団体との合同訓練への参加でも可\n・<b style="color:var(--r6);text-decoration:underline">訓練記録（日時・内容・参加者）を保存</b>' },
+      { key: 'dis_plan', label: '災害時の医薬品供給・地域衛生対応の計画を作成し実施している', help: '<b>必要な対応:</b>\n・災害発生時の医薬品供給体制の計画書を作成\n・被災状況に応じた対応手順の整備\n・地域の衛生管理への協力体制' },
+      { key: 'dis_renkei', label: '地域の協議会、研修又は訓練等に参加している', help: '<b>必要な対応:</b>\n・地域の災害対策協議会への参加\n・自治体・薬剤師会主催の研修・訓練への参加\n・<b style="color:var(--r6);text-decoration:underline">参加記録の保存</b>' },
+      { key: 'shuuchi', label: '対応可能な体制を行政機関・薬剤師会等のHP等で周知している', help: '<b>必要な対応:</b>\n・災害時・感染症発生時に対応可能であることを<b>ホームページ等で公開</b>\n・行政機関や薬剤師会のHP経由での周知でも可\n・薬局内の掲示も併せて行う' },
+      { key: 'saigai_mode', label: '災害時モード（オンライン資格確認等システム）の活用体制がある', help: '<b>必要な対応:</b>\n・オンライン資格確認等システムの<b>災害時モード（緊急時医療情報閲覧）</b>の操作方法を習得\n・電子処方箋管理サービスへの調剤情報の登録\n・平時からこれらシステムの活用に努めること' },
     ]
+    const rkHelpModal = ref(null)
+    function rkOpenHelp(key) { rkHelpModal.value = key }
+    function rkCloseHelp() { rkHelpModal.value = null }
+    function rkGetHelp(key) { return rkCheckLabels.find(c => c.key === key)?.help || '' }
     const rkAllOk = computed(() => Object.values(rkChecks).every(v => v))
     function rkNext() {
       if (rkStep.value === 1) {
@@ -1051,7 +1055,7 @@ const RequirementsTab = {
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
-             rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8,
+             rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8, rkHelpModal, rkOpenHelp, rkCloseHelp, rkGetHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -1370,11 +1374,19 @@ const RequirementsTab = {
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認</div>
           <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
           <ul class="task-list">
-            <li v-for="chk in rkCheckLabels" :key="chk.key" class="task-item">
+            <li v-for="chk in rkCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
               <input type="checkbox" class="task-check" v-model="rkChecks[chk.key]">
-              <div style="font-size:13px" :style="rkChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <div style="font-size:13px;flex:1" :style="rkChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="rkOpenHelp(chk.key)">?</button>
             </li>
           </ul>
+          <div v-if="rkHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="rkCloseHelp()">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{rkCheckLabels.find(c=>c.key===rkHelpModal)?.label}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="rkGetHelp(rkHelpModal)"></div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" @click="rkCloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+            </div>
+          </div>
         </div>
 
         <div v-if="rkStep===3">
