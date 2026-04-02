@@ -960,23 +960,62 @@ const RequirementsTab = {
     }
     watch([rkStep, rkR7, rkResult, rkApplied, rkChecks], saveRkJudge, { deep: true })
 
+    // 電子的調剤情報連携体制整備加算 ステップ式
+    const dxStep = ref(cjd.dx_step || 1)
+    const dxR7 = ref(cjd.dx_r7 ?? null)
+    const dxResult = ref(cjd.dx_result || null)
+    const dxApplied = ref(cjd.dx_applied || false)
+    const dxChecks = reactive({
+      d1: cjd.dx_d1 || false, d2: cjd.dx_d2 || false, d3: cjd.dx_d3 || false,
+      d4: cjd.dx_d4 || false, d5: cjd.dx_d5 || false, d6: cjd.dx_d6 || false,
+      d7: cjd.dx_d7 || false, d8: cjd.dx_d8 || false, d9: cjd.dx_d9 || false, d10: cjd.dx_d10 || false,
+    })
+    const dxCheckLabels = [
+      { key: 'd1', label: '(1) 電子情報処理組織の使用による請求を行っていること', help: '<b>告示第71号 五の四(1)</b>\n\nレセプトの電子請求（オンライン請求）を行っていること。' },
+      { key: 'd2', label: '(2) 電子資格確認を行う体制を有していること', help: '<b>告示第71号 五の四(2)</b>\n\nオンライン資格確認の導入・運用。マイナ保険証による資格確認が可能であること。' },
+      { key: 'd3', label: '(3) 電子資格確認を利用して取得した診療情報等を閲覧・活用して調剤を行う体制', help: '<b>告示第71号 五の四(3)</b>\n\n薬剤情報・特定健診情報等を閲覧し、調剤・服薬指導に活用する体制。' },
+      { key: 'd4', label: '(4) 電子処方箋の受付・調剤情報の登録・重複等チェックの体制', help: '<b>告示第71号 五の四(4)</b>\n\n・電子処方箋を受け付ける体制\n・調剤した薬剤の情報を電子的に登録する体制\n・<b style="color:var(--r6)">有効成分の重複・不適切な組合せを電子的に確認する体制</b>' },
+      { key: 'd5', label: '(5) 電子的な調剤録及び薬剤服用歴の管理体制', help: '<b>告示第71号 五の四(5)</b>\n\n調剤録・薬歴を電磁的記録で管理する体制（電子薬歴）。' },
+      { key: 'd6', label: '(6) 電磁的方法により診療情報を共有・活用する体制', help: '<b>告示第71号 五の四(6)</b>\n\n医療機関等との電子的な情報共有体制。' },
+      { key: 'd7', label: '(7) 電子資格確認に係る十分な実績', help: '<b>告示第71号 五の四(7)</b>\n\nマイナ保険証の利用実績。一定以上の利用率が求められる。' },
+      { key: 'd8', label: '(8) 医療DX推進の体制に関する事項を薬局内の見やすい場所に掲示', help: '<b>告示第71号 五の四(8)</b>\n\n医療DX推進の体制・質の高い調剤のための情報活用について薬局内に掲示。' },
+      { key: 'd9', label: '(9) (8)の掲示事項をウェブサイトに掲載', help: '<b>告示第71号 五の四(9)</b>\n\n原則としてウェブサイトへの掲載が必要。' },
+      { key: 'd10', label: '(10) マイナポータルの医療情報等に基づく健康管理相談に応じる体制', help: '<b>告示第71号 五の四(10)</b>\n\n患者がマイナポータルで確認した医療情報等に基づく健康管理の相談に対応できる体制。' },
+    ]
+    const dxAllOk = computed(() => Object.values(dxChecks).every(v => v))
+    function dxNext() {
+      if (dxStep.value === 1) {
+        if (dxR7.value === null) return
+        if (dxR7.value === true) dxStep.value = 2 // 届出済み→変更要件チェックへ
+        else dxStep.value = 2 // 新規→全要件チェックへ
+      }
+      else if (dxStep.value === 2) {
+        dxResult.value = dxAllOk.value ? { pts: 8, label: '加算（8点）', reason: dxR7.value ? '届出済み＋変更要件クリア。届出不要。' : '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
+        dxStep.value = 3
+      }
+    }
+    function dxBack() { if (dxStep.value > 1) dxStep.value-- }
+    function dxReset() { dxStep.value = 1; dxR7.value = null; dxResult.value = null; dxApplied.value = false }
+    function dxApplyToR8() {
+      if (!dxResult.value) return
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_dx8'] = dxResult.value.pts; dxApplied.value = true }
+    }
+    const dxHelpModal = ref(null)
+    function dxOpenHelp(key) { dxHelpModal.value = key }
+    function dxCloseHelp() { dxHelpModal.value = null }
+    function dxGetHelp(key) { return dxCheckLabels.find(c => c.key === key)?.help || '' }
+    function saveDxJudge() {
+      props.data.judge = {
+        ...(props.data.judge || {}),
+        dx_step: dxStep.value, dx_r7: dxR7.value, dx_result: dxResult.value, dx_applied: dxApplied.value,
+        ...Object.fromEntries(Object.entries(dxChecks).map(([k,v]) => ['dx_'+k, v])),
+      }
+    }
+    watch([dxStep, dxR7, dxResult, dxApplied, dxChecks], saveDxJudge, { deep: true })
+
     const JUDGE_PAGES = {
       k_renkei: null, // 専用ステップ式に移行
-      k_dx8: {
-        title: '電子的調剤情報連携体制整備加算',
-        source: 'docu/ 改定概要 p.15',
-        options: [
-          { value: 0, label: '算定なし' },
-          { value: 8, label: '加算（8点）' },
-        ],
-        checks: [
-          { id: 'eshoho', label: '電子処方箋の応需体制が整備されている' },
-          { id: 'dup_check', label: '電子処方箋による重複投薬等チェック機能が有効' },
-          { id: 'inter_check', label: '相互作用チェック機能が有効' },
-          { id: 'online', label: 'オンライン資格確認の導入' },
-          { id: 'mainy', label: '電子薬歴への対応' },
-        ],
-      },
+      k_dx8: null, // 専用ステップ式に移行
       k_zaitaku_taisei: {
         title: '在宅薬学総合体制加算',
         source: 'docu/ 改定概要 p.24',
@@ -1048,6 +1087,7 @@ const RequirementsTab = {
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8, rkHelpModal, rkOpenHelp, rkCloseHelp, rkGetHelp,
+             dxStep, dxR7, dxResult, dxApplied, dxChecks, dxCheckLabels, dxAllOk, dxNext, dxBack, dxReset, dxApplyToR8, dxHelpModal, dxOpenHelp, dxCloseHelp, dxGetHelp,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
@@ -1056,6 +1096,7 @@ const RequirementsTab = {
       <button class="btn" :class="{active:sub==='k_kihon'}" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
       <button class="btn" :style="sub==='k_chiiki'?'background:var(--teal);color:white':''" @click="sub='k_chiiki'" style="font-size:12px;padding:6px 12px">地域支援・医薬品供給対応体制</button>
       <button class="btn" :style="sub==='k_renkei'?'background:var(--teal);color:white':''" @click="sub='k_renkei'" style="font-size:12px;padding:6px 12px">連携強化</button>
+      <button class="btn" :style="sub==='k_dx8'?'background:var(--teal);color:white':''" @click="sub='k_dx8'" style="font-size:12px;padding:6px 12px">電子的調剤情報連携体制整備</button>
       <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
     </div>
     <div v-if="sub==='checklist'">
@@ -1397,6 +1438,65 @@ const RequirementsTab = {
         <div v-if="rkStep<3" style="margin-top:20px;display:flex;gap:8px">
           <button v-if="rkStep>1" class="btn" @click="rkBack()">戻る</button>
           <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="rkNext()">次へ</button>
+        </div>
+      </div>
+    </div>
+    <div v-if="sub==='k_dx8'">
+      <div class="section">
+        <div class="section-title">電子的調剤情報連携体制整備加算 <span class="badge badge-modified">改定</span></div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div>旧「医療DX推進体制整備加算」から名称・要件変更。</div>
+          <div>R7でDX加算を算定済みの場合、届出不要（表３）。ただし変更要件の確認が必要。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">判定ツール</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{dxStep}} / 3</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:(dxStep/3*100)+'%'}"></div></div>
+
+        <div v-if="dxStep===1" style="font-size:14px;line-height:2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：加算算定状況</div>
+          <div style="font-weight:600;margin-bottom:8px">令和7年度に医療DX推進体制整備加算を届出していましたか？</div>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="dxR7" :value="true">はい → 変更がなければ、引き続き算定可能（届出不要）</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="dxR7" :value="false">いいえ → 施設基準を確認</label>
+        </div>
+
+        <div v-if="dxStep===2" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認（告示第71号 五の四）</div>
+          <p v-if="dxR7" style="font-size:13px;font-weight:700;color:var(--amber);margin-bottom:12px">※R7で届出済み。変更された要件を中心に確認してください。</p>
+          <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
+          <ul class="task-list">
+            <li v-for="chk in dxCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="dxChecks[chk.key]">
+              <div style="font-size:12px;flex:1" :style="dxChecks[chk.key]?'text-decoration:line-through;opacity:0.5':''">{{chk.label}}</div>
+              <button class="btn" style="font-size:9px;padding:1px 5px;flex-shrink:0;background:var(--amber-l);color:var(--amber);border:1px solid var(--amber)" @click.stop="dxOpenHelp(chk.key)">?</button>
+            </li>
+          </ul>
+          <div v-if="dxHelpModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="dxCloseHelp()">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:15px;margin-bottom:12px">{{dxCheckLabels.find(c=>c.key===dxHelpModal)?.label}}</div>
+              <div style="font-size:13px;color:var(--text-muted);line-height:1.8;white-space:pre-line" v-html="dxGetHelp(dxHelpModal)"></div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" @click="dxCloseHelp()" style="background:var(--text);color:white">閉じる</button></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="dxStep===3">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：判定結果</div>
+          <div v-if="dxResult" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="dxResult.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{dxResult.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted)">{{dxResult.reason}}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="dxApplyToR8()">R8予測に反映</button>
+            <button class="btn" @click="dxReset()">最初からやり直す</button>
+            <span v-if="dxApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+        </div>
+
+        <div v-if="dxStep<3" style="margin-top:20px;display:flex;gap:8px">
+          <button v-if="dxStep>1" class="btn" @click="dxBack()">戻る</button>
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="dxNext()">次へ</button>
         </div>
       </div>
     </div>
