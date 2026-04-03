@@ -359,20 +359,23 @@ const TasksTab = {
     }
     const statusLabel = { todo: '未着手', wip: '進行中', done: '完了' }
 
+    // Tags
+    const tagDefs = {
+      todoke: { label: '届出', color: 'var(--purple)' },
+      system: { label: 'システム', color: 'var(--teal)' },
+      operation: { label: '運用・施設', color: 'var(--amber)' }
+    }
+    function tagLabel(t) { return tagDefs[t?.tag]?.label || '' }
+    function tagColor(t) { return tagDefs[t?.tag]?.color || 'var(--text-faint)' }
+
     const columns = [{ key: 'todo', label: '未着手' }, { key: 'wip', label: '進行中' }, { key: 'done', label: '完了' }]
     const allTasks = computed(() => {
       const list = []
-      for (const cat of store.categories) {
-        for (const tid of cat.keys) {
-          if (store.tasks[tid]) list.push({ id: tid, task: store.tasks[tid], cat: cat.label })
-        }
+      for (const [tid, task] of Object.entries(store.tasks)) {
+        list.push({ id: tid, task, cat: tagDefs[task.tag]?.label || '' })
       }
       return list
     })
-    const totalTasks = computed(() => allTasks.value.length)
-    const doneTasks = computed(() => allTasks.value.filter(t => status(t.id) === 'done').length)
-    const wipTasks = computed(() => allTasks.value.filter(t => status(t.id) === 'wip').length)
-    const pct = computed(() => totalTasks.value ? Math.round(doneTasks.value / totalTasks.value * 100) : 0)
     function tasksInColumn(col) { return allTasks.value.filter(t => status(t.id) === col) }
 
     // ── Calendar logic ──
@@ -465,7 +468,7 @@ const TasksTab = {
         return { cls: 'cal-dot-todo' }
       })
       const evts = eventsForDate(dateStr)
-      for (const ev of evts) dots.push({ cls: 'cal-dot-event', color: eventColorCss(ev.color) })
+      for (const ev of evts) dots.push({ cls: 'cal-dot-event', color: 'var(--purple)' })
       return dots
     }
 
@@ -548,10 +551,9 @@ const TasksTab = {
 
     // Add task (with subtasks support)
     const showAddForm = ref(false)
-    const addForm = reactive({ title: '', detail: '', deadline: '', category: '', newSubtask: '', subtasks: [] })
+    const addForm = reactive({ title: '', detail: '', deadline: '', tag: 'todoke', newSubtask: '', subtasks: [] })
     function openAddForm() {
-      addForm.title = ''; addForm.detail = ''; addForm.deadline = ''; addForm.newSubtask = ''; addForm.subtasks = []
-      addForm.category = store.categories.length ? store.categories[0].id : ''
+      addForm.title = ''; addForm.detail = ''; addForm.deadline = ''; addForm.tag = 'todoke'; addForm.newSubtask = ''; addForm.subtasks = []
       showAddForm.value = true
     }
     function addSubtaskToForm() {
@@ -563,35 +565,24 @@ const TasksTab = {
     function addTask() {
       if (!addForm.title.trim()) return
       const id = 'u' + Date.now()
-      const task = { title: addForm.title.trim(), detail: addForm.detail.trim(), deadline: addForm.deadline, status: 'todo' }
+      const task = { title: addForm.title.trim(), detail: addForm.detail.trim(), deadline: addForm.deadline, status: 'todo', tag: addForm.tag }
       if (addForm.subtasks.length) task.subtasks = addForm.subtasks.map((s, i) => ({ id: 's' + (i + 1), label: s.label, done: false }))
       store.tasks[id] = task
-      let cat = store.categories.find(c => c.id === addForm.category)
-      if (!cat) {
-        cat = { id: 'custom', label: 'カスタム', keys: [] }
-        store.categories.push(cat)
-      }
-      cat.keys.push(id)
       showAddForm.value = false
       saveTasks()
     }
 
     // ── Calendar events (schedules) ──
+    // ── Calendar events (schedules) ──
     const showAddEvent = ref(false)
-    const eventForm = reactive({ title: '', date: '', color: 'purple' })
-    const eventColors = [
-      { key: 'purple', label: '紫', css: 'var(--purple)' },
-      { key: 'teal', label: '緑', css: 'var(--teal)' },
-      { key: 'amber', label: '橙', css: 'var(--amber)' },
-      { key: 'red', label: '赤', css: 'var(--red)' },
-    ]
+    const eventForm = reactive({ title: '', date: '' })
     function openAddEvent() {
-      eventForm.title = ''; eventForm.date = ''; eventForm.color = 'purple'
+      eventForm.title = ''; eventForm.date = ''
       showAddEvent.value = true
     }
     function addEvent() {
       if (!eventForm.title.trim() || !eventForm.date) return
-      store.events.push({ id: 'ev' + Date.now(), title: eventForm.title.trim(), date: eventForm.date, color: eventForm.color })
+      store.events.push({ id: 'ev' + Date.now(), title: eventForm.title.trim(), date: eventForm.date, color: 'purple' })
       showAddEvent.value = false
       saveTasks()
     }
@@ -601,10 +592,6 @@ const TasksTab = {
     }
     function eventsForDate(dateStr) {
       return store.events.filter(e => e.date === dateStr)
-    }
-    function eventColorCss(colorKey) {
-      const c = eventColors.find(ec => ec.key === colorKey)
-      return c ? c.css : 'var(--purple)'
     }
 
     // Delete task
@@ -616,30 +603,18 @@ const TasksTab = {
       saveTasks()
     }
 
-    return { store, loading, viewMode, status, setStatus, cycleStatus, statusLabel, totalTasks, doneTasks, wipTasks, pct,
+    return { store, loading, viewMode, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
              showAddForm, addForm, openAddForm, addTask, addSubtaskToForm, removeSubtaskFromForm, deleteTask,
              currentMonth, selectedDate, prevMonth, nextMonth, goToday, monthLabel, calendarDays,
              todayStr, tasksForDate, dotsForDate, selectDate, deadlineClass, formatDeadlineShort, selectedDateLabel,
              subtaskProgress, toggleSubtask,
-             showAddEvent, eventForm, eventColors, openAddEvent, addEvent, deleteEvent, eventsForDate, eventColorCss }
+             showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate }
   },
   template: `<div>
     <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
     <template v-else>
-    <!-- KPI Cards -->
-    <div class="section">
-      <div class="section-title">事務タスク進捗</div>
-      <div class="kpi-grid" style="margin-bottom:16px">
-        <div class="kpi-card"><div class="kpi-label">未着手</div><div class="kpi-value" style="font-size:18px">{{totalTasks - doneTasks - wipTasks}}</div></div>
-        <div class="kpi-card" style="border-color:var(--amber)"><div class="kpi-label" style="color:var(--amber)">進行中</div><div class="kpi-value" style="font-size:18px;color:var(--amber)">{{wipTasks}}</div></div>
-        <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">完了</div><div class="kpi-value" style="font-size:18px">{{doneTasks}} / {{totalTasks}}</div></div>
-        <div class="kpi-card" :class="pct===100?'positive':''"><div class="kpi-label">進捗率</div><div class="kpi-value" style="font-size:18px">{{pct}}%</div></div>
-      </div>
-      <div class="req-progress"><div class="req-progress-bar" :style="{width:pct+'%'}"></div></div>
-    </div>
-
     <!-- View Toggle + Add Button -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div class="view-toggle">
@@ -658,12 +633,6 @@ const TasksTab = {
       <div style="display:flex;flex-direction:column;gap:8px">
         <input class="fee-input" style="max-width:100%;text-align:left" v-model="eventForm.title" placeholder="予定名（例: 届出書類公開日）">
         <input type="date" class="fee-input" style="max-width:200px;text-align:left" v-model="eventForm.date">
-        <div style="display:flex;gap:6px;align-items:center">
-          <span style="font-size:12px;color:var(--text-muted)">色:</span>
-          <button v-for="c in eventColors" :key="c.key" @click="eventForm.color=c.key"
-                  style="width:22px;height:22px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:all .1s"
-                  :style="{background: c.css, borderColor: eventForm.color===c.key ? 'var(--text)' : 'transparent'}"></button>
-        </div>
         <div style="display:flex;gap:8px;justify-content:flex-end">
           <button class="btn" @click="showAddEvent=false">キャンセル</button>
           <button class="btn" @click="addEvent" style="background:var(--purple);color:white;border:none">追加</button>
@@ -678,9 +647,8 @@ const TasksTab = {
         <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.title" placeholder="タスク名（必須）">
         <input class="fee-input" style="max-width:100%;text-align:left" v-model="addForm.detail" placeholder="詳細（任意）">
         <input type="date" class="fee-input" style="max-width:200px;text-align:left" v-model="addForm.deadline">
-        <select class="fee-select" v-model="addForm.category" style="max-width:100%">
-          <template v-for="cat in store.categories" :key="cat.id"><option :value="cat.id">{{cat.label}}</option></template>
-          <option value="__new__">+ 新しいカテゴリ</option>
+        <select class="fee-select" v-model="addForm.tag" style="max-width:200px">
+          <option v-for="(def, key) in tagDefs" :key="key" :value="key">{{def.label}}</option>
         </select>
         <div>
           <div style="font-size:12px;font-weight:600;margin-bottom:4px;color:var(--text-muted)">サブタスク</div>
@@ -714,7 +682,7 @@ const TasksTab = {
              class="cal-cell" :class="{ 'other-month': cell.otherMonth, today: cell.dateStr===todayStr, selected: cell.dateStr===selectedDate }"
              @click="selectDate(cell.dateStr)">
           <span class="cal-date" :class="{ today: cell.dateStr===todayStr }">{{ cell.day }}</span>
-          <div v-for="ev in eventsForDate(cell.dateStr)" :key="'e'+ev.id" class="cal-pill cal-pill-event" :style="{background: eventColorCss(ev.color), color:'white'}">{{ ev.title }}</div>
+          <div v-for="ev in eventsForDate(cell.dateStr)" :key="'e'+ev.id" class="cal-pill cal-pill-event">{{ ev.title }}</div>
           <div v-for="t in tasksForDate(cell.dateStr)" :key="'t'+t.id" class="cal-task-label" :class="'cal-task-label-'+status(t.id)"><span class="cal-task-label-dot" :class="'cal-dot-'+(status(t.id)==='done'?'done':status(t.id)==='wip'?'wip':(t.task.deadline && t.task.deadline < todayStr ? 'overdue':'todo'))"></span>{{ t.task.title }}</div>
         </div>
       </div>
@@ -722,8 +690,8 @@ const TasksTab = {
       <div v-if="selectedDate && (tasksForDate(selectedDate).length || eventsForDate(selectedDate).length)" class="cal-task-list">
         <div class="cal-task-list-header">{{ selectedDateLabel() }}（{{ tasksForDate(selectedDate).length + eventsForDate(selectedDate).length }}件）</div>
         <!-- Events -->
-        <div v-for="ev in eventsForDate(selectedDate)" :key="ev.id" class="cal-event-card" :style="{'border-left-color': eventColorCss(ev.color)}">
-          <span class="cal-event-dot" :style="{background: eventColorCss(ev.color)}"></span>
+        <div v-for="ev in eventsForDate(selectedDate)" :key="ev.id" class="cal-event-card">
+          <span class="cal-event-dot"></span>
           <span class="cal-event-title">{{ ev.title }}</span>
           <button class="cal-event-del" @click="deleteEvent(ev.id)">×</button>
         </div>
@@ -731,7 +699,7 @@ const TasksTab = {
         <div v-for="t in tasksForDate(selectedDate)" :key="t.id" class="cal-task-card">
           <div class="cal-task-title">{{ t.task.title }}</div>
           <div class="cal-task-meta">
-            <span class="kb-card-tag">{{ t.cat }}</span>
+            <span class="kb-tag-badge" :style="{color: tagColor(t.task)}"><span class="kb-tag-dot" :style="{background: tagColor(t.task)}"></span>{{tagLabel(t.task)}}</span>
             <span class="cal-task-deadline" :class="deadlineClass(t.task)">期限: {{ formatDeadlineShort(t.task.deadline) }}</span>
             <span class="kb-status-pill" :class="'kb-pill-'+status(t.id)" @click="cycleStatus(t.id)" style="margin-left:auto">{{ statusLabel[status(t.id)] }}</span>
           </div>
@@ -780,7 +748,7 @@ const TasksTab = {
               </div>
             </template>
             <div class="kb-card-foot">
-              <span class="kb-card-tag">{{t.cat}}</span>
+              <span class="kb-tag-badge" :style="{color: tagColor(t.task)}"><span class="kb-tag-dot" :style="{background: tagColor(t.task)}"></span>{{tagLabel(t.task)}}</span>
               <span class="kb-status-pill" :class="'kb-pill-'+col.key" @click.stop="cycleStatus(t.id)">{{statusLabel[col.key]}}</span>
             </div>
             <div v-if="expandedCard===t.id" class="kb-card-expand" @click.stop>

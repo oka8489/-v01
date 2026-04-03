@@ -29,7 +29,8 @@
       "title": "調剤基本料の届出更新",
       "detail": "受付回数・集中率・グループ規模を再計算し、届出を再提出。様式84・85。",
       "deadline": "2026-05-01",
-      "status": "wip",
+      "status": "todo",
+      "tag": "todoke",
       "subtasks": [
         {
           "id": "s1",
@@ -58,6 +59,7 @@
       "detail": "施設基準判定ツールで要件確認後、様式87の3を提出。",
       "deadline": "2026-05-01",
       "status": "todo",
+      "tag": "todoke",
       "subtasks": [
         {
           "id": "s1",
@@ -86,6 +88,7 @@
       "detail": "R8改定に対応したマスターデータの更新。ベンダーへの確認含む。",
       "deadline": "2026-05-31",
       "status": "todo",
+      "tag": "system",
       "subtasks": [
         {
           "id": "s1",
@@ -109,6 +112,7 @@
       "detail": "医療DX推進の掲示事項（電子的調剤要件(8)）およびウェブサイト掲載。",
       "deadline": "2026-06-01",
       "status": "todo",
+      "tag": "operation",
       "subtasks": [
         {
           "id": "s1",
@@ -132,6 +136,7 @@
       "detail": "処方箋受付回数・各種加算回数の月次集計。",
       "deadline": "2026-05-10",
       "status": "todo",
+      "tag": "operation",
       "subtasks": [
         {
           "id": "s1",
@@ -147,7 +152,41 @@
     }
   },
   "events": [
-    { "id": "ev1", "title": "届出書類受付開始", "date": "2026-05-07", "color": "purple" },
-    { "id": "ev2", "title": "改定施行日", "date": "2026-06-01", "color": "red" }
+    {
+      "id": "ev1",
+      "title": "薬価改定施行",
+      "date": "2026-04-01",
+      "color": "purple"
+    },
+    {
+      "id": "ev2",
+      "title": "届出様式が厚生局HPに掲載予定",
+      "date": "2026-04-15",
+      "color": "purple"
+    },
+    {
+      "id": "ev3",
+      "title": "届出書の受付開始日",
+      "date": "2026-05-07",
+      "color": "purple"
+    },
+    {
+      "id": "ev4",
+      "title": "届出書の提出推奨期限",
+      "date": "2026-05-18",
+      "color": "purple"
+    },
+    {
+      "id": "ev5",
+      "title": "調剤報酬改定施行",
+      "date": "2026-06-01",
+      "color": "purple"
+    },
+    {
+      "id": "ev6",
+      "title": "届出書の受付期限（必着）",
+      "date": "2026-06-01",
+      "color": "purple"
+    }
   ]
 }

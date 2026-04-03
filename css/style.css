@@ -166,7 +166,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 
 /* ── Calendar Pills (event titles in cells) ── */
 .cal-pill { font-size: 10px; line-height: 1.3; padding: 1px 4px; margin-top: 2px; border-radius: 3px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
-.cal-pill-event { opacity: 0.9; }
+.cal-pill-event { background: var(--purple); color: white; opacity: 0.9; }
 
 /* ── Calendar Task Labels (dot + title in cells) ── */
 .cal-task-label { font-size: 10px; line-height: 1.3; margin-top: 2px; display: flex; align-items: center; gap: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; color: var(--text-muted); }
@@ -176,7 +176,7 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 
 /* ── Calendar Event Card ── */
 .cal-event-card { display: flex; align-items: center; gap: 8px; padding: 8px 12px; margin-bottom: 6px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--purple); border-radius: 6px; }
-.cal-event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cal-event-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--purple); }
 .cal-event-title { font-size: 13px; font-weight: 500; flex: 1; }
 .cal-event-del { background: none; border: none; color: var(--text-faint); font-size: 16px; cursor: pointer; padding: 0 4px; line-height: 1; }
 .cal-event-del:hover { color: var(--neg); }
@@ -202,6 +202,10 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .subtask-item:hover { color: var(--text); }
 .subtask-item input[type="checkbox"] { margin: 0; cursor: pointer; }
 .subtask-item.done-subtask { text-decoration: line-through; opacity: 0.6; }
+
+/* ── Tag Badge ── */
+.kb-tag-badge { font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; }
+.kb-tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 /* ── Kanban deadline color classes ── */
 .kb-card-dl.overdue { color: var(--neg); }
