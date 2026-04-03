@@ -29,7 +29,9 @@ const app = createApp({
             if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8Data.r6[k] = v
           }
           // 新設項目の件数をR7統計値から推定
-          if (merged.t_rx_count) r8Data.r6.k_baseup_cnt = merged.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
+          if (merged.t_rx_count) {
+            r8Data.r6.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3（3月に1回）
+          }
         }
         // Merge pharmacy name and period
         if (json.pharmacyName) data.pharmacyName = json.pharmacyName
@@ -67,7 +69,9 @@ const app = createApp({
             if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8Data.r6[k] = v
           }
           // 新設項目の件数をR7統計値から推定
-          if (merged.t_rx_count) r8Data.r6.k_baseup_cnt = merged.t_rx_count
+          if (merged.t_rx_count) {
+            r8Data.r6.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3
+          }
         }
         console.log('R8実績データ読込完了:', json.pharmacyName, json.period)
       } catch (e) { console.error('R8実績データ読込失敗:', e.message) }
