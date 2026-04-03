@@ -24,17 +24,15 @@ const app = createApp({
           for (const [k,v] of Object.entries(json.r6.toukei||{})) { if (!k.startsWith('_')) merged[k] = v }
           for (const [k,v] of Object.entries(json.r6.kasan||{})) { if (!k.startsWith('_')) merged[k] = v }
           data.r6 = merged
-          // R8の初期値としてR7実績の件数・金額のみコピー（プルダウン選択値は除外）
-          if (Object.keys(r8Data.r6).length === 0) {
-            const r8copy = {}
-            for (const [k,v] of Object.entries(merged)) {
-              // _cntや_amtで終わるキー、またはt_で始まる統計値のみコピー。体制加算のプルダウン値(k_*)は除外
-              if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8copy[k] = v
-            }
-            // 新設項目の件数をR7統計値から推定
-            if (r8copy.t_rx_count) r8copy.k_baseup_cnt = r8copy.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
-            r8Data.r6 = r8copy
+          // R8にR7実績の件数・金額・統計値をコピー（プルダウン選択値は除外）
+          // 既存のR8プルダウン値(k_で始まり_cntや_amtで終わらないもの)も削除
+          const r8copy = {}
+          for (const [k,v] of Object.entries(merged)) {
+            if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8copy[k] = v
           }
+          // 新設項目の件数をR7統計値から推定
+          if (r8copy.t_rx_count) r8copy.k_baseup_cnt = r8copy.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
+          r8Data.r6 = r8copy
         }
         // Merge pharmacy name and period
         if (json.pharmacyName) data.pharmacyName = json.pharmacyName
