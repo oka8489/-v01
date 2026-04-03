@@ -24,9 +24,14 @@ const app = createApp({
           for (const [k,v] of Object.entries(json.r6.toukei||{})) { if (!k.startsWith('_')) merged[k] = v }
           for (const [k,v] of Object.entries(json.r6.kasan||{})) { if (!k.startsWith('_')) merged[k] = v }
           data.r6 = merged
-          // R8の初期値としてR7実績をコピー（R8がまだ空の場合）
+          // R8の初期値としてR7実績の件数・金額のみコピー（プルダウン選択値は除外）
           if (Object.keys(r8Data.r6).length === 0) {
-            r8Data.r6 = JSON.parse(JSON.stringify(merged))
+            const r8copy = {}
+            for (const [k,v] of Object.entries(merged)) {
+              // _cntや_amtで終わるキー、またはt_で始まる統計値のみコピー。体制加算のプルダウン値(k_*)は除外
+              if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8copy[k] = v
+            }
+            r8Data.r6 = r8copy
           }
         }
         // Merge pharmacy name and period
