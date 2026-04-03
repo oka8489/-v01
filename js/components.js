@@ -618,9 +618,9 @@ const TasksTab = {
     <!-- View Toggle + Add Button -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div class="view-toggle">
+        <button class="view-toggle-btn" :class="{active: viewMode==='flow'}" @click="viewMode='flow'">事務フロー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='calendar'}" @click="viewMode='calendar'">カレンダー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='kanban'}" @click="viewMode='kanban'">カンバン</button>
-        <button class="view-toggle-btn" :class="{active: viewMode==='flow'}" @click="viewMode='flow'">事務フロー</button>
       </div>
       <div v-if="viewMode!=='flow'" style="display:flex;gap:6px">
         <button v-if="viewMode==='calendar'" class="btn" @click="openAddEvent" style="border-color:var(--purple);color:var(--purple)">+ 予定追加</button>
