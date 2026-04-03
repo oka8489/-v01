@@ -255,22 +255,22 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_kanri_7', label: '7日以下', category: 'management', inputType: 'fixed',
-    changeType: 'modified', changeNote: '4→10点。旧4区分の7日以下・8-14日・15-28日を「27日以下」に統合。短期処方の管理料を一律10点に簡素化。', changePurpose: '日数区分の簡素化により算定事務を軽減し、短期処方の管理を統一的に評価。', isDetail: true,
+    changeType: 'modified', changeNote: '4→10点。旧4区分の7日以下・8-14日・15-28日を「27日以下」に統合。短期処方の管理料を一律10点に簡素化。', changePurpose: '日数区分の簡素化により算定事務を軽減し、短期処方の管理を統一的に評価。', isDetail: true, needsDb: true,
     r6: { fixedPoints: 4 },
   },
   {
     id: 't_kanri_8_14', label: '8-14日', category: 'management', inputType: 'fixed',
-    changeType: 'modified', changeNote: '28→10点。旧8-14日区分を「27日以下」に統合。長期処方推進に伴い短期処方の評価を統一。', changePurpose: '日数区分の簡素化により算定事務を軽減し、長期処方・リフィル処方の取組強化に対応。', isDetail: true,
+    changeType: 'modified', changeNote: '28→10点。旧8-14日区分を「27日以下」に統合。長期処方推進に伴い短期処方の評価を統一。', changePurpose: '日数区分の簡素化により算定事務を軽減し、長期処方・リフィル処方の取組強化に対応。', isDetail: true, needsDb: true,
     r6: { fixedPoints: 28 },
   },
   {
     id: 't_kanri_15_28', label: '15-28日', category: 'management', inputType: 'fixed',
-    changeType: 'modified', changeNote: '50→10点。旧15-28日区分を「27日以下」に統合。大幅な減点だが長期処方（28日以上60点）との二区分化で体系を簡素化。', changePurpose: '日数区分の簡素化により算定事務を軽減し、長期処方・リフィル処方の取組強化に対応。', isDetail: true,
+    changeType: 'modified', changeNote: '50→10点。旧15-28日区分を「27日以下」に統合。大幅な減点だが長期処方（28日以上60点）との二区分化で体系を簡素化。', changePurpose: '日数区分の簡素化により算定事務を軽減し、長期処方・リフィル処方の取組強化に対応。', isDetail: true, needsDb: true,
     r6: { fixedPoints: 50 },
   },
   {
     id: 't_kanri_29', label: '29日以上', category: 'management', inputType: 'fixed',
-    changeType: 'same', isDetail: true,
+    changeType: 'same', isDetail: true, needsDb: true,
     r6: { fixedPoints: 60 },
   },
   {
