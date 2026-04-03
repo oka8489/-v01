@@ -105,6 +105,7 @@ const R8_BASIC_FEES = [
   {
     id: 'k_bio', label: 'バイオ後続品調剤体制加算', category: 'basic', inputType: 'select', isSub: true,
     changeType: 'new',
+    countHint: 'バイオ後続品（インスリン除く）を調剤した回数。R7に該当加算がないため手動入力。取扱いがなければ0。',
     r8: { options: [{ value: 0, label: '算定なし' }, { value: 50, label: '加算（50点）' }] },
   },
 ]
