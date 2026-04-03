@@ -87,8 +87,8 @@ const R8_BASIC_FEES = [
     subRows: {
       trigger: 'zt2',
       items: [
-        { id: 'k_zaitaku_taisei2i', label: '　イ（個人宅）', pts: 100 },
-        { id: 'k_zaitaku_taisei2ro', label: '　ロ（施設等）', pts: 50 },
+        { id: 'k_zaitaku_taisei2i', label: '　イ（個人宅）', pts: 100, countHint: '個人宅への在宅訪問薬剤管理指導の回数。R7「在宅患者訪問薬剤管理指導料（単一1人）」の件数が目安。' },
+        { id: 'k_zaitaku_taisei2ro', label: '　ロ（施設等）', pts: 50, countHint: '施設等への在宅訪問薬剤管理指導の回数。R7「在宅患者訪問薬剤管理指導料（1人以外）」の件数が目安。' },
       ],
     },
   },

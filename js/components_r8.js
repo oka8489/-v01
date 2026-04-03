@@ -64,7 +64,7 @@ const R8FeeTable = {
         result.push(item)
         if (item.subRows && String(getPoints(item)) === String(item.subRows.trigger)) {
           for (const sub of item.subRows.items) {
-            result.push({ id: sub.id, label: sub.label, isSub: true, isSubRow: true, r8: { fixedPoints: sub.pts }, inputType: 'select', category: item.category })
+            result.push({ id: sub.id, label: sub.label, isSub: true, isSubRow: true, r8: { fixedPoints: sub.pts }, inputType: 'select', category: item.category, countHint: sub.countHint })
           }
         }
       }
