@@ -13,7 +13,6 @@ const R8_BASIC_FEES = [
   {
     id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'fixed',
     changeType: 'new',
-    countHint: '処方箋受付1回につき毎回算定。件数＝受付回数',
     r8: { fixedPoints: 4 },
   },
   {
