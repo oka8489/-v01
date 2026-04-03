@@ -860,52 +860,117 @@ const TodoTab = {
     const STORAGE_KEY = 'houshu-todo'
     const items = ref([])
 
-    // Load from localStorage
     const saved = localStorage.getItem(STORAGE_KEY)
     if (saved) { try { items.value = JSON.parse(saved) } catch{} }
 
     function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items.value)) }
 
+    // Add
     const newText = ref('')
     function addItem() {
       if (!newText.value.trim()) return
-      items.value.push({ id: Date.now(), text: newText.value.trim(), done: false, createdAt: new Date().toISOString() })
+      items.value.unshift({ id: Date.now(), text: newText.value.trim(), done: false })
       newText.value = ''
       save()
     }
+
+    // Toggle
     function toggleItem(id) {
       const item = items.value.find(i => i.id === id)
       if (item) { item.done = !item.done; save() }
     }
+
+    // Delete
     function deleteItem(id) {
       items.value = items.value.filter(i => i.id !== id)
       save()
     }
+
+    // Clear completed
+    function clearCompleted() {
+      items.value = items.value.filter(i => !i.done)
+      save()
+    }
+
+    // Inline edit (double click)
+    const editingId = ref(null)
+    const editText = ref('')
+    function startEdit(item) {
+      editingId.value = item.id
+      editText.value = item.text
+    }
+    function saveEdit(item) {
+      if (editText.value.trim()) { item.text = editText.value.trim(); save() }
+      editingId.value = null
+    }
+    function cancelEdit() { editingId.value = null }
+
+    // Drag reorder
+    const dragIdx = ref(null)
+    function onDragStart(e, idx) { dragIdx.value = idx; e.dataTransfer.effectAllowed = 'move' }
+    function onDragOver(e) { e.preventDefault() }
+    function onDrop(e, targetIdx) {
+      e.preventDefault()
+      if (dragIdx.value == null || dragIdx.value === targetIdx) return
+      const moved = items.value.splice(dragIdx.value, 1)[0]
+      items.value.splice(targetIdx, 0, moved)
+      dragIdx.value = null
+      save()
+    }
+    function onDragEnd() { dragIdx.value = null }
+
     const pending = computed(() => items.value.filter(i => !i.done))
     const completed = computed(() => items.value.filter(i => i.done))
+    const pendingIndices = computed(() => {
+      const map = []
+      items.value.forEach((item, idx) => { if (!item.done) map.push(idx) })
+      return map
+    })
 
-    return { items, newText, addItem, toggleItem, deleteItem, pending, completed }
+    return { items, newText, addItem, toggleItem, deleteItem, clearCompleted,
+             editingId, editText, startEdit, saveEdit, cancelEdit,
+             dragIdx, onDragStart, onDragOver, onDrop, onDragEnd,
+             pending, completed, pendingIndices }
   },
   template: `<div>
     <div class="section">
-      <div class="section-title">TO DO</div>
-      <div style="display:flex;gap:8px;margin-bottom:16px">
-        <input type="text" class="fee-input" style="flex:1;text-align:left" v-model="newText" placeholder="やること を入力..." @keyup.enter="addItem">
-        <button class="btn" @click="addItem" style="background:var(--text);color:white;border:none;white-space:nowrap">追加</button>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div class="section-title" style="margin:0">TO DO</div>
+        <span v-if="pending.length" style="font-size:12px;color:var(--text-muted)">{{ pending.length }}件</span>
       </div>
-      <div v-if="!items.length" style="text-align:center;padding:32px;color:var(--text-faint);font-size:13px">TO DOはまだありません</div>
+      <div class="todo-input-row">
+        <input type="text" class="todo-input" v-model="newText" placeholder="やることを入力して Enter..." @keyup.enter="addItem">
+        <button class="todo-add-btn" @click="addItem">追加</button>
+      </div>
+      <div v-if="!items.length" class="todo-empty">
+        <div style="font-size:24px;margin-bottom:8px">&#9745;</div>
+        <div>やることを追加しましょう</div>
+      </div>
       <div v-else>
-        <div v-for="item in pending" :key="item.id" class="todo-item" @click="toggleItem(item.id)">
-          <input type="checkbox" :checked="item.done" style="margin:0;cursor:pointer">
-          <span class="todo-text">{{ item.text }}</span>
-          <button class="todo-del" @click.stop="deleteItem(item.id)">&times;</button>
+        <div v-for="(item, i) in items" :key="item.id" v-show="!item.done">
+          <div class="todo-item" :class="{dragging: dragIdx===i}"
+               draggable="true" @dragstart="onDragStart($event, i)" @dragover="onDragOver" @drop="onDrop($event, i)" @dragend="onDragEnd">
+            <span class="todo-grip">⠿</span>
+            <input type="checkbox" class="todo-check" :checked="item.done" @change="toggleItem(item.id)">
+            <template v-if="editingId===item.id">
+              <input type="text" class="todo-edit-input" v-model="editText" @keyup.enter="saveEdit(item)" @keyup.escape="cancelEdit" @blur="saveEdit(item)" autofocus>
+            </template>
+            <template v-else>
+              <span class="todo-text" @dblclick="startEdit(item)">{{ item.text }}</span>
+            </template>
+            <button class="todo-del" @click="deleteItem(item.id)">&times;</button>
+          </div>
         </div>
-        <div v-if="completed.length" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-faint);margin-bottom:8px">完了（{{ completed.length }}件）</div>
-          <div v-for="item in completed" :key="item.id" class="todo-item todo-done" @click="toggleItem(item.id)">
-            <input type="checkbox" :checked="item.done" style="margin:0;cursor:pointer">
+        <div v-if="completed.length" class="todo-completed-section">
+          <div class="todo-completed-header">
+            <span>完了（{{ completed.length }}件）</span>
+            <button class="todo-clear-btn" @click="clearCompleted">すべて削除</button>
+          </div>
+          <div v-for="item in completed" :key="item.id" class="todo-item todo-done">
+            <span class="todo-grip" style="visibility:hidden">⠿</span>
+            <input type="checkbox" class="todo-check" :checked="item.done" @change="toggleItem(item.id)">
             <span class="todo-text">{{ item.text }}</span>
-            <button class="todo-del" @click.stop="deleteItem(item.id)">&times;</button>
+            <button class="todo-del" @click="deleteItem(item.id)">&times;</button>
           </div>
         </div>
       </div>
