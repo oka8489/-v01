@@ -855,6 +855,64 @@ const TasksTab = {
   </div>`
 }
 
+const TodoTab = {
+  setup() {
+    const STORAGE_KEY = 'houshu-todo'
+    const items = ref([])
+
+    // Load from localStorage
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) { try { items.value = JSON.parse(saved) } catch{} }
+
+    function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(items.value)) }
+
+    const newText = ref('')
+    function addItem() {
+      if (!newText.value.trim()) return
+      items.value.push({ id: Date.now(), text: newText.value.trim(), done: false, createdAt: new Date().toISOString() })
+      newText.value = ''
+      save()
+    }
+    function toggleItem(id) {
+      const item = items.value.find(i => i.id === id)
+      if (item) { item.done = !item.done; save() }
+    }
+    function deleteItem(id) {
+      items.value = items.value.filter(i => i.id !== id)
+      save()
+    }
+    const pending = computed(() => items.value.filter(i => !i.done))
+    const completed = computed(() => items.value.filter(i => i.done))
+
+    return { items, newText, addItem, toggleItem, deleteItem, pending, completed }
+  },
+  template: `<div>
+    <div class="section">
+      <div class="section-title">TO DO</div>
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <input type="text" class="fee-input" style="flex:1;text-align:left" v-model="newText" placeholder="やること を入力..." @keyup.enter="addItem">
+        <button class="btn" @click="addItem" style="background:var(--text);color:white;border:none;white-space:nowrap">追加</button>
+      </div>
+      <div v-if="!items.length" style="text-align:center;padding:32px;color:var(--text-faint);font-size:13px">TO DOはまだありません</div>
+      <div v-else>
+        <div v-for="item in pending" :key="item.id" class="todo-item" @click="toggleItem(item.id)">
+          <input type="checkbox" :checked="item.done" style="margin:0;cursor:pointer">
+          <span class="todo-text">{{ item.text }}</span>
+          <button class="todo-del" @click.stop="deleteItem(item.id)">&times;</button>
+        </div>
+        <div v-if="completed.length" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border)">
+          <div style="font-size:11px;color:var(--text-faint);margin-bottom:8px">完了（{{ completed.length }}件）</div>
+          <div v-for="item in completed" :key="item.id" class="todo-item todo-done" @click="toggleItem(item.id)">
+            <input type="checkbox" :checked="item.done" style="margin:0;cursor:pointer">
+            <span class="todo-text">{{ item.text }}</span>
+            <button class="todo-del" @click.stop="deleteItem(item.id)">&times;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`
+}
+
 const RequirementsTab = {
   props:['data','r8Data','activeSub'],
   emits:['update:activeSub'],

@@ -218,6 +218,15 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .flow-step::before { content: '•'; position: absolute; left: 0; color: var(--text-faint); }
 .flow-arrow { text-align: center; font-size: 14px; color: var(--text-faint); padding: 4px 0; }
 
+/* ── TO DO ── */
+.todo-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 6px; cursor: pointer; transition: background .1s; }
+.todo-item:hover { background: var(--surface2); }
+.todo-done { opacity: 0.5; }
+.todo-done .todo-text { text-decoration: line-through; }
+.todo-text { flex: 1; font-size: 14px; line-height: 1.5; }
+.todo-del { background: none; border: none; color: var(--text-faint); font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1; }
+.todo-del:hover { color: var(--neg); }
+
 /* ── Kanban deadline color classes ── */
 .kb-card-dl.overdue { color: var(--neg); }
 .kb-card-dl.due-today { color: var(--amber); }
