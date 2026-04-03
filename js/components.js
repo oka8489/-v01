@@ -620,8 +620,9 @@ const TasksTab = {
       <div class="view-toggle">
         <button class="view-toggle-btn" :class="{active: viewMode==='calendar'}" @click="viewMode='calendar'">カレンダー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='kanban'}" @click="viewMode='kanban'">カンバン</button>
+        <button class="view-toggle-btn" :class="{active: viewMode==='flow'}" @click="viewMode='flow'">事務フロー</button>
       </div>
-      <div style="display:flex;gap:6px">
+      <div v-if="viewMode!=='flow'" style="display:flex;gap:6px">
         <button v-if="viewMode==='calendar'" class="btn" @click="openAddEvent" style="border-color:var(--purple);color:var(--purple)">+ 予定追加</button>
         <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
       </div>
@@ -785,6 +786,71 @@ const TasksTab = {
         <div v-if="!tasksInColumn(col.key).length" class="kb-empty-col">ドラッグしてここに移動</div>
       </div>
     </div>
+
+    <!-- ═══ Flow View ═══ -->
+    <div v-if="viewMode==='flow'" class="section">
+      <div class="section-title">令和8年度 改定対応フロー</div>
+      <div class="flow-timeline">
+        <div class="flow-phase">
+          <div class="flow-phase-header" style="border-color:var(--teal)">
+            <span class="flow-phase-period">2026年3月〜4月</span>
+            <span class="flow-phase-title">情報収集・準備</span>
+          </div>
+          <div class="flow-steps">
+            <div class="flow-step">告示・通知の確認（3/5発出）</div>
+            <div class="flow-step">疑義解釈の確認（その1: 3/23、その2: 3/31）</div>
+            <div class="flow-step">届出様式のダウンロード（4月中旬に厚生局HPに掲載）</div>
+            <div class="flow-step">薬価マスター更新（4/1施行）</div>
+            <div class="flow-step">施設基準判定ツールで自局の要件確認</div>
+          </div>
+        </div>
+        <div class="flow-arrow">▼</div>
+        <div class="flow-phase">
+          <div class="flow-phase-header" style="border-color:var(--purple)">
+            <span class="flow-phase-period">2026年5月</span>
+            <span class="flow-phase-title">届出・実績集計</span>
+          </div>
+          <div class="flow-steps">
+            <div class="flow-step">前年5月〜当年4月の実績集計（調剤基本料・体制加算の区分判定）</div>
+            <div class="flow-step">処方箋集中率の再計算（医療モール新方式対応）</div>
+            <div class="flow-step">届出書類の作成・提出（5/7受付開始 → 5/18推奨 → 6/1必着）</div>
+            <div class="flow-step" style="padding-left:24px">・調剤基本料（様式84・85）</div>
+            <div class="flow-step" style="padding-left:24px">・地域支援・医薬品供給対応体制加算（様式87の3）</div>
+            <div class="flow-step" style="padding-left:24px">・調剤ベースアップ評価料（様式103、メール提出）</div>
+            <div class="flow-step" style="padding-left:24px">・在宅薬学総合体制加算2（様式87の3の5、再届出）</div>
+            <div class="flow-step" style="padding-left:24px">・その他新設加算（バイオ後続品、服薬管理指導料注1）</div>
+          </div>
+        </div>
+        <div class="flow-arrow">▼</div>
+        <div class="flow-phase">
+          <div class="flow-phase-header" style="border-color:var(--amber)">
+            <span class="flow-phase-period">2026年6月1日〜</span>
+            <span class="flow-phase-title">施行・運用開始</span>
+          </div>
+          <div class="flow-steps">
+            <div class="flow-step">レセコン算定ロジックの最終確認・テスト</div>
+            <div class="flow-step">院内掲示物・ウェブサイトの更新</div>
+            <div class="flow-step">算定フロー変更の周知（調剤管理料、かかりつけ薬剤師）</div>
+            <div class="flow-step">長期収載品の選定療養（患者負担額変更）対応</div>
+            <div class="flow-step">新制度での算定開始</div>
+          </div>
+        </div>
+        <div class="flow-arrow">▼</div>
+        <div class="flow-phase">
+          <div class="flow-phase-header" style="border-color:var(--text-muted)">
+            <span class="flow-phase-period">2026年7月〜</span>
+            <span class="flow-phase-title">継続管理</span>
+          </div>
+          <div class="flow-steps">
+            <div class="flow-step">月次実績集計・モニタリング</div>
+            <div class="flow-step">経過措置の期限管理（かかりつけ: 11/30、後発品旧加算: R9.5.31）</div>
+            <div class="flow-step">追加の疑義解釈・訂正通知の確認</div>
+            <div class="flow-step">定例報告（未妥結減算: 11月末）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     </template>
   </div>`
 }

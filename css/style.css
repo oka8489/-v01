@@ -207,6 +207,17 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .kb-tag-badge { font-size: 10px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; }
 .kb-tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
+/* ── Flow Timeline ── */
+.flow-timeline { display: flex; flex-direction: column; gap: 0; }
+.flow-phase { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.flow-phase-header { display: flex; align-items: center; gap: 12px; padding: 10px 16px; border-left: 4px solid; background: var(--surface2); }
+.flow-phase-period { font-size: 11px; font-weight: 600; color: var(--text-muted); min-width: 120px; }
+.flow-phase-title { font-size: 14px; font-weight: 700; }
+.flow-steps { padding: 8px 16px 12px; }
+.flow-step { font-size: 13px; line-height: 1.6; padding: 3px 0; color: var(--text); position: relative; padding-left: 16px; }
+.flow-step::before { content: '•'; position: absolute; left: 0; color: var(--text-faint); }
+.flow-arrow { text-align: center; font-size: 14px; color: var(--text-faint); padding: 4px 0; }
+
 /* ── Kanban deadline color classes ── */
 .kb-card-dl.overdue { color: var(--neg); }
 .kb-card-dl.due-today { color: var(--amber); }
