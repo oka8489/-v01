@@ -7,11 +7,13 @@ const R8_BASIC_FEES = [
   {
     id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
     changeType: 'new',
+    countHint: '同一患者につき3月に1回。概算: 処方箋受付回数÷3',
     r8: { fixedPoints: 1 },
   },
   {
     id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'fixed',
     changeType: 'new',
+    countHint: '処方箋受付1回につき毎回算定。件数＝受付回数',
     r8: { fixedPoints: 4 },
   },
   {

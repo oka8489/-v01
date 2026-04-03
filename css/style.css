@@ -244,6 +244,10 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .todo-clear-btn { background: none; border: none; color: var(--text-faint); font-size: 11px; cursor: pointer; text-decoration: underline; font-family: inherit; }
 .todo-clear-btn:hover { color: var(--neg); }
 
+/* ── Count Hint (?) ── */
+.count-hint { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; background: var(--text-faint); color: white; font-size: 10px; font-weight: 700; cursor: help; margin-right: 4px; vertical-align: middle; }
+.count-hint:hover { background: var(--text); }
+
 /* ── Kanban deadline color classes ── */
 .kb-card-dl.overdue { color: var(--neg); }
 .kb-card-dl.due-today { color: var(--amber); }
