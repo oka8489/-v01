@@ -31,6 +31,8 @@ const app = createApp({
               // _cntや_amtで終わるキー、またはt_で始まる統計値のみコピー。体制加算のプルダウン値(k_*)は除外
               if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8copy[k] = v
             }
+            // 新設項目の件数をR7統計値から推定
+            if (r8copy.t_rx_count) r8copy.k_baseup_cnt = r8copy.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
             r8Data.r6 = r8copy
           }
         }
