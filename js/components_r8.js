@@ -49,7 +49,16 @@ const R8FeeTable = {
     function isDisabled(item) { return item.r8 === null }
     function isMissing(item) { if (isDisabled(item)) return false; if (item.inputType==='count-only') return (props.data.r6?.[item.id+'_amt'] ?? props.data.r6?.[item.id]) == null; return props.data.r6?.[item.id+'_cnt'] == null }
     function isComputed(item) { if (isDisabled(item)) return false; if (item.inputType==='count-only'||item.unit==='単位') return false; return getPoints(item) != null && !isMissing(item) }
-    function getAmount(item) { if (item.inputType==='count-only'||item.unit==='単位') return props.data.r6?.[item.id+'_amt'] ?? props.data.r6?.[item.id] ?? 0; const p=getPoints(item),c=getCount(item); if(p==null||c==null) return 0; return c*p*POINT_TO_YEN }
+    function getAmount(item) {
+      if (item.inputType==='count-only'||item.unit==='単位') return props.data.r6?.[item.id+'_amt'] ?? props.data.r6?.[item.id] ?? 0
+      // subRowsを持つ親アイテムで子が展開中なら、子の合計を返す
+      if (item.subRows && String(getPoints(item)) === String(item.subRows.trigger)) {
+        let sum = 0
+        for (const sub of item.subRows.items) { const c = props.data.r6?.[sub.id+'_cnt'] || 0; sum += c * sub.pts * POINT_TO_YEN }
+        return sum
+      }
+      const p=getPoints(item),c=getCount(item); if(p==null||c==null||isNaN(Number(p))) return 0; return c*Number(p)*POINT_TO_YEN
+    }
     function updateSelect(item,v) { if(!props.data.r6) props.data.r6={}; props.data.r6[item.id]=isNaN(Number(v))?v:Number(v) }
     function updateCount(item,v) { if(!props.data.r6) props.data.r6={}; props.data.r6[item.id+'_cnt']=v?Number(String(v).replace(/,/g,'')):0 }
     function fmtC(v) { return (v||0).toLocaleString() }
