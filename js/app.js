@@ -34,7 +34,6 @@ const app = createApp({
             if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8fromR7[k] = v
           }
           if (merged.t_rx_count) {
-            r8fromR7.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
             r8fromR7.k_baseup_cnt = merged.t_rx_count
           }
           // 在宅薬学総合体制加算2 イ・ロ
@@ -86,7 +85,6 @@ const app = createApp({
           }
           // 新設項目の件数をR7統計値から推定
           if (merged.t_rx_count) {
-            r8new.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
             r8new.k_baseup_cnt = merged.t_rx_count
           }
           r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
