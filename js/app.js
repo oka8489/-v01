@@ -37,6 +37,9 @@ const app = createApp({
             r8fromR7.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
             r8fromR7.k_baseup_cnt = merged.t_rx_count
           }
+          // 在宅薬学総合体制加算2 イ・ロ
+          r8fromR7.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0  // 単一1人
+          r8fromR7.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0  // 1人以外
           Object.assign(r8fromR7, r7selects)
           r8Data.r6 = r8fromR7
         }
@@ -83,9 +86,11 @@ const app = createApp({
           }
           // 新設項目の件数をR7統計値から推定
           if (merged.t_rx_count) {
-            r8new.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3
-            r8new.k_baseup_cnt = merged.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
+            r8new.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
+            r8new.k_baseup_cnt = merged.t_rx_count
           }
+          r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
+          r8new.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0
           // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
           Object.assign(r8new, selects)
           r8Data.r6 = r8new
