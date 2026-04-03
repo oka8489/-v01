@@ -24,14 +24,20 @@ const app = createApp({
           for (const [k,v] of Object.entries(json.r6.toukei||{})) { if (!k.startsWith('_')) merged[k] = v }
           for (const [k,v] of Object.entries(json.r6.kasan||{})) { if (!k.startsWith('_')) merged[k] = v }
           data.r6 = merged
-          // R8に件数・金額・統計値のみマージ（プルダウン選択値は触らない）
+          // R8にも件数・統計値を反映（プルダウン選択値は保持）
+          const r7selects = {}
+          for (const [k,v] of Object.entries(r8Data.r6)) {
+            if (!k.endsWith('_cnt') && !k.endsWith('_amt') && !k.startsWith('t_')) r7selects[k] = v
+          }
+          const r8fromR7 = {}
           for (const [k,v] of Object.entries(merged)) {
-            if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8Data.r6[k] = v
+            if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8fromR7[k] = v
           }
-          // 新設項目の件数をR7統計値から推定
           if (merged.t_rx_count) {
-            r8Data.r6.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3（3月に1回）
+            r8fromR7.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
           }
+          Object.assign(r8fromR7, r7selects)
+          r8Data.r6 = r8fromR7
         }
         // Merge pharmacy name and period
         if (json.pharmacyName) data.pharmacyName = json.pharmacyName
@@ -64,14 +70,23 @@ const app = createApp({
           const merged = {}
           for (const [k,v] of Object.entries(json.r6.toukei||{})) { if (!k.startsWith('_')) merged[k] = v }
           for (const [k,v] of Object.entries(json.r6.kasan||{})) { if (!k.startsWith('_')) merged[k] = v }
-          // 件数・金額・統計値のみマージ（プルダウン選択値は触らない）
+          // 既存のプルダウン選択値を退避
+          const selects = {}
+          for (const [k,v] of Object.entries(r8Data.r6)) {
+            if (!k.endsWith('_cnt') && !k.endsWith('_amt') && !k.startsWith('t_')) selects[k] = v
+          }
+          // mergedから件数・金額・統計値をコピー
+          const r8new = {}
           for (const [k,v] of Object.entries(merged)) {
-            if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8Data.r6[k] = v
+            if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8new[k] = v
           }
           // 新設項目の件数をR7統計値から推定
           if (merged.t_rx_count) {
-            r8Data.r6.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3
+            r8new.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3
           }
+          // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
+          Object.assign(r8new, selects)
+          r8Data.r6 = r8new
         }
         console.log('R8実績データ読込完了:', json.pharmacyName, json.period)
       } catch (e) { console.error('R8実績データ読込失敗:', e.message) }
