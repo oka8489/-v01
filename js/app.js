@@ -35,6 +35,7 @@ const app = createApp({
           }
           if (merged.t_rx_count) {
             r8fromR7.k_bukka_cnt = Math.round(merged.t_rx_count / 3)
+            r8fromR7.k_baseup_cnt = merged.t_rx_count
           }
           Object.assign(r8fromR7, r7selects)
           r8Data.r6 = r8fromR7
@@ -83,6 +84,7 @@ const app = createApp({
           // 新設項目の件数をR7統計値から推定
           if (merged.t_rx_count) {
             r8new.k_bukka_cnt = Math.round(merged.t_rx_count / 3)  // 調剤物価対応料 = 受付回数÷3
+            r8new.k_baseup_cnt = merged.t_rx_count  // 調剤ベースアップ評価料 = 受付回数
           }
           // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
           Object.assign(r8new, selects)
