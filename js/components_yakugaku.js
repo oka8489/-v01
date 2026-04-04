@@ -347,7 +347,41 @@ const YAKUGAKU_TEMPLATE = `
     </div>
 
     <div v-if="sub==='yg_kakaritsuke'">
-      <div style="padding:8px 10px;background:var(--new-bg);border-radius:6px;margin-bottom:12px;font-size:11px;color:var(--new-text)"><b>かかりつけ薬剤師指導料・包括管理料</b> → 廃止。実績重視の評価として下記2つの加算を新設。</div>
+      <div class="section">
+        <div class="section-title" style="border-left:4px solid var(--teal);padding-left:8px">かかりつけ薬剤師の推進</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="padding:8px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:10px;color:var(--del-text)"><b>かかりつけ薬剤師指導料</b>（76点）＋ <b>かかりつけ薬剤師包括管理料</b>（291点）→ 廃止して下記に再編</div>
+          <div style="font-weight:700;margin-bottom:4px">包括評価から実績評価へ</div>
+          <div style="color:var(--text-muted);margin-bottom:10px">R6では「かかりつけ薬剤師が指導すれば76点」という包括的な評価だったが、R8では服薬管理指導料に統合（点数は45点/59点で同額）した上で、<b>実際に行った行為に対して加算</b>する仕組みに転換。</div>
+          <div style="display:flex;gap:12px;margin-bottom:10px">
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--text-faint)">R6（改定前）</div>
+              <table class="fee-table" style="font-size:12px"><tbody>
+                <tr><td>かかりつけ薬剤師指導料</td><td style="text-align:right">76点</td></tr>
+                <tr><td>服薬管理指導料1（それ以外）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>服薬管理指導料2（それ以外）</td><td style="text-align:right">59点</td></tr>
+              </tbody></table>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
+              <table class="fee-table" style="font-size:12px"><tbody>
+                <tr><td>服薬管理指導料1イ（かかりつけ）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>服薬管理指導料1ロ（それ以外）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>服薬管理指導料2イ（かかりつけ）</td><td style="text-align:right">59点</td></tr>
+                <tr><td>服薬管理指導料2ロ（それ以外）</td><td style="text-align:right">59点</td></tr>
+              </tbody></table>
+              <div style="font-size:11px;color:var(--text-faint);margin-top:4px">※ 基本点数は同額。差は下記の加算で評価</div>
+            </div>
+          </div>
+          <div style="font-weight:700;margin-bottom:4px">かかりつけ薬剤師としての実績に応じた加算</div>
+          <div style="color:var(--text-muted);margin-bottom:4px">電話等による服薬状況や残薬状況等の継続的な確認を評価</div>
+          <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-new">新設</span> <b>かかりつけ薬剤師フォローアップ加算</b> 50点（3月に1回）</div>
+          <div style="color:var(--text-muted);margin-bottom:4px">患家への訪問による服薬管理、残薬状況の確認等の実施、医療機関への情報提供を評価</div>
+          <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-new">新設</span> <b>かかりつけ薬剤師訪問加算</b> 230点（6月に1回）</div>
+          <div style="color:var(--text-muted);margin-bottom:4px">多剤服用患者の一元的・継続的な把握を通じて、包括的な薬物治療の評価・介入を実践する取組を評価</div>
+          <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-modified">改定</span> <b>服用薬剤調整支援料2</b> 1,000点（R9年6月以降算定）</div>
+        </div>
+      </div>
       <div class="section">
         <div class="section-title"><span class="badge badge-new">新設</span> フォローアップ加算（注13） <span style="font-size:12px;font-weight:400;color:var(--pos)">50点</span></div>
         <div style="font-size:12px;line-height:1.8">
