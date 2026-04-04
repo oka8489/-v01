@@ -6,14 +6,17 @@
 const R8_BASIC_FEES = [
   {
     id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
-    changeType: 'new',
+    changeType: 'new', needsDb: true,
     countHint: '同一患者につき3月に1回。概算: 処方箋受付回数÷3',
     r8: { fixedPoints: 1 },
   },
   {
-    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'fixed',
+    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'select',
     changeType: 'new',
-    r8: { fixedPoints: 4 },
+    r8: { options: [
+      { value: 4, label: '届出する（4点）' },
+      { value: 0, label: '届出しない（0点）' },
+    ]},
   },
   {
     id: 'k_kihon', label: '調剤基本料', category: 'basic', inputType: 'select',
@@ -52,7 +55,7 @@ const R8_BASIC_FEES = [
     ]},
   },
   {
-    id: 'k_kouhatsu', label: '後発医薬品調剤体制加算', category: 'basic', inputType: 'select', isSub: true,
+    id: 'k_kouhatsu', label: '後発医薬品調剤体制加算', category: 'basic', inputType: 'select', isDetail: true,
     changeType: 'abolished_merged',
     r8: null,
   },
@@ -62,17 +65,17 @@ const R8_BASIC_FEES = [
     r8: { options: [{ value: 0, label: '算定なし' }, { value: 5, label: '加算（5点）' }] },
   },
   {
-    id: 'k_dx8', label: '電子的調剤情報連携体制整備加算', category: 'basic', inputType: 'select', isSub: true,
-    changeType: 'modified',
+    id: 'k_dx8', label: '電子的調剤情報連携体制整備加算（8点）', category: 'basic', inputType: 'select', isSub: true,
+    changeType: 'merged',
     r8: { options: [{ value: 0, label: '算定なし' }, { value: 8, label: '加算（8点）' }] },
   },
   {
-    id: 'k_dx6', label: '医療DX推進体制整備加算（6点）', category: 'basic', inputType: 'select', isSub: true,
+    id: 'k_dx6', label: '医療DX推進体制整備加算（6点）', category: 'basic', inputType: 'select', isDetail: true,
     changeType: 'abolished_merged',
     r8: null,
   },
   {
-    id: 'k_dx10', label: '医療DX推進体制整備加算（10点）', category: 'basic', inputType: 'select', isSub: true,
+    id: 'k_dx10', label: '医療DX推進体制整備加算（10点）', category: 'basic', inputType: 'select', isDetail: true,
     changeType: 'abolished_merged',
     r8: null,
   },
@@ -104,7 +107,7 @@ const R8_BASIC_FEES = [
   },
   {
     id: 'k_bio', label: 'バイオ後続品調剤体制加算', category: 'basic', inputType: 'select', isSub: true,
-    changeType: 'new',
+    changeType: 'new', needsDb: true,
     countHint: 'バイオ後続品（インスリン除く）を調剤した回数。R7に該当加算がないため手動入力。取扱いがなければ0。',
     r8: { options: [{ value: 0, label: '算定なし' }, { value: 50, label: '加算（50点）' }] },
   },
@@ -219,23 +222,25 @@ const R8_MANAGEMENT_FEES = [
   },
   {
     id: 't_kanri_27', label: '27日以下', category: 'management', inputType: 'fixed',
-    changeType: 'modified', isDetail: true,
+    changeType: 'modified', isDetail: true, needsDb: true,
+    countHint: 'R7の「7日以下」「8〜14日」「15〜28日」の3区分を統合。R7実績のこれら3区分の件数合計を入力してください。',
     r8: { fixedPoints: 10 },
   },
   {
     id: 't_kanri_28', label: '28日以上', category: 'management', inputType: 'fixed',
-    changeType: 'same', isDetail: true,
+    changeType: 'modified', isDetail: true, needsDb: true,
+    countHint: 'R7の「29日以上」の件数をそのまま入力してください。R8では「28日以上」に変更されましたが、点数は60点で据置です。',
     r8: { fixedPoints: 60 },
   },
   {
     id: 't_kanri_gaiyou', label: '調剤管理料（内服以外）', category: 'management', inputType: 'fixed',
-    changeType: 'same',
-    r8: { fixedPoints: 4 },
+    changeType: 'modified',
+    r8: { fixedPoints: 10 },
   },
   {
     id: 't_chmgr_kazan', label: '調剤管理加算', category: 'management', inputType: 'fixed', isSub: true,
-    changeType: 'same',
-    r8: { fixedPoints: 3 },
+    changeType: 'abolished',
+    r8: null,
   },
   {
     id: 't_jufuku_other', label: '重複防止加算（残薬以外）', category: 'management', inputType: 'fixed', isSub: true,
@@ -243,9 +248,43 @@ const R8_MANAGEMENT_FEES = [
     r8: null,
   },
   {
+    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'count-only', isSub: true,
+    changeType: 'new',
+    r8: {},
+  },
+  {
+    id: 't_yugai1', label: '加算1', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new', needsDb: true,
+    countHint: '処方内容の疑義照会により処方変更があった回数（残薬調整を除く）。重複投薬・相互作用・副作用等の薬学的有害事象の防止に係る介入が対象。',
+    r8: { fixedPoints: 30 },
+  },
+  {
+    id: 't_yugai2', label: '加算2（在宅又はかかりつけ）', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new', needsDb: true,
+    countHint: '加算1と同じ内容を、在宅患者に対して実施した場合又はかかりつけ薬剤師が実施した場合の回数。',
+    r8: { fixedPoints: 50 },
+  },
+  {
     id: 't_jufuku_zan', label: '重複防止加算（残薬）', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'abolished_merged',
     r8: null,
+  },
+  {
+    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'count-only', isSub: true,
+    changeType: 'new',
+    r8: {},
+  },
+  {
+    id: 't_zanyaku1', label: '加算1', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new', needsDb: true,
+    countHint: '残薬状況の聞き取りを行い、残薬調整（処方変更）を実施した回数。処方医への疑義照会により処方が変更された場合が対象。',
+    r8: { fixedPoints: 30 },
+  },
+  {
+    id: 't_zanyaku2', label: '加算2（在宅又はかかりつけ）', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new', needsDb: true,
+    countHint: '加算1と同じ残薬調整を、在宅患者に対して実施した場合又はかかりつけ薬剤師が実施した場合の回数。',
+    r8: { fixedPoints: 50 },
   },
   {
     id: 't_iryo_joho', label: '医療情報取得加算', category: 'management', inputType: 'fixed', isSub: true,
@@ -278,9 +317,33 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_online', label: '服薬管理指導料（オンライン服薬指導）', category: 'management', inputType: 'fixed',
-    changeType: 'same',
+    id: 't_fukuyaku_online', label: '服薬管理指導料4（情報通信機器）', category: 'management', inputType: 'count-only',
+    changeType: 'modified',
+    changeNote: '旧「服薬管理指導料（オンライン服薬指導）」を服薬管理指導料4に改称。在宅患者オンライン薬剤管理指導料（4ロ）・在宅患者緊急オンライン薬剤管理指導料（4ハ）も統合。',
+    changePurpose: 'オンライン服薬指導の評価を服薬管理指導料に一本化し、算定体系を簡素化。',
+    r8: {},
+  },
+  {
+    id: 't_fukuyaku_online_i', label: '4イ 3月以内再来', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'modified',
     r8: { fixedPoints: 45 },
+  },
+  {
+    id: 't_fukuyaku_online_ro', label: '4ロ 在宅（通院困難）', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
+    changeNote: '旧「在宅患者オンライン薬剤管理指導料」を統合。',
+    r8: { fixedPoints: 59 },
+  },
+  {
+    id: 't_fukuyaku_online_ha', label: '4ハ 在宅（急変等）', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
+    changeNote: '旧「在宅患者緊急オンライン薬剤管理指導料」を統合。',
+    r8: { fixedPoints: 59 },
+  },
+  {
+    id: 't_fukuyaku_online_ni', label: '4ニ その他', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'modified',
+    r8: { fixedPoints: 59 },
   },
   {
     id: 't_fukuyaku_renkei', label: '服薬管理指導料（特2A/2B）連携薬剤師', category: 'management', inputType: 'count-only',
@@ -384,9 +447,11 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 125 },
   },
   {
-    id: 't_choseihi_2', label: '服用薬剤調整支援料2', category: 'management', inputType: 'fixed',
-    changeType: 'same',
-    r8: { fixedPoints: 110 },
+    id: 't_choseihi_2', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed',
+    changeType: 'modified',
+    changeNote: '110点→1,000点に大幅増点（R9年6月1日から適用）。算定要件を見直し、かかりつけ薬剤師（服薬状況等に係る総合的な管理及び評価を行うために必要な研修を受けたものに限る）が、複数の医療機関から6種類以上の内服薬が処方されている患者について、服用中の薬剤を継続的・一元的に把握し、薬剤調整を必要と認める場合に必要な評価等を実施した上で処方医に文書で提案した場合に算定。同一患者に対し6月に1回、かかりつけ薬剤師1人につき月4回まで。',
+    changePurpose: 'かかりつけ薬剤師によるポリファーマシー患者への包括的介入（薬物療法の適正化支援）を高く評価し、MRP/DRP特定→推奨案提示→アウトカムモニターの薬物療法最適化サイクルの実践を促進。',
+    r8: { pointsNote: '1,000点（R9.6〜）' },
   },
   {
     id: 't_keikan', label: '経管投薬支援料', category: 'management', inputType: 'fixed',
@@ -394,16 +459,6 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 100 },
   },
   // R8 新設
-  {
-    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'fixed',
-    changeType: 'new',
-    r8: { pointsNote: '加算1: 30点 / 加算2: 50点' },
-  },
-  {
-    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'fixed',
-    changeType: 'new',
-    r8: { pointsNote: '加算1: 30点 / 加算2: 50点' },
-  },
   {
     id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
     changeType: 'new',
@@ -439,13 +494,17 @@ const R8_HOMECARE_FEES = [
   },
   {
     id: 't_zaitaku_online', label: '在宅患者オンライン薬剤管理指導料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
-    r8: { fixedPoints: 59 },
+    changeType: 'abolished_merged',
+    changeNote: '服薬管理指導料4ロに統合。在宅で療養中の通院困難な患者に対し情報通信機器を用いた服薬指導を行った場合に59点を算定。',
+    changePurpose: 'オンライン服薬指導の評価を服薬管理指導料に一本化し、算定体系を簡素化。',
+    r8: null,
   },
   {
     id: 't_zaitaku_kinkyu_online', label: '在宅患者緊急オンライン薬剤管理指導料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
-    r8: { fixedPoints: 59 },
+    changeType: 'abolished_merged',
+    changeNote: '服薬管理指導料4ハに統合。在宅患者の急変等に伴い情報通信機器を用いた服薬指導を行った場合に59点を算定。',
+    changePurpose: '緊急時オンライン服薬指導の評価を服薬管理指導料に一本化し、算定体系を簡素化。',
+    r8: null,
   },
   {
     id: 't_zaitaku_mayaku', label: '麻薬管理加算（在宅）', category: 'homecare', inputType: 'fixed', isSub: true,

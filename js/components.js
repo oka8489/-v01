@@ -98,7 +98,7 @@ const PreparationFeeSection = {
     const totals=computed(()=>{let zS=0,yS=0,cS=0,aS=0;for(const item of mainItems.value){zS+=getRaw('t_'+item.id+'_zai');yS+=getRaw('t_'+item.id+'_yakuzai');cS+=getRaw('k_'+item.id+'_cnt');aS+=getAmount(item)};if(zairyoItem.value){zS+=getRaw('t_zairyo_zai');yS+=getRaw('t_zairyo_yakuzai')};return{zaiSum:zS,yakuzaiSum:yS,cntSum:cS,amtSum:aS}})
     return{mainItems,zairyoItem,kazanRows,kazanCols,kazanFeeMap,unitLabels,getRaw,getVal,setVal,isFieldMissing,getPoints,getAmount,kazanRowTotal,kazanColTotal,kazanGrandTotal,totals,formatYen}
   },
-  template:`<div class="section"><div class="section-title">B. 薬剤調製料</div><table class="fee-table"><thead><tr><th style="width:250px">剤種</th><th>算定単位</th><th style="width:120px;text-align:right">剤数</th><th style="width:140px;text-align:right">薬剤料（円）</th><th style="width:100px;text-align:right">件数</th><th style="width:80px;text-align:right">点数</th><th style="width:130px;text-align:right">調製料（円）</th></tr></thead><tbody><tr v-for="item in mainItems" :key="item.id"><td style="font-weight:600">{{item.label}} <badge-label :type="item.changeType"/></td><td style="font-size:11px;color:var(--text-muted);white-space:nowrap">{{unitLabels[item.id]||''}}</td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('t_'+item.id+'_zai')}" :value="getVal('t_'+item.id+'_zai')" @change="setVal('t_'+item.id+'_zai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px" :class="{\'empty-input\':isFieldMissing('t_'+item.id+'_yakuzai')}" :value="getVal('t_'+item.id+'_yakuzai')" @change="setVal('t_'+item.id+'_yakuzai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('k_'+item.id+'_cnt')}" :value="getVal('k_'+item.id+'_cnt')" @change="setVal('k_'+item.id+'_cnt',$event.target.value)"></td><td class="num-cell"><span v-if="getPoints(item)!=null">{{getPoints(item)}}</span><span v-else style="color:var(--text-faint)">※</span></td><td class="num-cell"><span class="amt-computed">{{formatYen(getAmount(item))}}</span></td></tr><tr v-if="zairyoItem"><td style="font-weight:600">材料</td><td></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('t_zairyo_zai')}" :value="getVal('t_zairyo_zai')" @change="setVal('t_zairyo_zai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px" :class="{\'empty-input\':isFieldMissing('t_zairyo_yakuzai')}" :value="getVal('t_zairyo_yakuzai')" @change="setVal('t_zairyo_yakuzai',$event.target.value)"></td><td></td><td></td><td></td></tr><tr class="total-row"><td colspan="2" style="font-weight:700">合計</td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.zaiSum.toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.yakuzaiSum.toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.cntSum.toLocaleString()}}</span></td><td></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{formatYen(totals.amtSum)}}</span></td></tr></tbody></table><div style="margin-top:16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">薬剤調製料加算（円）</div><table class="fee-table kazan-table"><thead><tr><th style="width:60px">剤種</th><th v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:4px 2px;width:90px">{{kz.label}}</th><th style="text-align:right;padding:6px 4px">合計</th></tr></thead><tbody><tr v-for="row in kazanRows" :key="row.id"><td style="font-weight:600">{{row.label}}</td><td v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:6px 4px"><input type="text" class="fee-input kaz-input" :class="{\'empty-input\':isFieldMissing('t_kaz_'+row.id+'_'+kz.id)}" :value="getVal('t_kaz_'+row.id+'_'+kz.id)" @change="setVal('t_kaz_'+row.id+'_'+kz.id,$event.target.value)"></td><td class="num-cell" style="font-weight:600"><span class="amt-computed">{{kazanRowTotal(row.id).toLocaleString()}}</span></td></tr><tr class="total-row"><td style="font-weight:700">合計</td><td v-for="kz in kazanCols" :key="kz.id" class="num-cell" style="font-weight:700"><span class="amt-computed">{{kazanColTotal(kz.id).toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{kazanGrandTotal().toLocaleString()}}</span></td></tr></tbody></table></div></div>`
+  template:`<div class="section"><div class="section-title">B. 薬剤調製料</div><table class="fee-table"><thead><tr><th style="width:250px">剤種</th><th>算定単位</th><th style="width:120px;text-align:right">剤数</th><th style="width:140px;text-align:right">薬剤料（円）</th><th style="width:100px;text-align:right">件数</th><th style="width:80px;text-align:right">点数</th><th style="width:130px;text-align:right">調製料（円）</th></tr></thead><tbody><tr v-for="item in mainItems" :key="item.id"><td style="font-weight:600">{{item.label}} <badge-label :type="item.changeType"/></td><td style="font-size:11px;color:var(--text-muted);white-space:nowrap">{{unitLabels[item.id]||''}}</td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('t_'+item.id+'_zai')}" :value="getVal('t_'+item.id+'_zai')" @change="setVal('t_'+item.id+'_zai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px" :class="{\'empty-input\':isFieldMissing('t_'+item.id+'_yakuzai')}" :value="getVal('t_'+item.id+'_yakuzai')" @change="setVal('t_'+item.id+'_yakuzai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('k_'+item.id+'_cnt')}" :value="getVal('k_'+item.id+'_cnt')" @change="setVal('k_'+item.id+'_cnt',$event.target.value)"></td><td class="num-cell"><span v-if="getPoints(item)!=null">{{getPoints(item)}}</span><span v-else style="color:var(--text-faint)">※</span></td><td class="num-cell"><span class="amt-computed">{{formatYen(getAmount(item))}}</span></td></tr><tr v-if="zairyoItem"><td style="font-weight:600">材料</td><td></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px" :class="{\'empty-input\':isFieldMissing('t_zairyo_zai')}" :value="getVal('t_zairyo_zai')" @change="setVal('t_zairyo_zai',$event.target.value)"></td><td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px" :class="{\'empty-input\':isFieldMissing('t_zairyo_yakuzai')}" :value="getVal('t_zairyo_yakuzai')" @change="setVal('t_zairyo_yakuzai',$event.target.value)"></td><td></td><td></td><td></td></tr><tr class="total-row"><td colspan="2" style="font-weight:700">合計</td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.zaiSum.toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.yakuzaiSum.toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{totals.cntSum.toLocaleString()}}</span></td><td></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{formatYen(totals.amtSum)}}</span></td></tr></tbody></table><div style="margin-top:16px"><div style="font-size:13px;font-weight:700;margin-bottom:8px">薬剤調製料加算（円）</div><table class="fee-table kazan-table"><thead><tr><th style="width:60px">剤種</th><th v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:4px 2px;width:90px">{{kz.label}}<badge-label v-if="kazanFeeMap[kz.id]" :type="kazanFeeMap[kz.id].changeType"/></th><th style="text-align:right;padding:6px 4px">合計</th></tr></thead><tbody><tr v-for="row in kazanRows" :key="row.id"><td style="font-weight:600">{{row.label}}</td><td v-for="kz in kazanCols" :key="kz.id" style="text-align:right;padding:6px 4px"><input type="text" class="fee-input kaz-input" :class="{\'empty-input\':isFieldMissing('t_kaz_'+row.id+'_'+kz.id)}" :value="getVal('t_kaz_'+row.id+'_'+kz.id)" @change="setVal('t_kaz_'+row.id+'_'+kz.id,$event.target.value)"></td><td class="num-cell" style="font-weight:600"><span class="amt-computed">{{kazanRowTotal(row.id).toLocaleString()}}</span></td></tr><tr class="total-row"><td style="font-weight:700">合計</td><td v-for="kz in kazanCols" :key="kz.id" class="num-cell" style="font-weight:700"><span class="amt-computed">{{kazanColTotal(kz.id).toLocaleString()}}</span></td><td class="num-cell" style="font-weight:700"><span class="amt-computed">{{kazanGrandTotal().toLocaleString()}}</span></td></tr></tbody></table></div></div>`
 }
 
 const ManagementFeeSection = { props:['data'], components:{FeeTable}, setup(){return{MANAGEMENT_FEES}}, template:'<div class="section"><div class="section-title">C. 薬学管理料</div><fee-table :items="MANAGEMENT_FEES" :data="data" :show-total="true"/></div>' }
@@ -136,15 +136,32 @@ const OverviewTab = {
 <div class="section">
   <div class="section-title">1. 賃上げ・物価対応</div>
   <div style="font-size:13px;line-height:1.8;margin-bottom:12px">
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px">
-      <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)">
-        <div style="font-weight:700;margin-bottom:4px">調剤ベースアップ評価料（新設）</div>
-        <div style="color:var(--text-muted)">処方箋受付1回につき4点。R9年度は8点に引上げ予定。対象：40歳未満の薬局勤務薬剤師・事務職員。全額を賃金改善に充当。R8・R9各年度+3.2%（事務職員+5.7%）のベア実現。</div>
+    <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:12px;font-size:12px;color:var(--text-muted)">
+      賃上げ余力の回復・確保のための特例的な対応を含む必要な措置を講じるとともに、医療現場での生産性向上の取組と併せ、必要な措置を講じることで、ベースアップ実現を支援。
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border-left:3px solid var(--pos)">
+        <div style="font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span>調剤ベースアップ評価料　<span style="font-family:'IBM Plex Mono',monospace;color:var(--pos)">4点</span></div>
+        <div style="color:var(--text-muted);font-size:12px">
+          <div style="margin-bottom:4px"><b>算定：</b>処方箋の受付1回につき所定点数を算定</div>
+          <div style="margin-bottom:4px"><b>対象職員：</b>40歳未満の薬局勤務薬剤師・事務職員</div>
+          <div style="margin-bottom:4px"><b>ベア目標：</b>R8・R9各年度 +3.2%（事務職員は+5.7%）</div>
+          <div><b>R9年6月〜：</b>所定点数の100分の200（8点）に引上げ</div>
+        </div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-faint)">施設基準：対象職員がいること／賃金改善の体制が整備されていること</div>
       </div>
-      <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)">
-        <div style="font-weight:700;margin-bottom:4px">調剤物価対応料（新設）</div>
-        <div style="color:var(--text-muted)">処方箋受付1回につき1点（3月に1回）。R9年度は2点に引上げ予定。医療材料費・光熱水費・委託費等の物件費高騰への対応。</div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border-left:3px solid var(--amber)">
+        <div style="font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span>調剤物価対応料　<span style="font-family:'IBM Plex Mono',monospace;color:var(--amber)">1点</span></div>
+        <div style="color:var(--text-muted);font-size:12px">
+          <div style="margin-bottom:4px"><b>算定：</b>処方箋受付1回につき、<b style="color:var(--neg)">3月に1回に限り</b>算定</div>
+          <div style="margin-bottom:4px"><b>目的：</b>R8年度以降の物価上昇への対応分 ＋ R6年度以降の経営環境悪化への緊急対応分</div>
+          <div style="margin-bottom:4px"><b>位置づけ：</b>調剤基本料に包括（調剤基本料等の算定に併せて算定）</div>
+          <div><b>R9年6月〜：</b>所定点数の100分の200（2点）に引上げ</div>
+        </div>
       </div>
+    </div>
+    <div style="padding:10px 14px;background:#fff8e1;border-radius:var(--radius);font-size:12px;color:var(--text)">
+      <b>R8年度以降の対応：</b>保険薬局の経営状況等の調査を実施し、賃上げ措置の実績を詳細に把握。経済・物価動向が見通しから大きく変動し経営に支障が生じた場合は、R9年度予算で加減算を含む調整を行う。
     </div>
   </div>
 </div>
@@ -152,33 +169,68 @@ const OverviewTab = {
 <div class="section">
   <div class="section-title">2. 体制評価の見直し</div>
   <div style="font-size:13px;line-height:1.8">
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">調剤基本料の見直し</div>
-      <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">改定前</th><th style="text-align:right">改定後</th></tr></thead><tbody>
-        <tr><td>基本料1</td><td style="text-align:right">45点</td><td style="text-align:right;color:var(--pos);font-weight:600">47点</td></tr>
-        <tr><td>基本料2</td><td style="text-align:right">29点</td><td style="text-align:right;color:var(--pos);font-weight:600">30点</td></tr>
-        <tr><td>基本料3イ</td><td style="text-align:right">24点</td><td style="text-align:right;color:var(--pos);font-weight:600">25点</td></tr>
-        <tr><td>基本料3ロ</td><td style="text-align:right">19点</td><td style="text-align:right;color:var(--pos);font-weight:600">20点</td></tr>
-        <tr><td>基本料3ハ</td><td style="text-align:right">35点</td><td style="text-align:right;color:var(--pos);font-weight:600">37点</td></tr>
-        <tr><td>特別A</td><td style="text-align:right">32点</td><td style="text-align:right">5点</td></tr>
-        <tr><td>特別B</td><td style="text-align:right">5点</td><td style="text-align:right">3点</td></tr>
-      </tbody></table>
-      <ul style="padding-left:16px;color:var(--text-muted);margin-top:6px;font-size:12px">
-        <li>同一グループ300店舗以上の区分を撤廃（3ロ・3ハ統合）</li>
-        <li>医療モール内の複数医療機関を1つとみなす集中率計算に変更</li>
-        <li>都市部の新規開設薬局に門前薬局等立地依存減算（▲15点）を新設</li>
-        <li>特別Aの同一建物内診療所の除外規定を撤廃</li>
-      </ul>
-    </div>
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">加算の統合・新設・廃止</div>
-      <table class="fee-table" style="font-size:12px"><thead><tr><th>項目</th><th>変更</th><th>内容</th></tr></thead><tbody>
-        <tr><td>地域支援体制加算<br>+後発医薬品調剤体制加算</td><td><span class="badge badge-merged">統合</span></td><td>地域支援・医薬品供給対応体制加算1〜5に再編（27/59/67/37/59点）</td></tr>
-        <tr><td>後発医薬品調剤体制加算</td><td><span class="badge badge-abolished-merged">統合廃止</span></td><td>上記に統合。経過措置R9.5.31</td></tr>
-        <tr><td>在宅薬学総合体制加算</td><td><span class="badge badge-modified">改定</span></td><td>加算1: 15→30点、加算2イ: 50→100点、加算2ロ: 50点据置</td></tr>
-        <tr><td>バイオ後続品調剤体制加算</td><td><span class="badge badge-new">新設</span></td><td>50点（バイオ後続品調剤時）</td></tr>
-        <tr><td>医療DX推進体制整備加算</td><td><span class="badge badge-modified">改定</span></td><td>3区分を廃止し電子的調剤情報連携体制整備加算（8点）に一本化</td></tr>
-      </tbody></table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--teal)"><span class="badge badge-modified">改定</span> 調剤基本料</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">面分業推進の観点から基本料1、3ハの引上げ。R6改定以降の経営環境悪化を踏まえた緊急対応として各調剤基本料（特別A・Bを除く）を引上げ。</div>
+        <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">改定前</th><th style="text-align:right">改定後</th></tr></thead><tbody>
+          <tr><td>基本料1</td><td style="text-align:right">45点</td><td style="text-align:right;color:var(--pos);font-weight:600">47点</td></tr>
+          <tr><td>基本料2</td><td style="text-align:right">29点</td><td style="text-align:right;color:var(--pos);font-weight:600">30点</td></tr>
+          <tr><td>基本料3イ</td><td style="text-align:right">24点</td><td style="text-align:right;color:var(--pos);font-weight:600">25点</td></tr>
+          <tr><td>基本料3ロ</td><td style="text-align:right">19点</td><td style="text-align:right;color:var(--pos);font-weight:600">20点</td></tr>
+          <tr><td>基本料3ハ</td><td style="text-align:right">35点</td><td style="text-align:right;color:var(--pos);font-weight:600">37点</td></tr>
+          <tr><td>特別A</td><td style="text-align:right">32点</td><td style="text-align:right">5点</td></tr>
+          <tr><td>特別B</td><td style="text-align:right">5点</td><td style="text-align:right">3点</td></tr>
+        </tbody></table>
+        <ul style="padding-left:16px;color:var(--text-muted);margin-top:8px;font-size:12px">
+          <li>同一グループ300店舗以上の区分を撤廃（3ロ・3ハ統合）</li>
+          <li>医療モール内の複数医療機関を1つとみなす集中率計算に変更</li>
+          <li>特別Aの同一建物内診療所の除外規定を撤廃</li>
+        </ul>
+        <div style="margin-top:10px;padding:8px 10px;background:#fff3e0;border-radius:6px;font-size:11px;border:1px dashed var(--amber)">
+          <div style="font-weight:700;margin-bottom:4px">〈都市部等への新規出店抑制〉</div>
+          <div>R8年6月以降に新規開設する薬局に適用</div>
+          <ul style="padding-left:14px;margin:4px 0 0">
+            <li>都市部に立地し、小規模かつ処方箋集中率が高い場合は調剤基本料2</li>
+            <li style="color:var(--neg);font-weight:600">門前薬局等立地依存減算 ▲15点</li>
+            <li style="font-size:10px;color:var(--text-muted)">※都市部＝特別区・政令指定都市。ただし半径500m以内に他の保険薬局がない場合は除く</li>
+          </ul>
+        </div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--pos)">一定の機能を有する薬局の体制の評価</div>
+        <div style="margin-bottom:12px">
+          <div style="padding:6px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:6px;font-size:11px;color:var(--del-text)"><b>後発医薬品調剤体制加算</b> ＋ <b>地域支援体制加算</b> → 統合して下記に再編</div>
+          <div style="font-size:12px;font-weight:700;margin-bottom:4px"><span class="badge badge-merged">統合</span> 地域支援・医薬品供給対応体制加算</div>
+          <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">改定前</th><th style="text-align:right">改定後</th></tr></thead><tbody>
+            <tr><td colspan="3" style="font-size:11px;color:var(--text-muted);background:var(--surface1)">【基本料1の薬局】</td></tr>
+            <tr><td>加算1</td><td style="text-align:right;font-size:11px;color:var(--text-faint)">-</td><td style="text-align:right;color:var(--pos);font-weight:600">27点</td></tr>
+            <tr><td>加算2</td><td style="text-align:right">32点</td><td style="text-align:right;color:var(--pos);font-weight:600">59点</td></tr>
+            <tr><td>加算3</td><td style="text-align:right">40点</td><td style="text-align:right;color:var(--pos);font-weight:600">67点</td></tr>
+            <tr><td colspan="3" style="font-size:11px;color:var(--text-muted);background:var(--surface1)">【基本料1以外の薬局】</td></tr>
+            <tr><td>加算4</td><td style="text-align:right">10点</td><td style="text-align:right;color:var(--pos);font-weight:600">37点</td></tr>
+            <tr><td>加算5</td><td style="text-align:right">32点</td><td style="text-align:right;color:var(--pos);font-weight:600">59点</td></tr>
+          </tbody></table>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="badge badge-new">新設</span><b>バイオ後続品調剤体制加算</b><span style="font-family:'IBM Plex Mono',monospace">50点</span></div>
+          <div style="font-size:11px;color:var(--text-muted)">バイオ後続品の使用促進の観点から、バイオ後続品を調剤する体制の評価を新設</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="padding:6px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:4px;font-size:11px;color:var(--del-text)"><b>医療DX推進体制整備加算</b>（6点/8点/10点の3区分）＋ <b>医療情報取得加算</b> → 廃止して下記に一本化</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px;margin-bottom:4px"><span class="badge badge-new">新設</span><b>電子的調剤情報連携体制整備加算</b><span style="font-family:'IBM Plex Mono',monospace">8点</span><span style="font-size:10px;color:var(--text-muted)">（月1回）</span></div>
+          <div style="font-size:11px;color:var(--text-muted)">電子処方箋システムによる重複投薬等チェックを行う体制の評価</div>
+        </div>
+        <div>
+          <div style="font-size:12px;margin-bottom:4px"><span class="badge badge-modified">改定</span> <b>在宅薬学総合体制加算</b></div>
+          <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">改定前</th><th style="text-align:right">改定後</th></tr></thead><tbody>
+            <tr><td>加算1</td><td style="text-align:right">15点</td><td style="text-align:right;color:var(--pos);font-weight:600">30点</td></tr>
+            <tr><td>加算2 イ（個人宅）</td><td style="text-align:right">50点</td><td style="text-align:right;color:var(--pos);font-weight:600">100点</td></tr>
+            <tr><td>加算2 ロ（施設）</td><td style="text-align:right">50点</td><td style="text-align:right">50点</td></tr>
+          </tbody></table>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px">在宅訪問を十分に行うための体制を整備する薬局を、実績に基づき評価（※在宅患者の処方箋に基づく対応の場合の加算）</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -186,46 +238,84 @@ const OverviewTab = {
 <div class="section">
   <div class="section-title">3. 対人業務の評価見直し</div>
   <div style="font-size:13px;line-height:1.8">
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">かかりつけ薬剤師：包括評価から実績重視へ転換</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        <div style="padding:10px;background:var(--del-bg);border-radius:var(--radius);border:1px solid #f5c6c6">
-          <div style="font-weight:700;color:var(--del-text);margin-bottom:4px;font-size:12px">廃止</div>
-          <ul style="padding-left:16px;color:var(--del-text);font-size:12px;line-height:1.6"><li>かかりつけ薬剤師指導料（76点）</li><li>かかりつけ薬剤師包括管理料（291点）</li></ul>
-        </div>
-        <div style="padding:10px;background:var(--new-bg);border-radius:var(--radius);border:1px solid #b3d4f7">
-          <div style="font-weight:700;color:var(--new-text);margin-bottom:4px;font-size:12px">新設（実績評価）</div>
-          <ul style="padding-left:16px;color:var(--new-text);font-size:12px;line-height:1.6"><li>フォローアップ加算（50点/3月に1回）</li><li>訪問加算（230点/6月に1回）</li></ul>
-        </div>
-      </div>
-    </div>
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">調剤管理料の見直し</div>
+    <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:16px">
+      <div style="font-weight:700;margin-bottom:6px"><span class="badge badge-modified">改定</span> 調剤管理料</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">内服薬の調剤管理料を、長期処方（28日分以上）とそれ以外（27日分以下）との2区分に見直し。</div>
       <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">改定前</th><th style="text-align:right">改定後</th></tr></thead><tbody>
         <tr><td>7日以下</td><td style="text-align:right">4点</td><td style="text-align:right" rowspan="3">27日以下: 10点</td></tr>
         <tr><td>8〜14日</td><td style="text-align:right">28点</td></tr>
         <tr><td>15〜28日</td><td style="text-align:right">50点</td></tr>
         <tr><td>29日以上</td><td style="text-align:right">60点</td><td style="text-align:right">28日以上: 60点（据置）</td></tr>
+        <tr><td>内服以外</td><td style="text-align:right">4点</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
       </tbody></table>
-      <p style="color:var(--text-muted);font-size:12px;margin-top:4px">調剤管理加算は廃止。内服以外の調剤管理料は4→10点。</p>
+      <p style="color:var(--text-muted);font-size:12px;margin-top:4px">調剤管理加算は廃止。</p>
     </div>
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">残薬対策・薬学的介入の強化</div>
-      <table class="fee-table" style="font-size:12px"><thead><tr><th>項目</th><th>変更</th><th>内容</th></tr></thead><tbody>
-        <tr><td>重複投薬・相互作用等防止加算</td><td><span class="badge badge-abolished-merged">統合廃止</span></td><td>下記2つに発展的再編</td></tr>
-        <tr><td>調剤時残薬調整加算</td><td><span class="badge badge-new">新設</span></td><td>30点/50点</td></tr>
-        <tr><td>薬学的有害事象等防止加算</td><td><span class="badge badge-new">新設</span></td><td>30点/50点</td></tr>
-        <tr><td>医療情報取得加算</td><td><span class="badge badge-abolished-merged">統合廃止</span></td><td>電子的調剤情報連携体制整備加算に統合</td></tr>
-      </tbody></table>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--teal)">かかりつけ薬剤師の推進</div>
+        <div style="padding:8px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:8px;font-size:11px;color:var(--del-text)"><b>かかりつけ薬剤師指導料</b>（76点）＋ <b>かかりつけ薬剤師包括管理料</b>（291点）→ 廃止して下記に再編</div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">電話等による服薬状況や残薬状況等の継続的な確認を評価</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>かかりつけ薬剤師フォローアップ加算</b><span style="font-family:'IBM Plex Mono',monospace">50点</span><span style="font-size:10px;color:var(--text-muted)">（3月に1回）</span></div>
+        </div>
+        <div style="margin-bottom:8px">
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">患家への訪問による服薬管理、残薬状況の確認等の実施、医療機関への情報提供を評価</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>かかりつけ薬剤師訪問加算</b><span style="font-family:'IBM Plex Mono',monospace">230点</span><span style="font-size:10px;color:var(--text-muted)">（6月に1回）</span></div>
+        </div>
+        <div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">多剤服用患者の一元的・継続的な把握を通じて、包括的な薬物治療の評価・介入を実践する取組を評価</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-modified">改定</span><b>服用薬剤調整支援料2</b><span style="font-family:'IBM Plex Mono',monospace">1,000点</span></div>
+        </div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--pos)">訪問薬剤管理指導の推進</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">在宅患者訪問薬剤管理指導料の見直し</div>
+          <div style="font-size:12px;color:var(--text-muted)">算定間隔を<b>中6日以上</b>から<b style="color:var(--pos)">週1回算定</b>に見直し</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">医師と同時訪問した際の評価</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">ポリファーマシー対策及び残薬対策を推進する観点から、医師及び薬剤師による同時訪問を評価</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>訪問薬剤管理医師同時指導料</b><span style="font-family:'IBM Plex Mono',monospace">150点</span></div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:4px">複数名で訪問した際の評価</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:4px">行動面での運動興奮等がみられる患者に対する複数名訪問を評価</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>複数名薬剤管理指導訪問料</b><span style="font-family:'IBM Plex Mono',monospace">300点</span></div>
+        </div>
+      </div>
     </div>
-    <div style="margin-bottom:12px">
-      <div style="font-weight:600;margin-bottom:6px">在宅訪問の充実</div>
-      <ul style="padding-left:16px;color:var(--text-muted);font-size:12px;line-height:1.8">
-        <li>訪問薬剤管理医師同時指導料（新設 150点/6月に1回）：医師と薬剤師の同時訪問</li>
-        <li>複数名薬剤管理指導訪問料（新設 300点）：複数名での訪問</li>
-        <li>訪問薬剤管理指導の算定間隔：「中6日以上」→「週1回」に緩和</li>
-        <li>服用薬剤調整支援料2：110点→1,000点（R9年6月適用、かかりつけ薬剤師による包括的介入）</li>
-      </ul>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--amber)">残薬対策・一元的管理の推進</div>
+        <div style="padding:8px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:10px;font-size:11px;color:var(--del-text)"><b>重複投薬・相互作用等防止加算</b> → 廃止して下記2つに発展的再編</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--del-text);margin-bottom:2px">旧：重複防止加算（残薬以外）40点 →</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>薬学的有害事象等防止加算</b><span style="font-family:'IBM Plex Mono',monospace">50点<sup style="font-size:9px">※</sup>/30点</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">重複投薬・相互作用・副作用等の薬学的有害事象防止に係る介入を評価</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:11px;color:var(--del-text);margin-bottom:2px">旧：重複防止加算（残薬）20点 →</div>
+          <div style="font-size:12px;display:flex;align-items:center;gap:6px"><span class="badge badge-new">新設</span><b>調剤時残薬調整加算</b><span style="font-family:'IBM Plex Mono',monospace">50点<sup style="font-size:9px">※</sup>/30点</span></div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">残薬状況の聞き取り・残薬調整を実施した場合を評価</div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted)">※ 在宅患者の場合又はかかりつけ薬剤師が実施する場合</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius)">
+        <div style="font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid var(--r6)">服薬指導の評価の充実</div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">吸入薬指導加算の対象疾患の拡大</div>
+          <div style="font-size:12px;color:var(--text-muted)">インフルエンザ患者に対する吸入薬指導も評価</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">バイオ後続品の説明時の評価</div>
+          <div style="font-size:12px;color:var(--text-muted)">バイオ後続品の選択に係る患者への説明を評価 → <b>特定薬剤管理指導料3ロ</b>の評価対象に追加</div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:600;margin-bottom:2px">乳幼児の無菌製剤処理加算の対象を小児まで拡大</div>
+          <div style="font-size:12px;color:var(--text-muted)"><b>6歳未満</b>から<b style="color:var(--pos)">15歳未満</b>への対象年齢の引き上げ</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -233,12 +323,31 @@ const OverviewTab = {
 <div class="section">
   <div class="section-title">4. その他</div>
   <ul style="padding-left:16px;font-size:13px;line-height:1.8;color:var(--text-muted)">
-    <li>無菌製剤処理加算の増点対象を6歳未満→15歳未満に拡大</li>
-    <li>吸入薬指導加算の対象にインフルエンザ吸入薬を追加（算定上限: 3月→6月に1回）</li>
-    <li>バイオ後続品の品質等に関する説明を特定薬剤管理指導加算3ロで評価</li>
-    <li>在宅患者オンライン薬剤管理指導料と服薬管理指導料を一本化</li>
-    <li>夜間休日における調剤の選定療養化</li>
+    <li>在宅患者オンライン薬剤管理指導料・在宅患者緊急オンライン薬剤管理指導料を廃止し、服薬管理指導料4ロ・4ハに統合</li>
+    <li>無菌製剤処理加算の対象を6歳未満→15歳未満に拡大、中心静脈栄養法用は137→237点に増点</li>
+    <li>夜間休日における調剤の選定療養化（保険薬局でも開局時間外の特別の料金徴収が可能に）</li>
+    <li>長期収載品の選定療養の患者負担を1/4→<b>1/2</b>に引上げ</li>
+    <li>栄養保持を目的とした医薬品（エンシュア等）の保険給付に処方理由の記載が必要に</li>
   </ul>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
+    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px;line-height:1.8">
+      <div style="font-weight:700;margin-bottom:6px">薬担規則の改正（バイオ後続品関係）</div>
+      <ul style="padding-left:18px;color:var(--text-muted);margin:0">
+        <li>保険薬局はバイオ後続品の<b>備蓄体制の確保に努める</b>こと（努力義務）</li>
+        <li>一般名処方の場合、患者にバイオ後続品の<b>説明を適切に行う</b>こと（義務）＋バイオ後続品を調剤するよう<b>努める</b>こと（努力義務）</li>
+        <li>注射薬の銘柄名処方は<b>変更調剤不可</b></li>
+      </ul>
+    </div>
+    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius);font-size:12px;line-height:1.8">
+      <div style="font-weight:700;margin-bottom:6px">届出・報告（概要p.52-54）</div>
+      <ul style="padding-left:18px;color:var(--text-muted);margin:0">
+        <li><b>新規届出要：</b>ベースアップ評価料、地域支援加算、在宅薬学総合体制2、バイオ後続品、服薬管理指導料注1</li>
+        <li><b>届出不問：</b>電子的調剤情報連携体制整備（名称変更のみ）、調剤基本料（区分変更なし）、在宅薬学総合体制1（区分変更なし）</li>
+        <li><b>届出期間：</b>R8.5.7〜6.1（必着）</li>
+        <li><b>オンライン申請可能</b>（電子申請・届出等システム）</li>
+      </ul>
+    </div>
+  </div>
 </div>
 
 <div class="section">
@@ -984,6 +1093,7 @@ const RequirementsTab = {
   setup(props, { emit }) {
     const sub = computed({ get:()=>props.activeSub||'k_kihon', set:v=>emit('update:activeSub',v) })
     const subCategory = ref('taisei')
+    watch(sub, v => { if (v === 'k_baseup') subCategory.value = 'chinage' })
     const groups = window.REQUIREMENT_DEFINITIONS || []
     function isChecked(id) { return !!props.data.requirements?.[id] }
     function toggle(id) { if (!props.data.requirements) props.data.requirements = {}; props.data.requirements[id] = !props.data.requirements[id] }
@@ -1000,6 +1110,7 @@ const RequirementsTab = {
     // Step 1: 届出・敷地内
     const j1Todokede = ref(jd.todokede || 'yes')
     const j1Shikichi = ref(jd.shikichi || 'no')
+    const showShikichiModal = ref(false)
     // Step 2: チェーン薬局・グループ規模
     const j2IsChain = ref(jd.isChain || 'no')
     const j2GroupTotal = ref(jd.groupTotal || 0)
@@ -1405,7 +1516,7 @@ const RequirementsTab = {
       }
       else if (rkStep.value === 2) {
         if (rkR7.value === true) {
-          rkResult.value = { pts: 5, label: '加算（5点）', reason: '施設基準に変更なし。届出不要、引き続き算定可能。' }
+          rkResult.value = { pts: 5, label: '加算（5点）', reason: '施設基準に変更なし。届出不問、引き続き算定可能。' }
           rkStep.value = 3
         } else {
           rkResult.value = rkAllOk.value ? { pts: 5, label: '加算（5点）', reason: '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
@@ -1445,10 +1556,10 @@ const RequirementsTab = {
       { key: 'd4', highlight: true, badge: '変更', label: '(4) 電子処方箋の受付・調剤情報の登録・重複等チェックの体制', help: '<b>告示 五の四(4)／通知 第95の2(4)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7では加算1（10点）のみ重複投薬等チェックが必須だったが、R8では<b>全体で必須</b>に。\n\n<b>具体的な要件：</b>\n・<b>電子処方箋</b>を受け付け、調剤する体制\n・紙の処方箋を含め、原則<b>全ての調剤結果</b>を速やかに電子処方箋管理サービスに登録\n・電子処方箋管理サービスの<b>重複投薬等チェック機能</b>を用いて、有効成分の重複・不適切な組合せの有無を確認できる体制' },
       { key: 'd5', label: '(5) 電子的な調剤録及び薬剤服用歴の管理体制', help: '<b>告示 五の四(5)／通知 第95の2(5)</b>\n\n電磁的記録による<b>調剤録及び薬剤服用歴</b>の管理体制を有していること。\n\n※紙媒体で受け付けた処方箋・情報提供文書等を紙のまま保管することは差し支えない\n※オンライン資格確認、薬歴管理、レセプト請求等の<b>システム間で情報連携</b>されていることが望ましい' },
       { key: 'd6', highlight: true, badge: '新設', label: '(6) 電磁的方法により診療情報を共有・活用する体制', help: '<b>告示 五の四(6)／通知 第95の2(6)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\n電子カルテ情報共有サービスによる診療情報の共有・活用。R7にはなかった要件。\n\n<b>具体的な要件：</b>\n国等が提供する<b>電子カルテ情報共有サービス</b>により取得される診療情報等を活用する体制。\n\n※当面の間、基準を満たしているものとみなす。ただし全国運用開始時には<b>速やかに導入</b>に努めること。' },
-      { key: 'd7', highlight: true, badge: '変更', label: '(7) 電子資格確認に係る十分な実績を有していること', help: '<b>告示 五の四(7)／通知 第95の2(7)(8)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7は加算1=30%、加算2=20%、加算3=10%だったが、R8では一本化で<b>30%</b>に統一。旧加算2・3から移行する場合は利用率の引き上げが必要。\n\n<b>具体的な要件：</b>\n算定する月の<b>3月前</b>のレセプト件数ベース<b>マイナ保険証利用率が30%以上</b>であること。\n（＝同月のマイナ保険証利用者数÷同月の患者数。支払基金から報告される数値）\n\n※3月前に代えて、<b>その前月又は前々月</b>の利用率を用いることも可\n※届出不要（基準を満たしていればよい）' },
+      { key: 'd7', highlight: true, badge: '変更', label: '(7) 電子資格確認に係る十分な実績を有していること', help: '<b>告示 五の四(7)／通知 第95の2(7)(8)</b>\n\n<b style="color:var(--r6)">【R7→R8の変更点】</b>\nR7は加算1=30%、加算2=20%、加算3=10%だったが、R8では一本化で<b>30%</b>に統一。旧加算2・3から移行する場合は利用率の引き上げが必要。\n\n<b>具体的な要件：</b>\n算定する月の<b>3月前</b>のレセプト件数ベース<b>マイナ保険証利用率が30%以上</b>であること。\n（＝同月のマイナ保険証利用者数÷同月の患者数。支払基金から報告される数値）\n\n※3月前に代えて、<b>その前月又は前々月</b>の利用率を用いることも可\n※届出不問（基準を満たしていればよい）' },
       { key: 'd8', label: '(8) 医療DX推進の体制に関する事項を薬局内の見やすい場所に掲示', help: '<b>告示 五の四(8)／通知 第95の2(9)</b>\n\n以下の事項を薬局内の<b>見やすい場所に掲示</b>すること：\n\n<b>(イ)</b> オンライン資格確認等システムを通じて診療情報・薬剤情報等を取得・活用している薬局であること\n<b>(ロ)</b> マイナンバーカードの健康保険証利用を促進する等、<b>医療DXを通じて質の高い医療</b>を提供できるよう取り組んでいること\n<b>(ハ)</b> 電子処方箋や電子カルテ情報共有サービスを活用するなど、<b>医療DXに係る取組</b>を実施していること' },
       { key: 'd9', label: '(9) (8)の掲示事項をウェブサイトに掲載', help: '<b>告示 五の四(9)／通知 第95の2(10)</b>\n\n(8)の掲示事項について、原則として<b>ウェブサイトに掲載</b>していること。\n\n※ホームページ等を有しない保険薬局はこの限りではない。' },
-      { key: 'd10', highlight: true, badge: '新設', label: '(10) マイナポータルの医療情報等に基づく健康管理相談に応じる体制', help: '<b>告示 五の四(10)／通知 第95の2(11)(12)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\nR7にはなかった要件。マイナポータルの医療情報に基づく健康管理相談への対応体制が新たに求められる。\n\n<b>具体的な要件：</b>\nマイナポータルの医療情報等に基づき、患者からの<b>健康管理に係る相談に応じる体制</b>を有していること。\n※届出不要（基準を満たしていればよい）\n\nまた、「医療情報システムの安全管理に関するガイドライン」及び「薬局におけるサイバーセキュリティ対策チェックリスト」を活用した<b>サイバーセキュリティ対策</b>を含めセキュリティ全般について適切な対応を行うこと。' },
+      { key: 'd10', highlight: true, badge: '新設', label: '(10) マイナポータルの医療情報等に基づく健康管理相談に応じる体制', help: '<b>告示 五の四(10)／通知 第95の2(11)(12)</b>\n\n<b style="color:var(--r6)">【R8新設】</b>\nR7にはなかった要件。マイナポータルの医療情報に基づく健康管理相談への対応体制が新たに求められる。\n\n<b>具体的な要件：</b>\nマイナポータルの医療情報等に基づき、患者からの<b>健康管理に係る相談に応じる体制</b>を有していること。\n※届出不問（基準を満たしていればよい）\n\nまた、「医療情報システムの安全管理に関するガイドライン」及び「薬局におけるサイバーセキュリティ対策チェックリスト」を活用した<b>サイバーセキュリティ対策</b>を含めセキュリティ全般について適切な対応を行うこと。' },
     ]
     const dxAllOk = computed(() => Object.values(dxChecks).every(v => v))
     function dxNext() {
@@ -1459,7 +1570,7 @@ const RequirementsTab = {
         dxStep.value = 2
       }
       else if (dxStep.value === 2) {
-        dxResult.value = dxAllOk.value ? { pts: 8, label: '加算（8点）', reason: dxR7.value ? '届出済み＋変更要件クリア。届出不要。' : '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
+        dxResult.value = dxAllOk.value ? { pts: 8, label: '加算（8点）', reason: dxR7.value ? '届出済み＋変更要件クリア。届出不問。' : '施設基準を全て満たしています。新規届出が必要。' } : { pts: 0, label: '算定なし', reason: '施設基準に未達の項目があります。' }
         dxStep.value = 3
       }
     }
@@ -1544,7 +1655,7 @@ const RequirementsTab = {
         ztStep.value = 2
       } else if (ztStep.value === 2) {
         ztResult.value = ztAllOk.value
-          ? { pts: 30, label: '加算1（30点）', reason: '加算1の施設基準を満たしています。' + (ztR7.value !== 'none' ? '区分変更がなければ届出不要。' : '新規届出が必要（様式87の3の5）。') }
+          ? { pts: 30, label: '加算1（30点）', reason: '加算1の施設基準を満たしています。' + (ztR7.value !== 'none' ? '区分変更がなければ届出不問。' : '新規届出が必要（様式87の3の5）。') }
           : { pts: 0, label: '算定なし', reason: '加算1の施設基準に未達の項目があります。' }
         // 加算2チェックの初期化: R7で加算2届出済みなら全ON
         if (ztR7.value === 'zt2') { for (const k of Object.keys(zt2Checks)) zt2Checks[k] = true }
@@ -1581,7 +1692,7 @@ const RequirementsTab = {
     function zt2Next() {
       if (zt2Step.value === 1) {
         zt2Result.value = zt2AllOk.value
-          ? { pts: 100, label: '加算2（イ100点／ロ50点）', reason: '加算2の施設基準を満たしています。' + (ztR7.value === 'zt2' ? '区分変更がなければ届出不要。' : '届出が必要（様式87の3の5）。') }
+          ? { pts: 100, label: '加算2（イ100点／ロ50点）', reason: '加算2の施設基準を満たしています。' + (ztR7.value === 'zt2' ? '区分変更がなければ届出不問。' : '届出が必要（様式87の3の5）。') }
           : { pts: 0, label: '加算2は算定不可', reason: '加算2の追加要件に未達の項目があります。加算1（30点）で算定可能です。' }
         zt2Step.value = 2
       }
@@ -1606,6 +1717,36 @@ const RequirementsTab = {
       }
     }
     watch([ztStep, zt2Step, ztR7, ztResult, zt2Result, ztApplied, ztChecks, zt2Checks], saveZtJudge, { deep: true })
+
+    // ベースアップ評価料の試算
+    const buRxCount = ref(props.data.r6?.k_kihon_cnt || 0)
+    const defaultStaff = [{ type: 'pharmacist', age: 0, monthlySalary: 0 }]
+    const buStaff = reactive(props.data.baseup?.staff ? JSON.parse(JSON.stringify(props.data.baseup.staff)) : defaultStaff)
+    function buIsTarget(s) { return s.type === 'clerk' || (s.age > 0 && s.age < 40) }
+    const buTargetCount = computed(() => buStaff.filter(buIsTarget).length)
+    const buRequiredTotal = computed(() => buStaff.reduce((sum, s) => {
+      if (buIsTarget(s) && s.monthlySalary > 0) {
+        const rate = s.type === 'clerk' ? 0.057 : 0.032
+        return sum + Math.ceil(s.monthlySalary * 12 * rate)
+      }
+      return sum
+    }, 0))
+    const buRequiredWithFukuri = computed(() => Math.ceil(buRequiredTotal.value * 1.15))
+    function buAddStaff() { buStaff.push({ type: 'pharmacist', age: 0, monthlySalary: 0 }) }
+    function buRemoveStaff() { if (buStaff.length > 1) buStaff.pop() }
+    const buApplyVal = ref('4')
+    const buApplied = ref(false)
+    function buApplyToR8() {
+      if (props.r8Data) {
+        if (!props.r8Data.r6) props.r8Data.r6 = {}
+        props.r8Data.r6.k_baseup = Number(buApplyVal.value)
+        buApplied.value = true
+      }
+    }
+    watch([buRxCount, buStaff], () => {
+      if (!props.data.baseup) props.data.baseup = {}
+      props.data.baseup.staff = JSON.parse(JSON.stringify(buStaff))
+    }, { deep: true })
 
     const JUDGE_PAGES = {
       k_renkei: null, // 専用ステップ式に移行
@@ -1638,7 +1779,7 @@ const RequirementsTab = {
     const judgePageIds = Object.keys(JUDGE_PAGES).filter(k => JUDGE_PAGES[k] !== null)
 
     return { sub, subCategory, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
-             jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
+             jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, showShikichiModal, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
              rkStep, rkR7, rkResult, rkApplied, rkChecks, rkCheckLabels, rkAllOk, rkNext, rkBack, rkReset, rkApplyToR8, rkHelpModal, rkOpenHelp, rkCloseHelp, rkGetHelp,
@@ -1647,12 +1788,21 @@ const RequirementsTab = {
              ztStep, ztR7, ztResult, ztApplied, ztChecks, ztCheckLabels, ztAllOk, ztNext, ztBack, ztReset, ztApplyToR8,
              zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
              ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
+             buRxCount, buStaff, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
   },
   template: `<div>
     <div style="display:flex;gap:4px;margin-bottom:8px">
-      <button class="btn" :style="subCategory==='taisei'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='taisei'" style="font-size:13px;padding:8px 16px">体制加算</button>
-      <button class="btn" :style="subCategory==='sonota'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='sonota'" style="font-size:13px;padding:8px 16px">その他</button>
+      <button class="btn" :style="subCategory==='chinage'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='chinage';sub='k_baseup'" style="font-size:13px;padding:8px 16px">賃上げ</button>
+      <button class="btn" :style="subCategory==='taisei'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='taisei';sub='k_kihon'" style="font-size:13px;padding:8px 16px">体制加算</button>
+      <button class="btn" :style="subCategory==='sonota_kasan'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='sonota_kasan';sub='ot_chozai'" style="font-size:13px;padding:8px 16px">薬剤調製料・薬剤料</button>
+      <button class="btn" :style="subCategory==='memo'?'background:var(--text);color:white;font-weight:700':''" @click="subCategory='memo';sub='memo'" style="font-size:13px;padding:8px 16px">メモ</button>
+    </div>
+    <div v-if="subCategory==='chinage'" style="margin-bottom:12px">
+      <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+        <button class="btn" :style="sub==='k_baseup'?'background:var(--teal);color:white':''" @click="sub='k_baseup'" style="font-size:12px;padding:6px 12px">調剤ベースアップ評価料</button>
+        <button class="btn" :style="sub==='k_bukka'?'background:var(--teal);color:white':''" @click="sub='k_bukka'" style="font-size:12px;padding:6px 12px">調剤物価対応料</button>
+      </div>
     </div>
     <div v-if="subCategory==='taisei'" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
       <button class="btn" :style="sub==='k_kihon'?'background:var(--teal);color:white':''" @click="sub='k_kihon'" style="font-size:12px;padding:6px 12px">調剤基本料</button>
@@ -1660,17 +1810,31 @@ const RequirementsTab = {
       <button class="btn" :style="sub==='k_renkei'?'background:var(--teal);color:white':''" @click="sub='k_renkei'" style="font-size:12px;padding:6px 12px">連携強化</button>
       <button class="btn" :style="sub==='k_dx8'?'background:var(--teal);color:white':''" @click="sub='k_dx8'" style="font-size:12px;padding:6px 12px">電子的調剤情報連携体制整備</button>
       <button class="btn" :style="sub==='k_zaitaku'?'background:var(--teal);color:white':''" @click="sub='k_zaitaku'" style="font-size:12px;padding:6px 12px">在宅薬学総合体制</button>
+      <button class="btn" :style="sub==='k_jikangai'?'background:var(--teal);color:white':''" @click="sub='k_jikangai'" style="font-size:12px;padding:6px 12px">時間外加算</button>
+      <button class="btn" :style="sub==='k_yakan'?'background:var(--teal);color:white':''" @click="sub='k_yakan'" style="font-size:12px;padding:6px 12px">夜間・休日等加算</button>
       <button class="btn" :style="sub==='k_bio'?'background:var(--teal);color:white':''" @click="sub='k_bio'" style="font-size:12px;padding:6px 12px">バイオ後続品調剤体制</button>
     </div>
-    <div v-if="subCategory==='sonota'" style="margin-bottom:12px">
-      <div v-if="judgePageIds.length" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
-        <button v-for="pid in judgePageIds" :key="pid" class="btn" :style="sub===pid?'background:var(--teal);color:white':''" @click="sub=pid" style="font-size:12px;padding:6px 12px">{{JUDGE_PAGES[pid].title.replace(/加算$/,'').replace(/体制整備加算$/,'')}}</button>
-      </div>
-      <div v-else style="padding:24px;text-align:center;color:var(--text-muted);font-size:13px">準備中</div>
+    <div v-if="subCategory==='sonota_kasan'" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+      <button class="btn" :style="sub==='ot_chozai'?'background:var(--teal);color:white':''" @click="sub='ot_chozai'" style="font-size:12px;padding:6px 12px">薬剤調製料</button>
+      <button class="btn" :style="sub==='ot_mukin'?'background:var(--teal);color:white':''" @click="sub='ot_mukin'" style="font-size:12px;padding:6px 12px">無菌製剤処理加算</button>
+      <button class="btn" :style="sub==='ot_mayaku'?'background:var(--teal);color:white':''" @click="sub='ot_mayaku'" style="font-size:12px;padding:6px 12px">麻薬等加算</button>
+      <button class="btn" :style="sub==='ot_jika'?'background:var(--teal);color:white':''" @click="sub='ot_jika'" style="font-size:12px;padding:6px 12px">自家製剤・計量混合</button>
+      <button class="btn" :style="sub==='ot_yakuzai'?'background:var(--teal);color:white':''" @click="sub='ot_yakuzai'" style="font-size:12px;padding:6px 12px">薬剤料・材料料</button>
     </div>
     <div v-if="sub==='k_kihon'">
       <div class="section">
-        <div class="section-title">調剤基本料の施設基準 <span class="badge badge-modified">改定</span></div>
+        <div class="section-title">調剤基本料 <span class="badge badge-modified">改定</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div style="margin-bottom:4px"><b>概要：</b>処方箋受付1回につき算定。薬局の規模・集中率等に応じて基本料1〜3、特別A・Bの区分で算定。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき。同時受付の場合、2枚目以降は80/100。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>全ての患者（処方箋を受け付けた場合）</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>注4（100分の50）該当薬局は、加算等と合算して3点未満の場合は3点を算定。</div>
+          <div style="margin-bottom:4px"><b>届出：</b>必要（処方箋受付回数等の実績は前年5月1日〜当年4月30日で判定）</div>
+          <div style="margin-bottom:4px"><b>届出受付期間：</b>令和8年5月7日〜6月1日（必着）</div>
+          <div style="margin-bottom:4px"><b>R8変更点：</b>基本料1・3ハ増点、基本料2の対象拡大（都市部）、300店舗区分撤廃、特別A除外規定撤廃、門前薬局等立地依存減算（▲15点）新設。</div>
+          <div style="margin-bottom:4px"><b style="color:var(--neg)">報告（妥結率）：</b>毎年4月1日〜9月30日の妥結率の実績を報告。妥結率5割以下の場合は特別調剤基本料Bを算定。</div>
+          <div><b style="color:var(--neg)">報告（後発品取組状況）：</b>後発医薬品の使用促進の取組状況を地方厚生局長に報告。未報告の場合は注4（100分の50）が適用。</div>
+        </div>
         <img src="img/r8_kihon_chart.png" alt="調剤基本料の見直し（R8改定後）" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0">
       </div>
       <div class="section">
@@ -1692,9 +1856,36 @@ const RequirementsTab = {
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="j1Todokede" value="no">いいえ（届出していない）→ 特別B（3点）</label>
           </div>
           <div v-if="j1Todokede==='yes'" style="margin-bottom:12px">
-            <div style="font-weight:600;margin-bottom:6px">同一敷地内薬局ですか？（医療機関と不動産取引等の特別な関係があり、集中率50%超）</div>
+            <div style="font-weight:600;margin-bottom:6px">同一敷地内薬局ですか？（医療機関と不動産取引等の特別な関係があり、集中率50%超）<button class="btn" style="font-size:11px;padding:2px 8px;margin-left:6px;background:var(--teal);color:white;border-radius:4px;cursor:pointer" @click="showShikichiModal=true">？同一敷地内薬局とは</button></div>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="j1Shikichi" value="no">いいえ</label>
             <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="j1Shikichi" value="yes">はい → 特別A（5点）</label>
+          </div>
+          <div v-if="showShikichiModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="showShikichiModal=false">
+            <div style="background:white;border-radius:12px;padding:24px;max-width:640px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
+              <div style="font-weight:700;font-size:17px;margin-bottom:16px">同一敷地内薬局（特別調剤基本料A）とは</div>
+              <div style="font-size:13px;line-height:1.9;color:var(--text)">
+                <div style="font-weight:600;margin-bottom:6px">定義（施設基準）</div>
+                <div style="padding:10px 14px;background:var(--surface2);border-radius:8px;margin-bottom:12px">
+                  次の<b>いずれか</b>に該当する保険薬局：
+                  <ol style="padding-left:20px;margin:6px 0 0">
+                    <li style="margin-bottom:4px"><b>イ</b>　医療機関と<b style="color:var(--neg)">不動産取引等その他の特別な関係</b>を有している保険薬局であって、当該医療機関に係る処方箋による調剤の割合が<b style="color:var(--neg)">5割を超える</b>こと。</li>
+                    <li><b>ロ</b>　同一敷地内において<b style="color:var(--neg)">オンライン診療受診施設</b>を設置していること。<br><span style="font-size:11px;color:var(--text-muted)">※ただし、無医地区・準無医地区に所在する薬局は除く。</span></li>
+                  </ol>
+                </div>
+                <div style="font-weight:600;margin-bottom:6px">R8改定での変更点</div>
+                <ul style="padding-left:18px;margin-bottom:12px">
+                  <li style="margin-bottom:4px"><b>同一建物内の診療所の除外規定を削除</b>：従来は同一建物内に診療所がある場合は特別Aの対象外だったが、R8改定でこの除外規定を撤廃。</li>
+                  <li style="margin-bottom:4px"><b>オンライン診療受診施設の新設</b>：同一敷地内にオンライン診療の受診施設を設置する場合も特別Aの対象に追加。</li>
+                  <li><b>点数の引下げ</b>：32点 → 5点。</li>
+                </ul>
+                <div style="font-weight:600;margin-bottom:6px">経過措置</div>
+                <div style="padding:10px 14px;background:#fff8e1;border-radius:8px;font-size:12px;margin-bottom:12px">
+                  R8年3月4日時点で同一建物内に診療所が所在していた薬局については、<b>新たに他の医療機関と特別な関係を有しない</b>かつ<b>当該診療所が所在し続ける</b>場合に限り、<b>当面の間</b>、イに該当しないものとみなす。
+                </div>
+                <div style="font-size:11px;color:var(--text-muted)">出典：令和8年度診療報酬改定の概要【調剤】p.18、告示第71号（特掲診療料の施設基準等）</div>
+              </div>
+              <div style="margin-top:16px;text-align:right"><button class="btn" style="background:var(--text);color:white;padding:6px 20px" @click="showShikichiModal=false">閉じる</button></div>
+            </div>
           </div>
         </div>
 
@@ -1760,9 +1951,14 @@ const RequirementsTab = {
       <div class="section">
         <div class="section-title">地域支援・医薬品供給対応体制加算 <span class="badge badge-merged">統合</span></div>
         <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
-          <div>旧「地域支援体制加算」と「後発医薬品調剤体制加算」を統合。5段階に再編。</div>
-          <div><strong>イ</strong> 医薬品の安定供給体制 + <strong>ロ</strong> 後発品85%以上 → 加算1（27点）</div>
-          <div>加算1 + 地域医療への貢献実績 → 加算2～5</div>
+          <div style="margin-bottom:4px"><b>概要：</b>旧「地域支援体制加算」と「後発医薬品調剤体制加算」を統合。5段階に再編。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき。特別調剤基本料Aの薬局は100分の10。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>全ての患者。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="margin-bottom:4px"><b>区分：</b><strong>イ</strong> 医薬品の安定供給体制 + <strong>ロ</strong> 後発品85%以上 → 加算1（27点）。加算1 + 地域医療への貢献実績 → 加算2～5。</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>連携強化加算、バイオ後続品調剤体制加算等と併算定可。</div>
+          <div style="margin-bottom:4px"><b>届出：</b>必要（新設のため全薬局が届出要）。届出受付期間：R8.5.7〜6.1</div>
+          <div style="margin-bottom:4px"><b>経過措置：</b>旧・後発医薬品調剤体制加算はR9.5.31まで算定可。</div>
+          <div><b>R8変更点：</b>旧2加算を統合し名称変更。加算1（27点）を新設。全区分で後発品85%以上が基本要件に。</div>
         </div>
         <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap"><iframe width="48%" height="200" src="https://www.youtube.com/embed/wMeB4mvPZZk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe><iframe width="48%" height="200" src="https://www.youtube.com/embed/JG_xkkXPyJY" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe></div>
       </div>
@@ -1933,10 +2129,14 @@ const RequirementsTab = {
     </div>
     <div v-if="sub==='k_renkei'">
       <div class="section">
-        <div class="section-title">連携強化加算</div>
+        <div class="section-title">連携強化加算 <span style="font-size:12px;font-weight:400;color:var(--pos)">5点</span></div>
         <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
-          <div>R8改定で施設基準の変更なし。</div>
-          <div>R7で算定済みの場合、届出不要（表３）。新規算定の場合は届出が必要。</div>
+          <div style="margin-bottom:4px"><b>概要：</b>感染対策向上加算の届出を行った医療機関と連携し、感染防止対策に関する取組を実施する薬局を評価。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき5点。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>全ての患者。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>地域支援・医薬品供給対応体制加算等と併算定可。特別調剤基本料Aの薬局で連携先が感染対策向上加算の届出医療機関の場合は算定不可。</div>
+          <div style="margin-bottom:4px"><b>届出：</b>R7で算定済みの場合は届出不問（表3）。新規算定の場合は届出が必要。</div>
+          <div><b>R8変更点：</b>施設基準の変更なし。</div>
         </div>
       </div>
       <div class="section">
@@ -1992,11 +2192,17 @@ const RequirementsTab = {
     </div>
     <div v-if="sub==='k_dx8'">
       <div class="section">
-        <div class="section-title">電子的調剤情報連携体制整備加算 <span class="badge badge-modified">改定</span></div>
-        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
-          <div>医療DX推進体制整備加算（3区分）を廃止し、電子的調剤情報連携体制整備加算（8点）に一本化。</div>
-          <div>医療情報取得加算も廃止・統合。</div>
+        <div class="section-title">電子的調剤情報連携体制整備加算 <span class="badge badge-merged">統合</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">8点（月1回）</span></div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8;margin-bottom:12px">
+          <div style="margin-bottom:4px"><b>概要：</b>医療DX推進体制整備加算（3区分）＋医療情報取得加算を廃止し一本化。電子処方箋システムによる重複投薬等チェック体制の整備を評価。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき8点。<b>患者1人につき月1回</b>に限る。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>全ての患者。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="margin-bottom:4px"><b>算定要件：</b>オンライン資格確認等システムや電子処方箋管理サービスの重複投薬等チェックを通じて取得した情報を閲覧・活用し、調剤・服薬指導等を行うこと。</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>調剤基本料の加算として算定。他の加算と併算定可。</div>
+          <div style="margin-bottom:4px"><b>届出：</b>R7でDX加算を算定済みの場合は届出不問（表3）。新規の場合は届出が必要。</div>
+          <div><b>R8変更点：</b>旧3区分（6/8/10点）＋医療情報取得加算（1点）→ 8点に一本化。名称変更。</div>
         </div>
+        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">旧加算との対比</div>
         <table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:12px">
           <tr style="background:var(--surface2)"><th style="padding:6px 8px;text-align:left;border:1px solid var(--border)"></th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">現行</th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">改定後</th></tr>
           <tr><td style="padding:6px 8px;border:1px solid var(--border)">イ 医療DX推進体制整備加算1</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">10点</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--r6);font-weight:700" rowspan="3">電子的調剤情報連携体制整備加算<br>8点（月1回）</td></tr>
@@ -2004,7 +2210,7 @@ const RequirementsTab = {
           <tr><td style="padding:6px 8px;border:1px solid var(--border)">ハ 医療DX推進体制整備加算3</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">6点</td></tr>
           <tr><td style="padding:6px 8px;border:1px solid var(--border)">医療情報取得加算</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">1点（年1回）</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--neg)">削除</td></tr>
         </table>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">R7でDX加算を算定済みの場合、届出不要（表3）。ただし変更要件の確認が必要。</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">R7でDX加算を算定済みの場合、届出不問（表3）。ただし変更要件の確認が必要。</div>
       </div>
       <div class="section">
         <div class="section-title">判定ツール</div>
@@ -2014,13 +2220,13 @@ const RequirementsTab = {
         <div v-if="dxStep===1" style="font-size:14px;line-height:2">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：加算算定状況</div>
           <div style="font-weight:600;margin-bottom:8px">令和7年度に医療DX推進体制整備加算を届出していましたか？</div>
-          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="dxR7" :value="true">はい → 変更がなければ、引き続き算定可能（届出不要）</label>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:4px"><input type="radio" v-model="dxR7" :value="true">はい → 変更がなければ、引き続き算定可能（届出不問）</label>
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="radio" v-model="dxR7" :value="false">いいえ → 施設基準を確認</label>
         </div>
 
         <div v-if="dxStep===2" style="font-size:14px;line-height:1.8">
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：施設基準の確認（告示第71号 五の四）</div>
-          <div v-if="dxR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。施設基準に変更がないことを確認してください。変更がなければ届出不要です。<div style="margin-top:6px;color:var(--r6);font-weight:700;font-size:12px">※青字（新規・変更）を中心にチェック</div></div>
+          <div v-if="dxR7" style="padding:12px;background:var(--green-l);border:1px solid var(--pos);border-radius:var(--radius);font-size:13px;color:var(--pos);margin-bottom:12px">R7で届出済み。施設基準に変更がないことを確認してください。変更がなければ届出不問です。<div style="margin-top:6px;color:var(--r6);font-weight:700;font-size:12px">※青字（新規・変更）を中心にチェック</div></div>
           <p v-else style="font-size:12px;color:var(--text-muted);margin-bottom:12px">新規に算定する場合、以下の施設基準を全て満たす必要があります。</p>
           <ul class="task-list">
             <li v-for="chk in dxCheckLabels" :key="chk.key" class="task-item" style="align-items:center">
@@ -2061,8 +2267,14 @@ const RequirementsTab = {
     <div v-if="sub==='k_zaitaku'">
       <div class="section">
         <div class="section-title">在宅薬学総合体制加算 <span class="badge badge-modified">改定</span></div>
-        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
-          <div>在宅薬学総合体制加算の要件を見直すとともに、加算2について単一建物診療患者又は単一建物居住者が1人（個人宅）の場合とそれ以外の訪問薬剤指導時の評価を区分。</div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8;margin-bottom:12px">
+          <div style="margin-bottom:4px"><b>概要：</b>在宅訪問を十分に行うための体制を整備する薬局を、実績に基づき評価。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき。加算1: 30点、加算2イ: 100点（個人宅）、加算2ロ: 50点（施設等）。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>厚生労働大臣が定める患者（在宅患者の処方箋に基づく対応の場合）。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>加算1と加算2は併算定不可（いずれかを算定）。特別調剤基本料Aの薬局は100分の10。</div>
+          <div style="margin-bottom:4px"><b>届出：</b>加算2は再届出が必要（様式87の3の5）。加算1は区分変更がなければ届出不問。</div>
+          <div style="margin-bottom:4px"><b>免許：</b>施設基準の実績要件に「麻薬管理指導加算の実績」があるため、実質的に<b style="color:var(--neg)">麻薬小売業者免許</b>が必要。</div>
+          <div><b>R8変更点：</b>加算1を15→30点に倍増。加算2をイ（個人宅100点）・ロ（施設50点）に区分。要件強化。</div>
         </div>
         <table style="width:100%;font-size:12px;border-collapse:collapse;margin-top:12px">
           <tr style="background:var(--surface2)"><th style="padding:6px 8px;text-align:left;border:1px solid var(--border)"></th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">現行</th><th style="padding:6px 8px;text-align:center;border:1px solid var(--border)">改定後</th></tr>
@@ -2070,7 +2282,7 @@ const RequirementsTab = {
           <tr><td style="padding:6px 8px;border:1px solid var(--border)">加算2イ <span style="color:var(--r6);font-weight:600">（新）</span><br><span style="font-size:11px">単一建物1人（個人宅）</span></td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)" rowspan="2">50点</td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border);color:var(--r6);font-weight:700">100点</td></tr>
           <tr><td style="padding:6px 8px;border:1px solid var(--border)">加算2ロ <span style="color:var(--r6);font-weight:600">（新）</span><br><span style="font-size:11px">イ以外（施設等）</span></td><td style="padding:6px 8px;text-align:center;border:1px solid var(--border)">50点</td></tr>
         </table>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">施設基準が改正。区分変更がない場合は届出不要。</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:8px">施設基準が改正。区分変更がない場合は届出不問。</div>
       </div>
       <div class="section">
         <div class="section-title">加算1 判定ツール</div>
@@ -2109,7 +2321,7 @@ const RequirementsTab = {
           <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 3：加算1の判定結果</div>
           <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="ztAllOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
             <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{ztAllOk ? '加算1（30点）算定可能' : '算定不可'}}</div>
-            <div v-if="ztAllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7!=='none' ? '区分変更がなければ届出不要。' : '新規届出が必要（様式87の3の5）。'}}</div>
+            <div v-if="ztAllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7!=='none' ? '区分変更がなければ届出不問。' : '新規届出が必要（様式87の3の5）。'}}</div>
             <div v-else style="font-size:13px;color:var(--del-text)">施設基準に未チェック項目があります。</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -2163,7 +2375,7 @@ const RequirementsTab = {
             <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：加算2の判定結果</div>
             <div style="padding:16px;border-radius:var(--radius);margin-bottom:16px" :style="zt2AllOk?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
               <div style="font-size:20px;font-weight:700;margin-bottom:4px">{{zt2AllOk ? '加算2（イ100点／ロ50点）算定可能' : '加算2は算定不可'}}</div>
-              <div v-if="zt2AllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7==='zt2' ? '区分変更がなければ届出不要。' : '届出が必要（様式87の3の5）。'}}</div>
+              <div v-if="zt2AllOk" style="font-size:13px;color:var(--text-muted)">{{ztR7==='zt2' ? '区分変更がなければ届出不問。' : '届出が必要（様式87の3の5）。'}}</div>
               <div v-else style="font-size:13px;color:var(--del-text)">追加要件に未チェック項目があります。加算1（30点）で算定可能です。</div>
             </div>
             <div v-if="zt2AllOk" style="display:flex;gap:8px;align-items:center">
@@ -2180,12 +2392,103 @@ const RequirementsTab = {
       </div>
     </div>
 
+    <div v-if="sub==='k_jikangai'">
+      <div class="section">
+        <div class="section-title">時間外加算（時間外・休日・深夜）</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          開局時間外に調剤した場合の加算。R8改定での変更なし。<br>
+          <b>対象患者：</b>開局時間外に来局した急病等やむを得ない理由の患者。常態として開局している時間に来局した患者は対象外。
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">概要・点数</div>
+        <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th>時間帯</th><th style="text-align:right">加算率</th></tr></thead><tbody>
+          <tr><td style="font-weight:600">時間外加算</td><td>概ね午前8時前・午後6時以降、終日休業日</td><td style="text-align:right">基礎額の100%</td></tr>
+          <tr><td style="font-weight:600">休日加算</td><td>日曜・祝日・年末年始（12/29〜1/3）</td><td style="text-align:right">基礎額の140%</td></tr>
+          <tr><td style="font-weight:600">深夜加算</td><td>午後10時〜午前6時</td><td style="text-align:right">基礎額の200%</td></tr>
+        </tbody></table>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px">※時間外・休日・深夜加算は重複算定不可。</div>
+      </div>
+      <div class="section">
+        <div class="section-title">算定要件</div>
+        <div style="font-size:13px;line-height:1.8">
+          <div style="font-weight:600;margin-bottom:6px">基礎額の計算</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius)">
+            基礎額 ＝ 調剤基本料（注1〜16適用後）＋ 薬剤調製料 ＋ 無菌製剤処理加算 ＋ 調剤管理料<br>
+            <span style="color:var(--neg)">※含まないもの：</span>麻薬等加算、自家製剤加算、計量混合調剤加算、調剤時残薬調整加算、薬学的有害事象等防止加算
+          </div>
+          <div style="font-weight:600;margin-bottom:6px">時間外加算（基礎額×100%）</div>
+          <ul style="padding-left:18px;font-size:12px;color:var(--text-muted);margin-bottom:10px">
+            <li>開局時間外であること（常態として調剤応需の態勢をとっている時間は対象外）</li>
+            <li>処方箋の受付時間を薬剤服用歴等に記載すること</li>
+          </ul>
+          <div style="font-weight:600;margin-bottom:6px">休日加算（基礎額×140%）</div>
+          <ul style="padding-left:18px;font-size:12px;color:var(--text-muted);margin-bottom:10px">
+            <li>輪番制による休日当番薬局、救急医療対策の一環の薬局、行政要請による開局の場合</li>
+            <li>休日を開局しない薬局で急病等やむを得ない理由による場合</li>
+            <li>常態として休日に開局している薬局の開局時間内は算定不可</li>
+          </ul>
+          <div style="font-weight:600;margin-bottom:6px">深夜加算（基礎額×200%）</div>
+          <ul style="padding-left:18px;font-size:12px;color:var(--text-muted);margin-bottom:10px">
+            <li>午後10時〜午前6時。常態として深夜開局している場合は対象外</li>
+            <li>処方箋の受付時間を薬剤服用歴等に記載すること</li>
+          </ul>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">施設基準・届出</div>
+        <div style="padding:10px;background:#e8f5e9;border-radius:var(--radius);font-size:12px">
+          施設基準なし。<b>届出不要</b>。要件を満たせば算定可能。開局時間を薬局の内側・外側に表示すること。
+        </div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：保医発0305第6号 別添3 (9)、告示第69号 別表第三 区分01 注4</div>
+      </div>
+    </div>
+
+    <div v-if="sub==='k_yakan'">
+      <div class="section">
+        <div class="section-title">夜間・休日等加算</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          開局時間内の夜間・休日に調剤した場合の加算。時間外加算とは異なり<b>開局時間内</b>が対象。R8改定での変更なし。<br>
+          <b>対象患者：</b>開局時間内の夜間・休日時間帯に来局した全ての患者。
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">概要・点数</div>
+        <table class="fee-table" style="font-size:12px"><thead><tr><th>項目</th><th>内容</th></tr></thead><tbody>
+          <tr><td style="font-weight:600">点数</td><td>処方箋受付1回につき <b>40点</b></td></tr>
+          <tr><td style="font-weight:600">対象時間</td><td>午後7時（土曜日は午後1時）〜 午前8時、休日の開局時間内</td></tr>
+          <tr><td style="font-weight:600">算定単位</td><td>薬剤調製料の加算として算定</td></tr>
+        </tbody></table>
+      </div>
+      <div class="section">
+        <div class="section-title">算定要件</div>
+        <ul style="padding-left:18px;font-size:12px;color:var(--text-muted);line-height:2">
+          <li>当該保険薬局が表示する<b>開局時間内</b>の時間において調剤を行った場合に算定</li>
+          <li>時間外加算等の要件を満たす場合は、夜間・休日等加算ではなく<b>時間外加算等を算定</b>すること</li>
+          <li>開局時間を薬局の<b>内側・外側</b>の分かりやすい場所に表示すること</li>
+          <li>夜間・休日等加算の<b>対象日・受付時間帯</b>を薬局内の分かりやすい場所に掲示すること</li>
+          <li>平日・土曜日に算定する場合は、処方箋の<b>受付時間を薬剤服用歴等に記載</b>すること</li>
+        </ul>
+      </div>
+      <div class="section">
+        <div class="section-title">施設基準・届出</div>
+        <div style="padding:10px;background:#e8f5e9;border-radius:var(--radius);font-size:12px">
+          施設基準なし。<b>届出不要</b>。開局時間の掲示・表示が必要。
+        </div>
+        <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：保医発0305第6号 別添3 (10)、告示第69号 別表第三 区分01 注5</div>
+      </div>
+    </div>
+
     <div v-if="sub==='k_bio'">
       <div class="section">
-        <div class="section-title">バイオ後続品調剤体制加算 <span class="badge badge-new">新設</span></div>
-        <div style="font-size:12px;color:var(--text-muted);line-height:1.8">
-          <div>R8新設。バイオ後続品の使用促進のための体制評価（50点・バイオ後続品調剤時）。</div>
-          <div style="color:var(--neg);font-weight:600">※新設のため、届出が必要（様式87の3の7）</div>
+        <div class="section-title">バイオ後続品調剤体制加算 <span class="badge badge-new">新設</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">50点</span></div>
+        <div style="font-size:12px;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:var(--radius);line-height:1.8">
+          <div style="margin-bottom:4px"><b>概要：</b>バイオ後続品（インスリン製剤を除く）の使用促進のための体制評価。</div>
+          <div style="margin-bottom:4px"><b>算定単位：</b>処方箋受付1回につき50点。バイオ後続品を調剤した場合に算定。</div>
+          <div style="margin-bottom:4px"><b>対象患者：</b>バイオ後続品（インスリン製剤を除く）が処方された患者。</div>
+          <div style="margin-bottom:4px"><b>併算定：</b>調剤基本料の加算として算定。特別調剤基本料Aの薬局は100分の10。特別調剤基本料Bの薬局は算定不可。後発医薬品減算の対象外。</div>
+          <div style="margin-bottom:4px"><b style="color:var(--neg)">届出：必要（様式87の3の7）</b>　新設のためR7実績なし。</div>
+          <div><b>届出受付期間：</b>令和8年5月7日〜6月1日（必着）</div>
         </div>
       </div>
       <div class="section">
@@ -2227,6 +2530,221 @@ const RequirementsTab = {
 
         <div v-if="bioStep<2" style="margin-top:20px;display:flex;gap:8px">
           <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="bioNext()">次へ</button>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='k_bukka'">
+      <div class="section">
+        <div class="section-title">調剤物価対応料 <span class="badge badge-new">新設</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">1点（3月に1回）</span></div>
+        <div style="display:grid;grid-template-columns:2fr 3fr;gap:16px;margin-bottom:16px">
+          <img src="img/r8_bukka_overview.png" alt="物価対応に係る全体像" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0;align-self:start">
+          <div style="align-self:start;font-size:12px;line-height:1.8">
+            <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+            <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+              R8年度及びR9年度の物価上昇に段階的に対応するため、調剤基本料等の算定に併せて算定可能な加算として新設。処方箋受付1回につき<b>1点</b>、<b style="color:var(--neg)">3月に1回に限り</b>算定。R9年6月以降は<b>2点</b>（100分の200）。調剤基本料に包括。
+            </div>
+            <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+            <div style="color:var(--text-muted);margin-bottom:8px">全ての患者。処方箋を受け付けた場合に算定。患者の同意等は不要。</div>
+            <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+              <li>処方箋を提出した患者に対して調剤した場合に、<b>3月に1回に限り</b>算定</li>
+              <li>併算定：調剤基本料等と併せて算定可能。他の加算との制限なし</li>
+            </ul>
+            <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+            <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:#e8f5e9;border-radius:6px"><b>施設基準なし。届出不要。</b>全ての保険薬局で算定可能。</div>
+            <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+              <li>R8年度以降の物価上昇（医療材料費・光熱水費・委託費等）への対応分</li>
+              <li>R6年度以降の経営環境の悪化を踏まえた緊急対応分</li>
+            </ul>
+            <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+            <div style="color:var(--text-muted)">保医発0305第6号 別添3 区分41。疑義解釈での特段のQ&Aなし。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='memo'">
+      <div class="section">
+        <div class="section-title">加算の整理方針</div>
+        <div style="font-size:13px;line-height:2;padding:14px;background:var(--surface2);border-radius:var(--radius)">
+          <div style="font-weight:700;margin-bottom:8px">加算は以下の内容で必要なものを整理する</div>
+          <ol style="padding-left:24px;margin:0">
+            <li style="margin-bottom:4px"><b>概要</b> ─ 加算の趣旨、算定単位、点数、算定回数・頻度の制限</li>
+            <li style="margin-bottom:4px"><b>対象患者</b> ─ どの患者に算定できるか、除外条件</li>
+            <li style="margin-bottom:4px"><b>算定要件</b> ─ 算定に必要な行為・条件、併算定の可否</li>
+            <li style="margin-bottom:4px"><b>施設基準</b> ─ 届出に必要な体制・実績要件</li>
+            <li style="margin-bottom:4px"><b>改定内容・狙い</b> ─ R7→R8での変更点、改定の背景・目的、経過措置</li>
+            <li style="margin-bottom:4px"><b>通知・疑義解釈</b> ─ 留意事項通知の該当箇所、疑義解釈Q&A</li>
+            <li><b>届出・免許・報告・その他</b> ─ 届出様式・届出方法・届出期限、必要な免許・許可、報告義務、その他留意事項</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='ot_chozai'">
+      <div class="section">
+        <div class="section-title">薬剤調製料（区分01）</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            処方箋に基づき薬剤を調製した場合に、剤種ごとに算定する技術料。R8改定での点数変更なし。施設基準なし、届出不要。
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 点数一覧</div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:12px"><thead><tr><th>剤種</th><th>算定単位</th><th style="text-align:right">点数</th><th>備考</th></tr></thead><tbody>
+            <tr><td style="font-weight:600">内服薬</td><td>1剤につき</td><td style="text-align:right">24点</td><td>服用時点同一＝1剤。4剤分以上は算定不可。</td></tr>
+            <tr><td style="font-weight:600">内服用滴剤</td><td>1調剤につき</td><td style="text-align:right">10点</td><td>内服薬の注1による。</td></tr>
+            <tr><td style="font-weight:600">屯服薬</td><td>受付1回につき</td><td style="text-align:right">21点</td><td>剤数にかかわらず1回のみ。</td></tr>
+            <tr><td style="font-weight:600">浸煎薬</td><td>1調剤につき</td><td style="text-align:right">190点</td><td>4調剤以上は算定不可。</td></tr>
+            <tr><td style="font-weight:600">湯薬</td><td>1調剤につき</td><td style="text-align:right">190〜400点</td><td>7日以下190点、8〜28日は190点+10点/日、29日以上400点。4調剤以上は算定不可。</td></tr>
+            <tr><td style="font-weight:600">注射薬</td><td>受付1回につき</td><td style="text-align:right">26点</td><td>調剤数にかかわらず1回のみ。</td></tr>
+            <tr><td style="font-weight:600">外用薬</td><td>1調剤につき</td><td style="text-align:right">10点</td><td>4調剤以上は算定不可。</td></tr>
+          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件のポイント</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:12px">
+            <li><b>「1剤」の考え方：</b>服用時点が同一であれば、投与日数にかかわらず1剤として算定。例：毎食後の2種類の薬＝1剤。</li>
+            <li><b>4剤制限：</b>内服薬は4剤分以上、浸煎薬・湯薬・外用薬は4調剤以上の部分は算定不可。</li>
+            <li><b>分割調剤：</b>14日分超の投薬で保存困難等の理由による場合は2回目以降1分割調剤につき5点。医師の分割指示による場合は点数を分割回数で除して算定。</li>
+            <li><b>リフィル処方箋：</b>2回目以降の調剤でも薬剤調製料は算定可能。</li>
+          </ul>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示第69号 別表第三 区分01、保医発0305第6号 別添3</div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='ot_mukin'">
+      <div class="section">
+        <div class="section-title">無菌製剤処理加算 <span class="badge badge-modified">改定</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            注射薬について無菌製剤処理を行った場合に、1日につき所定点数を加算。R8で対象年齢を6歳未満→<b>15歳未満</b>に拡大、中心静脈栄養法用は<b>137→237点</b>に増点。
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">中心静脈栄養法用輸液、抗悪性腫瘍剤又は麻薬が処方された患者。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 点数</div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>薬剤</th><th style="text-align:right">一般</th><th style="text-align:right">15歳未満</th></tr></thead><tbody>
+            <tr><td>中心静脈栄養法用輸液</td><td style="text-align:right">69点</td><td style="text-align:right;color:var(--pos);font-weight:600">237点 <span class="badge badge-modified">改定</span></td></tr>
+            <tr><td>抗悪性腫瘍剤</td><td style="text-align:right">79点</td><td style="text-align:right">147点</td></tr>
+            <tr><td>麻薬</td><td style="text-align:right">69点</td><td style="text-align:right">137点</td></tr>
+          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">無菌製剤処理を行うための設備（無菌室・クリーンベンチ・安全キャビネット等）を有していること。届出が必要。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">対象を6歳未満の乳幼児→15歳未満の小児に拡大。小児に対しても投与量調整が発生することを踏まえた評価の見直し。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">告示第69号 別表第三 区分01 注2。保医発0305第6号 別添3 (7)。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・その他</div>
+          <ul style="padding-left:18px;color:var(--text-muted)">
+            <li>届出が必要（施設基準の届出）</li>
+            <li>特段の免許は不要だが、無菌調剤室を<b>共同利用</b>する場合は薬事法施行規則に基づく要件を遵守すること。費用は両者の合議。</li>
+            <li>麻薬の無菌製剤処理を行う場合は<b style="color:var(--neg)">麻薬小売業者免許</b>が必要</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='ot_mayaku'">
+      <div class="section">
+        <div class="section-title">麻薬・向精神薬等加算</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            麻薬、向精神薬、覚醒剤原料又は毒薬を調剤した場合の加算。R8改定での変更なし。
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 点数</div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>薬剤</th><th>算定単位</th><th style="text-align:right">点数</th></tr></thead><tbody>
+            <tr><td style="font-weight:600">麻薬</td><td>1調剤につき</td><td style="text-align:right">70点</td></tr>
+            <tr><td style="font-weight:600">向精神薬・覚醒剤原料・毒薬</td><td>1調剤につき</td><td style="text-align:right">8点</td></tr>
+          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>重複した規制を受けている薬剤：麻薬の場合は70点、それ以外は8点</li>
+            <li>内服薬のほか、屯服薬、注射薬、外用薬についても算定可</li>
+            <li>予製剤等で規制含有量以下の場合は算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">施設基準なし。届出不要。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 届出・免許・その他</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li><b style="color:var(--neg)">麻薬小売業者免許</b>が必要（麻薬及び向精神薬取締法に基づき都道府県知事に申請）</li>
+            <li>覚醒剤原料を取り扱う場合は<b>覚醒剤原料取扱者指定</b>が必要</li>
+            <li>向精神薬・毒薬の取扱いには特段の免許は不要だが、保管・管理の法的義務あり</li>
+          </ul>
+          <div style="font-size:11px;color:var(--text-faint)">出典：告示第69号 別表第三 区分01 注3、保医発0305第6号 別添3 (8)、麻薬及び向精神薬取締法</div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='ot_jika'">
+      <div class="section">
+        <div class="section-title">自家製剤加算・計量混合調剤加算</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 自家製剤加算</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            薬剤を自家製剤の上調剤した場合の加算。1調剤につき算定（内服薬の錠剤等は投与日数7日ごと）。予製剤・錠剤分割の場合は100分の20。R8改定での変更なし。
+          </div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:12px"><thead><tr><th style="width:55%">区分</th><th style="width:22%;text-align:right">点数</th><th style="width:23%;text-align:right">予製剤（20/100）</th></tr></thead><tbody>
+            <tr><td>内服薬 錠剤・カプセル剤・散剤等</td><td style="text-align:right">20点（7日ごと）</td><td style="text-align:right">4点</td></tr>
+            <tr><td>内服薬 屯服薬 錠剤・散剤等</td><td style="text-align:right">90点</td><td style="text-align:right">18点</td></tr>
+            <tr><td>内服薬・屯服薬 液剤</td><td style="text-align:right">45点</td><td style="text-align:right">9点</td></tr>
+            <tr><td>外用薬 錠剤・軟膏剤・坐剤等</td><td style="text-align:right">90点</td><td style="text-align:right">18点</td></tr>
+            <tr><td>外用薬 点眼剤・点鼻剤等</td><td style="text-align:right">75点</td><td style="text-align:right">15点</td></tr>
+            <tr><td>外用薬 液剤</td><td style="text-align:right">45点</td><td style="text-align:right">9点</td></tr>
+          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">2. 計量混合調剤加算</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            2種以上の薬剤を計量・混合して調剤した場合の加算。1調剤につき算定。自家製剤加算と併算定不可。R8改定での変更なし。
+          </div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th style="width:55%">区分</th><th style="width:22%;text-align:right">点数</th><th style="width:23%;text-align:right">予製剤（20/100）</th></tr></thead><tbody>
+            <tr><td>液剤</td><td style="text-align:right">35点</td><td style="text-align:right">7点</td></tr>
+            <tr><td>散剤・顆粒剤</td><td style="text-align:right">45点</td><td style="text-align:right">9点</td></tr>
+            <tr><td>軟・硬膏剤</td><td style="text-align:right">80点</td><td style="text-align:right">16点</td></tr>
+          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">施設基準</div>
+          <div style="color:var(--text-muted)">いずれも施設基準なし。届出不要。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示第69号 別表第三 区分01 注6・7、保医発0305第6号 別添3 (11)(12)</div>
+        </div>
+      </div>
+    </div>
+
+    <div v-if="sub==='ot_yakuzai'">
+      <div class="section">
+        <div class="section-title">薬剤料（区分20）</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            使用薬剤の薬価に基づき算定。R8改定での計算方法の変更なし（<b style="color:var(--r6)">薬価改定率 ▲0.86%、R8年4月施行</b>）
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 計算方法</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>薬価が15円以下 → <b>1点</b></li>
+            <li>薬価が15円超 → 10円又はその端数を増すごとに<b>1点加算</b></li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">3. 特記事項</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>特別調剤基本料A・Bの薬局で1処方につき7種類以上の内服薬を調剤した場合は<b>100分の90</b>で算定</li>
+          </ul>
+          <div style="font-size:11px;color:var(--text-faint)">出典：告示第69号 別表第三 区分20</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">特定保険医療材料料（区分30）</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+            特定保険医療材料を支給した場合に算定。材料価格を10円で除して得た点数。R8改定での変更なし（<b style="color:var(--r6)">材料価格改定率 ▲0.01%、R8年6月施行</b>）。
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 計算方法</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">材料価格 ÷ 10円 ＝ 点数</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 対象</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>在宅医療に係る自己注射用の注射器・注射針等</li>
+            <li>別表2に掲げる特定保険医療材料</li>
+            <li>在宅医療以外の目的で使用する材料は算定不可</li>
+          </ul>
+          <div style="font-size:11px;color:var(--text-faint)">出典：告示第69号 別表第三 区分30</div>
         </div>
       </div>
     </div>
@@ -2274,5 +2792,151 @@ const RequirementsTab = {
         </div>
       </div>
     </div></template>
+
+    <div v-if="sub==='k_baseup'">
+      <div class="section">
+        <div class="section-title">調剤ベースアップ評価料 <span class="badge badge-new">新設</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">4点（受付1回）</span></div>
+        <div style="display:grid;grid-template-columns:2fr 3fr;gap:16px;margin-bottom:16px">
+          <img src="img/r8_baseup_overview.jpg" alt="賃上げ・物価対応に係る全体像" style="width:100%;border-radius:var(--radius);border:1px solid #e0e0e0;align-self:start">
+          <div style="align-self:start;font-size:12px;line-height:1.8">
+            <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+            <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">
+              薬局職員の賃金改善を図る体制を評価。処方箋の受付1回につき<b>4点</b>を算定。R9年6月以降は<b>8点</b>（100分の200）。収入は全額を対象職員の賃上げに充当する必要がある。
+            </div>
+            <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+            <div style="color:var(--text-muted);margin-bottom:8px">全ての患者。処方箋を受け付けた場合に算定。頻度制限なし（受付の都度算定可能）。</div>
+            <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+              <li>収入は対象職員の<b>基本給又は毎月の手当の引上げ</b>及びそれに伴う賞与・時間外手当・法定福利費等の増加分にのみ充当可能</li>
+              <li>賞与だけの引き上げは不可。「処遇改善手当」等の新設はOK</li>
+              <li>原則として算定開始月から賃金改善を実施し、算定する月は継続すること</li>
+              <li>併算定：他の加算との制限なし</li>
+            </ul>
+            <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:4px">
+              <li>当該保険薬局に勤務する職員がいること</li>
+              <li>対象職員の賃金の改善を実施するにつき必要な体制が整備されていること</li>
+            </ul>
+            <div style="padding:8px 10px;background:#e8f5e9;border-radius:6px;color:var(--text);margin-bottom:8px">
+              <b>対象職員：</b>40歳未満の薬局勤務薬剤師、事務職員（年齢不問）<br>
+              <b>除外：</b>事業主・使用者・開設者・管理薬剤師・業務委託者・本部職員等<br>
+              <b>届出：</b>必要（<b>様式103</b>、原則メール提出）。届出前1月の給与支払い実績が必要。<br>
+              <b>必要賃上げ水準：</b>R8・R9各年度 +3.2%（事務職員は+5.7%）
+            </div>
+            <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+            <div style="color:var(--text-muted);margin-bottom:8px">R8新設。薬剤師・事務職員の確実な賃上げを実現するための原資措置。R8・R9の2年間で段階的にベースアップを支援。</div>
+            <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+            <div style="color:var(--text-muted)">
+              保医発0305第6号 別添3 区分40。<br>
+              疑義解釈その1 問2（派遣職員）、問3（管理薬剤師は対象外）。<br>
+              疑義解釈その2 問7（3.2%未達でも算定可）、問8-9（除外対象者）、問10（出向元職員）。
+            </div>
+            <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告・その他</div>
+            <ul style="padding-left:18px;color:var(--text-muted)">
+              <li><b>届出：</b>様式103（原則メール提出）。届出前1月の給与支払い実績が必要。</li>
+              <li><b style="color:var(--neg)">報告：賃金改善実績報告書</b>（年1回・8月まで提出）＋<b>賃金改善中間報告書</b>の提出義務あり。</li>
+              <li>原則として算定開始月から賃金改善を実施し、算定する月は継続すること。</li>
+              <li>R8年6月〜R9年5月の収入は原則としてR9年5月までの賃金改善に用いること（翌年度への繰越は原則不可）。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">よくある疑問</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:8px">
+            <div style="font-weight:700;color:var(--text);margin-bottom:4px">Q. パート・アルバイトは対象に含まれるか？</div>
+            <div style="color:var(--text-muted)"><b style="color:var(--pos)">含まれます。</b>雇用形態による除外規定はありません。直接雇用であれば対象です。派遣職員も一定要件のもと対象にできます（疑義解釈その1 問2）。<br>
+            <b>除外されるのは：</b>事業主・使用者・開設者・<span style="color:var(--neg)">管理薬剤師</span>・40歳以上の薬剤師・業務委託者・調剤業務に直接従事しない本部職員等（疑義解釈その2 問8-9）</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:8px">
+            <div style="font-weight:700;color:var(--text);margin-bottom:4px">Q. 対象職員全員の賃上げが必要か？</div>
+            <div style="color:var(--text-muted)"><b style="color:var(--pos)">はい。</b>評価料により得られる収入は<b>全て</b>対象職員の基本給又は毎月の手当の引上げに充当する必要があります。一部の職員だけ上げて他は据え置きは不可です（疑義解釈その2 問7）。</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:8px">
+            <div style="font-weight:700;color:var(--text);margin-bottom:4px">Q. 40歳未満の薬剤師がいない場合は？</div>
+            <div style="color:var(--text-muted)"><b style="color:var(--pos)">事務職員がいれば届出可能です。</b>施設基準は「勤務する職員がいること」であり、対象職員が1名以上いれば足ります。</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius);margin-bottom:8px">
+            <div style="font-weight:700;color:var(--text);margin-bottom:4px">Q. 3.2%（5.7%）のベースアップを達成できなくても届出できるか？</div>
+            <div style="color:var(--text-muted)"><b style="color:var(--pos)">算定できます。</b>ただし得られた収入は全額を対象職員の賃上げに用いること。3.2%に届かなくても、収入全額を賃上げに充てていれば問題ありません（疑義解釈その2 問7）。</div>
+          </div>
+          <div style="padding:10px 14px;background:var(--surface2);border-radius:var(--radius)">
+            <div style="font-weight:700;color:var(--text);margin-bottom:4px">Q. 賞与（ボーナス）での引き上げは可能か？</div>
+            <div style="color:var(--text-muted)"><b style="color:var(--neg)">賞与だけの引き上げは不可。</b>まず<b>基本給又は毎月の手当を引き上げ</b>ることが必須で、「<b>それに伴う</b>」賞与・時間外手当・法定福利費の増加分も充当対象です。基本給を据え置いて賞与のみ上乗せすることはできません（保医発0305第6号 別添3 区分40(2)）。<br><b style="color:var(--pos)">「処遇改善手当」等の新設はOK。</b>毎月固定で支払われる手当であれば、新たに創設する形でも認められます。</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">試算：届出すべきか？</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ベースアップ評価料の収入と、対象職員（薬剤師は40歳未満、事務職員は年齢不問）への必要賃上げ額を比較します。<br>薬剤師は+3.2%、事務職員は+5.7%が水準です。</div>
+
+        <div style="margin-bottom:16px">
+          <div style="font-weight:700;margin-bottom:8px">収入見込み</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+            <span style="font-size:12px;color:var(--text-muted);min-width:140px">年間処方箋受付回数</span>
+            <input type="text" class="fee-input" style="max-width:120px;text-align:right" :value="fmtC(buRxCount)" @change="buRxCount=parseNum($event.target.value)">
+            <span style="font-size:12px">回</span>
+            <span style="font-size:12px;color:var(--text-muted);margin-left:8px">→ 年間収入: <b style="color:var(--pos)">{{formatYen(buRxCount * 40)}}</b> 円（R9: {{formatYen(buRxCount * 80)}} 円）</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <div style="font-weight:700;margin-bottom:8px">対象職員（40歳未満）の入力</div>
+          <table class="fee-table" style="font-size:12px">
+            <thead><tr><th style="width:40px"></th><th style="width:100px">職種</th><th style="width:60px;text-align:center">年齢</th><th style="width:140px;text-align:right">月額給与（税引前）</th><th style="width:60px;text-align:center">対象</th><th style="width:60px;text-align:right">賃上げ率</th><th style="width:120px;text-align:right">年間賃上げ必要額</th></tr></thead>
+            <tbody>
+              <tr v-for="(s, i) in buStaff" :key="i">
+                <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
+                <td><select class="fee-select" style="font-size:12px;padding:2px 4px" v-model="s.type"><option value="pharmacist">薬剤師</option><option value="clerk">事務職員</option></select></td>
+                <td style="text-align:center"><input v-if="s.type==='pharmacist'" type="number" class="fee-input" style="max-width:50px;text-align:center;font-size:12px" v-model.number="s.age"><span v-else style="color:var(--text-faint);font-size:11px">不問</span></td>
+                <td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px;text-align:right;font-size:12px" :value="fmtC(s.monthlySalary)" @change="s.monthlySalary=parseNum($event.target.value)"></td>
+                <td style="text-align:center"><span v-if="s.type==='clerk'" style="color:var(--pos);font-weight:600">対象</span><span v-else-if="s.age>0&&s.age<40" style="color:var(--pos);font-weight:600">対象</span><span v-else-if="s.age>=40" style="color:var(--text-faint)">対象外</span><span v-else style="color:var(--text-faint)">-</span></td>
+                <td style="text-align:right"><span v-if="s.type==='clerk'">5.7%</span><span v-else-if="s.age>0&&s.age<40">3.2%</span><span v-else>-</span></td>
+                <td style="text-align:right"><span v-if="(s.type==='clerk'||(s.age>0&&s.age<40))&&s.monthlySalary>0">{{formatYen(Math.ceil(s.monthlySalary * 12 * (s.type==='clerk'?0.057:0.032)))}}</span><span v-else>-</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr style="font-weight:700"><td colspan="4" style="text-align:right">対象職員合計</td><td style="text-align:center">{{buTargetCount}}名</td><td></td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
+            </tfoot>
+          </table>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="btn" style="font-size:11px;padding:4px 12px" @click="buAddStaff()">＋ 職員追加</button>
+            <button v-if="buStaff.length>1" class="btn" style="font-size:11px;padding:4px 12px" @click="buRemoveStaff()">－ 削除</button>
+          </div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※月額給与は基本給＋毎月固定の手当（通勤手当除く）。法定福利費（約15%）は自動加算されます。</div>
+        </div>
+
+        <div style="padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.8" :style="buRxCount>0&&buRequiredTotal>0?(buRxCount*40>=buRequiredWithFukuri?'background:#e8f5e9;border:2px solid var(--pos)':'background:#fff3e0;border:2px solid var(--amber)'):'background:var(--surface2)'">
+          <template v-if="buRxCount>0&&buRequiredTotal>0">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;font-size:13px">
+              <div><div style="color:var(--text-muted);font-size:11px">評価料収入</div><div style="font-weight:700;color:var(--pos)">{{formatYen(buRxCount*40)}} 円</div></div>
+              <div><div style="color:var(--text-muted);font-size:11px">賃上げ必要額（法定福利費込）</div><div style="font-weight:700;color:var(--neg)">{{formatYen(buRequiredWithFukuri)}} 円</div></div>
+              <div><div style="color:var(--text-muted);font-size:11px">差額</div><div style="font-weight:700" :style="buRxCount*40>=buRequiredWithFukuri?'color:var(--pos)':'color:var(--neg)'">{{formatYen(buRxCount*40 - buRequiredWithFukuri)}} 円</div></div>
+            </div>
+            <div style="font-weight:700;margin-bottom:4px">
+              <span v-if="buRxCount*40>=buRequiredWithFukuri" style="color:var(--pos)">収入が賃上げ必要額を上回ります → 届出を推奨</span>
+              <span v-else style="color:var(--amber)">収入が賃上げ必要額を下回ります → 持ち出しが発生</span>
+            </div>
+            <div v-if="buRxCount*40<buRequiredWithFukuri" style="font-size:12px;color:var(--text-muted)">ただし賃上げ自体は経営上の判断であり、持ち出しがあっても届出するケースもあります。</div>
+          </template>
+          <template v-else>
+            <div style="color:var(--text-muted)">処方箋受付回数と対象職員の情報を入力すると、試算結果を表示します。</div>
+          </template>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">R8予測に反映</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <select class="fee-select" :value="buApplyVal" @change="buApplyVal=$event.target.value">
+            <option value="4">届出する（4点）</option>
+            <option value="0">届出しない（0点）</option>
+          </select>
+          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="buApplyToR8()">R8予測に反映</button>
+          <span v-if="buApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+        </div>
+      </div>
+    </div>
+
   </div>`
 }

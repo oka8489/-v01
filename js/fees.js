@@ -26,6 +26,18 @@ function parseNum(s) { return Number(String(s).replace(/,/g, '')) || 0 }
 // ====================================================================
 const BASIC_FEES = [
   {
+    id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
+    changeType: 'new', changeNote: 'R8新設。処方箋受付1回につき1点、3月に1回算定可。R9年度は2点に引上げ予定。令和8年度以降の物価上昇に段階的に対応するための措置。',
+    changePurpose: '医療材料費・光熱水費・委託費等の物件費高騰を踏まえ、薬局経営の安定を図るための物価対応措置。',
+    r6: null,
+  },
+  {
+    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'select',
+    changeType: 'new', changeNote: 'R8新設。処方箋受付1回につき4点。対象は40歳未満の薬局勤務薬剤師と事務職員。全額を賃金改善に充当が要件。R9年度は8点（200/100）に引上げ予定。',
+    changePurpose: '薬剤師・事務職員の確実な賃上げ（R8・R9各年度+3.2%、事務職員+5.7%のベースアップ）を実現するための原資措置。',
+    r6: null,
+  },
+  {
     id: 'k_kihon', label: '調剤基本料', category: 'basic', inputType: 'select',
     changeType: 'modified', changeNote: '面分業推進の観点から基本料1（45→47点）と3ハ（35→37点）を引上げ。基本料2の対象拡大: 都市部で600回超1,800回以下かつ集中率85%超の薬局が新たに対象（当面既存薬局は適用除外）。医療モール内の複数医療機関を1つとみなす集中率計算方法に変更。同一グループ300店舗以上の区分を撤廃（3ロ・3ハ統合）。特別Aは同一建物内診療所の除外規定を撤廃（32→7点）。都市部の新規開設薬局への門前薬局等立地依存減算（▲15点）を新設。',
     changePurpose: '薬局ビジョン策定後10年経過も門前薬局割合はむしろ増加。立地依存型経営から地域密着型への転換を促進し、面分業推進と都市部の新規門前出店を抑制。',
@@ -80,7 +92,7 @@ const BASIC_FEES = [
   },
   {
     id: 'k_dx8', label: '医療DX推進体制整備加算（8点）', category: 'basic', inputType: 'select', isSub: true,
-    changeType: 'modified', changeNote: '医療DX推進体制整備加算（8点/6点/10点の3区分）を廃止し、電子的調剤情報連携体制整備加算（8点・月1回）として一本化。電子処方箋システムによる重複投薬等チェック体制が要件に。',
+    changeType: 'merged', changeNote: '医療DX推進体制整備加算（8点/6点/10点の3区分）を廃止し、電子的調剤情報連携体制整備加算（8点・月1回）として一本化。電子処方箋システムによる重複投薬等チェック体制が要件に。',
     changePurpose: '医療DX推進の評価を電子処方箋・調剤情報連携の実装段階に移行し、DX加算体系を簡素化。重複投薬等チェック体制の構築を促進。',
     r6: { options: [{ value: 0, label: '算定なし' }, { value: 8, label: '加算（8点）' }] },
   },
@@ -115,18 +127,6 @@ const BASIC_FEES = [
     id: 'k_yakan', label: '夜間・休日等加算', category: 'basic', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r6: { fixedPoints: 40 },
-  },
-  {
-    id: 'k_bukka', label: '調剤物価対応料', category: 'basic', inputType: 'fixed',
-    changeType: 'new', changeNote: 'R8新設。処方箋受付1回につき1点、3月に1回算定可。R9年度は2点に引上げ予定。令和8年度以降の物価上昇に段階的に対応するための措置。',
-    changePurpose: '医療材料費・光熱水費・委託費等の物件費高騰を踏まえ、薬局経営の安定を図るための物価対応措置。',
-    r6: null,
-  },
-  {
-    id: 'k_baseup', label: '調剤ベースアップ評価料', category: 'basic', inputType: 'select',
-    changeType: 'new', changeNote: 'R8新設。処方箋受付1回につき4点。対象は40歳未満の薬局勤務薬剤師と事務職員。全額を賃金改善に充当が要件。R9年度は8点（200/100）に引上げ予定。',
-    changePurpose: '薬剤師・事務職員の確実な賃上げ（R8・R9各年度+3.2%、事務職員+5.7%のベースアップ）を実現するための原資措置。',
-    r6: null,
   },
   {
     id: 'k_bio', label: 'バイオ後続品調剤体制加算', category: 'basic', inputType: 'select', isSub: true,
@@ -280,7 +280,7 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_chmgr_kazan', label: '調剤管理加算', category: 'management', inputType: 'fixed', isSub: true,
-    changeType: 'same',
+    changeType: 'abolished',
     r6: { fixedPoints: 3 },
   },
   {
@@ -290,10 +290,22 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 40 },
   },
   {
+    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'select', isSub: true,
+    changeType: 'new', changeNote: 'R8新設。旧「重複投薬・相互作用等防止加算（残薬以外）」を発展的に再編。重複投薬・相互作用・副作用等の薬学的有害事象防止に係る介入内容により30点または50点。',
+    changePurpose: '薬学的有害事象（重複投薬・相互作用・副作用等）の防止に向けた薬剤師の積極的介入と処方変更に繋がる疑義照会を推進。',
+    r6: null,
+  },
+  {
     id: 't_jufuku_zan', label: '重複防止加算（残薬）', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'abolished_merged', changeNote: '重複投薬・相互作用等防止加算（残薬）を廃止し、調剤時残薬調整加算（30/50点）に発展的再編。R6は20点。処方箋上での減数調剤指示を可能とする様式見直しと連動。',
     changePurpose: '残薬対策の強化を目的に評価を独立化し、残薬量を勘案した減数調剤等の積極的な取組みを促進。',
     r6: { fixedPoints: 20 },
+  },
+  {
+    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'select', isSub: true,
+    changeType: 'new', changeNote: 'R8新設。旧「重複投薬・相互作用等防止加算（残薬）」を発展的に再編。残薬調整の内容により30点または50点。処方箋上で残薬量を勘案した減数調剤指示が可能となる様式見直しと連動。',
+    changePurpose: '残薬対策の強化を目的に評価を独立化し、薬剤師による積極的な残薬調整と服薬アドヒアランス向上を促進。',
+    r6: null,
   },
   {
     id: 't_iryo_joho', label: '医療情報取得加算', category: 'management', inputType: 'fixed', isSub: true,
@@ -330,7 +342,7 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_fukuyaku_online', label: '服薬管理指導料（オンライン服薬指導）', category: 'management', inputType: 'fixed',
-    changeType: 'same',
+    changeType: 'modified',
     r6: { fixedPoints: 45 },
   },
   {
@@ -441,7 +453,7 @@ const MANAGEMENT_FEES = [
   {
     id: 't_choseihi_2', label: '服用薬剤調整支援料2', category: 'management', inputType: 'fixed',
     description: '医師へ減薬提案',
-    changeType: 'same',
+    changeType: 'modified',
     r6: { fixedPoints: 110 },
   },
   {
@@ -451,18 +463,6 @@ const MANAGEMENT_FEES = [
   },
   // R8 廃止（kakaritsuke_shido, kakaritsuke_hokatsu は上の特2A/2Bの後に移動済み）
   // R8 新設（管理料）
-  {
-    id: 't_zanyaku', label: '調剤時残薬調整加算', category: 'management', inputType: 'select',
-    changeType: 'new', changeNote: 'R8新設。旧「重複投薬・相互作用等防止加算（残薬）」を発展的に再編。残薬調整の内容により30点または50点。処方箋上で残薬量を勘案した減数調剤指示が可能となる様式見直しと連動。',
-    changePurpose: '残薬対策の強化を目的に評価を独立化し、薬剤師による積極的な残薬調整と服薬アドヒアランス向上を促進。',
-    r6: null,
-  },
-  {
-    id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'select',
-    changeType: 'new', changeNote: 'R8新設。旧「重複投薬・相互作用等防止加算（残薬以外）」を発展的に再編。重複投薬・相互作用・副作用等の薬学的有害事象防止に係る介入内容により30点または50点。',
-    changePurpose: '薬学的有害事象（重複投薬・相互作用・副作用等）の防止に向けた薬剤師の積極的介入と処方変更に繋がる疑義照会を推進。',
-    r6: null,
-  },
   {
     id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'select',
     changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師指導料・包括管理料の廃止に伴い、実績重視の評価として新設。かかりつけ薬剤師が服薬後に電話・ICT等でフォローアップを行った場合に50点。月1回算定可。',
@@ -499,12 +499,12 @@ const HOMECARE_FEES = [
   },
   {
     id: 't_zaitaku_online', label: '在宅患者オンライン薬剤管理指導料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
+    changeType: 'abolished_merged',
     r6: { fixedPoints: 59 },
   },
   {
     id: 't_zaitaku_kinkyu_online', label: '在宅患者緊急オンライン薬剤管理指導料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
+    changeType: 'abolished_merged',
     r6: { fixedPoints: 59 },
   },
   {
