@@ -38,7 +38,7 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
           <div style="display:flex;gap:12px;margin-bottom:8px">
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
-              <div style="font-weight:700;margin-bottom:6px;font-size:11px;color:var(--text-faint)">R7（改定前）4区分</div>
+              <div style="font-weight:700;margin-bottom:6px;font-size:11px;color:var(--text-faint)">R6（改定前）4区分</div>
               <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">点数</th></tr></thead><tbody>
                 <tr><td>1 内服薬 イ 7日分以下</td><td style="text-align:right">4点</td></tr>
                 <tr><td>1 内服薬 ロ 8〜14日分</td><td style="text-align:right">28点</td></tr>
@@ -50,8 +50,8 @@ const YAKUGAKU_TEMPLATE = `
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
               <div style="font-weight:700;margin-bottom:6px;font-size:11px;color:var(--pos)">R8（改定後）2区分</div>
               <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">点数</th></tr></thead><tbody>
-                <tr><td>1 内服薬 イ 28日分以上（長期処方）</td><td style="text-align:right">60点</td></tr>
-                <tr><td style="color:var(--pos);font-weight:600">1 内服薬 ロ 27日分以下</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
+                <tr><td style="color:var(--pos);font-weight:600">1 内服薬 イ 27日分以下</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
+                <tr><td>1 内服薬 ロ 28日分以上（長期処方）</td><td style="text-align:right">60点</td></tr>
                 <tr><td style="color:var(--pos);font-weight:600">2 内服以外</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
               </tbody></table>
             </div>
