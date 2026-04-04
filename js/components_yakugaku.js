@@ -175,11 +175,11 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">特に安全管理が必要な医薬品（ハイリスク薬）が処方された患者に、当該薬剤の服用状況・副作用等の確認及び指導を行った場合に算定。処方箋受付1回につき。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b>1イ:</b> ハイリスク薬が新たに処方された患者（薬効分類が新規）。<br><b>1ロ:</b> ��イリスク薬の用量変更等があった患者で、薬剤師が必要と認めた場合。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b>1イ:</b> ハイリスク薬が新たに処方された患者（薬効分類が新規）。<br><b>1ロ:</b> ハイリスク薬の用量変更等があった患者で、薬剤師が必要と認めた場合。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
             <li>薬剤服用歴に基づき服用状況・副作用の有無等を確認し、必要な指導を実施</li>
-            <li>ハイ��スク薬: 抗悪性腫瘍剤、免疫抑制剤、不整脈用剤、抗てんかん剤、血液凝固阻止剤、ジギタリス製剤、テオフィリン製剤、精神神経用剤、糖尿病用剤、膵臓ホルモン剤、抗HIV薬</li>
+            <li>ハイリスク薬: 抗悪性腫瘍剤、免疫抑制剤、不整脈用剤、抗てんかん剤、血液凝固阻止剤（内服薬）、ジギタリス製剤、テオフィリン製剤、カリウム製剤（注射薬）、精神神経用剤、糖尿病用剤、膵臓ホルモン剤、抗HIV薬（「薬局におけるハイリスク薬の薬学的管理指導に関する業務ガイドライン」参照）</li>
             <li>服薬管理指導料の4ロ・4ハを算定する場合は算定不可</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
@@ -187,7 +187,7 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">���医発0305第6号 別添3 区分10の3 注7。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.30-31 区分10の3 注7。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">届出不要。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分10の3 注7</div>
@@ -202,41 +202,49 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted);margin-bottom:8px">医療機関において抗悪性腫瘍剤を注射されている患者。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>医療機関から文書等で抗悪性腫瘍剤の投薬・注射に関する情報を入手</li>
-            <li>電話等で副作用の有無・服薬状況等を確認し、結果を文書で処方医に提供</li>
+            <li>連携充実加算を届け出ている医療機関で抗悪性腫瘍剤を注射された患者が対象</li>
+            <li>ア: レジメン（治療内容）等を確認し、必要な薬学的管理及び指導を行う</li>
+            <li>イ: 電話等により服用状況・副作用（疑われる症状）の有無等を患者又は家族等に確認</li>
+            <li>ウ: 確認結果を踏まえ、医療機関に必要な情報を文書で提供</li>
             <li>月1回に限り算定（処方箋受付がない月でも算定可）</li>
-            <li>服薬管理指導料��4ロ・4ハを算定する場合は算定不可</li>
+            <li>特別調剤基本料Aで特別な関係の医療機関への情報提供は算定不可</li>
+            <li>服薬管理指導料の4ロ・4ハを算定する場合は算定不可</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">地域��援・医薬品供給対応��制加算</b>の届出が必要。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">地域支援・医薬品供給対応体制加算</b>の届出が必要。薬剤師はあらかじめ医療機関HPでレジメン等を閲覧し情報把握すること。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。がん患者の外来化学療法推進に伴い薬局での副作用管理を評価。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 区分10の3 注8。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.30-31 区分10の3 注8。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">地域支援・医薬品供給対応体制加算の届出が前提。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分10の3 注8</div>
         </div>
       </div>
       <div class="section">
-        <div class="section-title">特定薬剤管理指導加算3（注9） <span class="badge badge-modified">改���</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">3イ 5点 / 3ロ 10点</span></div>
+        <div class="section-title">特定薬剤管理指導加算3（注9） <span class="badge badge-modified">改定</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">3イ 5点 / 3ロ 10点</span></div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">RMP対象医薬品（3イ）又はバイオ後続品等の医薬品選択に関する説明（3ロ）を行った場合に算定。初回1回に限り。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b>3イ:</b> RMP（医薬品リスク管理計画）に基づく患者向け資材が作成されている医薬品が処方された患者。<br><b>3ロ:</b> 医薬品の選択に係る情報提供が必要な患者（バ��オ後続品等）。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b>3イ:</b> RMP（医薬品リスク管理計画）に基づく患者向け資材が作成されている医薬品が処方された患者。<br><b>3ロ:</b> 医薬品の選択に係る情報提供が必要な患者（バイオ後続品等）。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li><b>3イ:</b> RMPに基づく患者向け資材を用いて指導。当該薬剤の初回処方時に1回。</li>
-            <li><b>3ロ:</b> バイオ後続品等の品質・有効性・安全性について適切な説明を実施。当該薬剤の初回処方時に1回。</li>
-            <li>服薬管理指導料の4ロ・4ハ���算定する場合は算定不可</li>
+            <li><b>3イ:</b> RMP策定が義務づけられている医薬品を新たに処方された場合、患者向け資材を用いて指導。初回1回。</li>
+            <li><b>3ロ:</b> 以下のいずれかの場合に算定（初回1回）:<br>
+              ・選定療養対象の先発医薬品を選択しようとする患者への説明<br>
+              ・供給不安定により銘柄変更が必要な患者への説明<br>
+              ・<b style="color:var(--r8)">バイオ医薬品の一般名処方又はバイオ後続品が処方された患者への品質・有効性・安全性の説明</b></li>
+            <li>対象医薬品が複数処方されている場合、それぞれ1回ずつ算定可。ただしイ・ロの重複算定不可</li>
+            <li>特定薬剤管理指導加算1又は2との併算定可</li>
+            <li>服薬管理指導料の4ロ・4ハを算定する場合は算定不可</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
           <div style="color:var(--text-muted);margin-bottom:8px">届出不要。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">3ロにバイオ後続品の選択に係る説明を追加</b>。薬担規則改正と連動し、薬剤師によるバイ���後続品の使用促進を評価。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">3ロにバイオ後続品の選択に係る説明を追加</b>。薬担規則改正と連動し、薬剤師によるバイオ後続品の使用促進を評価。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保��発0305第6号 別添3 区分10の3 注9。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.31-32 区分10の3 注9。改定の概要 p.35。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">届出不要。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分10の3 注9</div>
@@ -301,12 +309,13 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">吸入薬が処方された患者に対し、文書及び練習用吸入器等を用いて吸入手技の指導を行い、処方医に文書で情報提供した場合に算定。<b style="color:var(--r8)">6月に1回</b>（R7: 3月に1回）。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">吸入薬（喘息・COPD用吸入薬、<b style="color:var(--r8)">インフルエンザ吸入薬</b>）が処方された患者。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">吸入薬が処方された患者。R7は喘息又はCOPDの患者に限定されていたが、<b style="color:var(--r8)">R8で疾患制限を撤廃（インフルエンザ吸入薬等も対象）</b>。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>文書及び練習用吸入器等を用いて吸入手技の指導を実施</li>
-            <li>処方医に対し吸入指導の結果等を文書で情報提供</li>
-            <li>6月に1回に限り算定</li>
+            <li>患者・家族等又は医療機関の求めに応じ、患者の同意を得て実施</li>
+            <li>文書及び練習用吸入器等を用いて必要な薬学的管理及び指導を実施</li>
+            <li>処方医に対し必要な情報を文書で提供</li>
+            <li>6月に1回に限り算定（R7: 3月に1回）</li>
             <li>服薬管理指導料の4ロ・4ハを算定する場合は算定不可</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
@@ -330,12 +339,13 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">かかりつけ薬剤師が、調剤後の次回処方箋持参までの間に服薬状況・残薬状況等を電話等で継続的に確認した場合に算定。3月に1回。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">服薬管理指導料1イ又は2イを算定し、かつ外来服薬支援料1・服用薬剤調整支援料・残薬調整加算・有害事象防止加算のいずれかを算定した患者。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">服薬管理指導料1イ又は2イを算定している患者であって、直近6ヶ月に以下のいずれかを算定したもの:<br>外来服薬支援料1 / 服用薬剤調整支援料1・2 / 調剤時残薬調整加算 / 薬学的有害事象等防止加算</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>かかりつけ薬剤師が電話等で服薬状況・残薬状況を継続確認</li>
+            <li>かかりつけ薬剤師が電話等により服薬状況・残薬状況等を継続的に確認及び必要な指導等を実施</li>
+            <li>前回調剤後、当該患者が再度処方箋を持参するまでの間に実施</li>
             <li>一方的な情報発信のみでは不可（<b>双方向性が必要</b>）</li>
-            <li>前回調剤後～再度処方箋持参までの間に実施</li>
+            <li>患者又はその家族等の求めに応じて実施</li>
             <li>3月に1回に限り算定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
@@ -358,16 +368,17 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted);margin-bottom:8px">服薬管理指導料1イ又は2イを算定している患者。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>かかりつけ薬剤師が患家を訪問し、残薬整理・服用薬管理指導を実施</li>
-            <li>処方医に対し情報提供</li>
+            <li>患者又はその家族等の求めに応じて患家を訪問</li>
+            <li>かかりつけ薬剤師が服用薬の服薬管理、残薬状況の確認等を実施</li>
+            <li>その結果を保険医療機関に情報提供</li>
             <li>交通費は患家負担</li>
             <li>6月に1回に限り算定</li>
             <li>外来服薬支援料1・在宅訪問薬剤管理指導料・服薬情報等提供料を算定している患者は算定不可</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">かかりつけ薬剤師の施設基準</b>の届出が前提。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">かかりつけ薬剤師の施設基準</b>の届出が前提。かかりつけ薬剤師の要件: 保険薬剤師3年以上の経験、週31時間以上勤務、当該薬局に6ヶ月以上在籍、研修認定取得、地域活動参画。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>残薬調整のための患家訪問を個別に評価。在宅でなくても患家に出向く取り組みを促進。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>かかりつけ薬剤師の包括的評価（旧指導料76点）から実績重視へ転換。残薬調整のための患家訪問を個別に評価。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 区分10の3 注14。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
@@ -477,15 +488,17 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted);margin-bottom:8px">在宅で療養を行っている通院が困難な患者。独歩で来局できる者は対象外。<br><b>1:</b> 患家1人 / <b>2:</b> 同一建物居住者2〜9人 / <b>3:</b> 同一建物居住者10人以上。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>医師の指示に基づく薬学的管理指導計画の策定（月1回見直し）</li>
-            <li>月4回まで（末期の患者等: 週2回かつ月8回）</li>
+            <li>医師の指示に基づく薬学的管理指導計画の策定（少なくとも月1回見直し）</li>
+            <li>月4回まで（末期の悪性腫瘍・注射による麻薬・中心静脈栄養法の患者: 週2回かつ月8回）</li>
+            <li><b style="color:var(--r8)">月2回以上算定の場合は週1回を限度</b>（R7: 中6日以上）</li>
             <li>薬剤師1人につき週40回上限</li>
             <li>16km超は特殊事情がない限り算定不可</li>
+            <li><b style="color:var(--r8)">休日・夜間を含む開局時間外の調剤及び訪問対応体制の整備が必要</b>（初回訪問時に連絡先等を文書交付）</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">在宅訪問薬剤管理指導を行う旨の届出</b>が必要。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">在宅訪問薬剤管理指導を行う旨の届出</b>が必要。在宅協力薬局との連携による夜間・休日対応体制の整備。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">算定間隔を中6日以上→週1回に見直し。</b>在宅医療の推進に伴い、柔軟な訪問スケジュールを可能にする。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">算定間隔を中6日以上→週1回に見直し。夜間休日の連絡体制整備を要件に追加。</b>在宅医療の推進に伴い、柔軟な訪問スケジュールを可能にする。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.43-50。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
@@ -558,18 +571,20 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅療養へ移行が予定されている通院困難な患者に対し、退院前から医療機関と連携して必要な薬学的管理指導を行った場合に算定。訪問薬剤管理指導料の初回算定月に1回。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">在宅での療養に移行が予定されている通院が困難な患者。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">以下のア及びイを満たす患者:<br>ア: 認知症・精神障害・18歳未満の障害児・6歳未満の乳幼児・末期がん・注射麻薬が必要な患者<br>イ: 訪問薬剤管理指導料（単一建物1人）・居宅/介護予防居宅療養管理指導費に係る医師の指示がある患者</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>退院前から医療機関の薬剤師等と連携し、退院後の薬物療法に必要な情報を共有</li>
-            <li>訪問薬剤管理指導料を初めて算定する月に1回に限り算定</li>
+            <li>計画的な訪問薬剤管理指導の実施前に患家を訪問</li>
+            <li>多職種と連携し、退院時処方内容を踏まえた薬剤調整・残薬整理・服薬方法提案等を実施</li>
+            <li>退院直後の場合は入院医療機関と連携し処方内容に関する情報共有</li>
+            <li>訪問薬剤管理指導料の初回算定月に1回に限り算定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
           <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">在宅訪問薬剤管理指導の届出</b>が前提。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>入院→在宅のスムーズな移行を薬局が支援することを評価。退院時共同指導との連携を促進。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>入院→在宅のスムーズな移行を薬局が支援することを評価。ポリファーマシー対応や服用回数を減らす観点も含む。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 区分15の8。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.59-61 区分15の8。改定の概要 p.28。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">在宅訪問薬剤管理指導の届出が前提。交通費は患家負担。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分15の8</div>
@@ -581,11 +596,11 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">訪問薬剤管理指導料1を算定する患者に対し、訪問診療を行う医師と同時に患家を訪問し薬学的管理指導を行った場合に算定。6月に1回。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">訪問薬剤管理指導料1を算定する患者（患家1人）。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">以下のいずれかを算定している患者（単一建物診療/居住者が1人の場合に限る）:<br>在宅患者訪問薬剤管理指導料 / 在宅患者緊急訪問薬剤管理指導料 / 居宅療養管理指導費 / 介護予防居宅療養管理指導費</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>訪問診療を行う医師と同時に患家を訪問</li>
-            <li>医師と連携して薬学的管理指導を実施</li>
+            <li>患者の同意を得て、訪問診療を実施している保険医（在宅時医学総合管理料を算定する主治医）と同時に訪問</li>
+            <li>薬学的管理及び指導を実施</li>
             <li>6月に1回に限り算定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
@@ -593,7 +608,7 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>ポリファーマシー対策・残薬対策の観点から、医師と薬剤師の同時訪問による協働を評価。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 区分15の9。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.61-63 区分15の9。改定の概要 p.38。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">在宅訪問薬剤管理指導の届出が前提。交通費は患家負担。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分15の9</div>
@@ -605,18 +620,18 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">訪問薬剤管理指導料1を算定する患者に対し、薬局又は在宅協力薬局の職員と複数名で患家を訪問し薬学的管理指導を行った場合に算定。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">訪問薬剤管理指導料1を算定する患者で、行動面での運動興奮等がみられるもの等。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">通院が困難な患者のうち、医師が複数名訪問の必要性があると認めるもの。<br>以下のいずれかを算定（単一建物診療/居住者が1人の場合に限る）: 在宅患者訪問薬剤管理指導料 / 在宅患者緊急訪問薬剤管理指導料 / 居宅療養管理指導費 / 介護予防居宅療養管理指導費</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>薬局又は在宅協力薬局の職員と複数名で患家を訪問</li>
-            <li>行動面での運動興奮等がみられる患者等への安全な訪問を確保</li>
+            <li>患者又は家族等の同意を得て、当該薬局又は在宅協力薬局に勤務する職員（薬剤師以外も可）とともに複数名で訪問</li>
+            <li>「複数名訪問の必要性」は薬剤師の利便性ではなく、患者が興奮・攻撃性を示す等、単独では指導の実施が担保できないおそれがある場合に判断</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
           <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">在宅訪問薬剤管理指導の届出</b>が前提。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>認知症等で行動面に課題がある患者への安全な訪問体制を確保するため、複数名での訪問を評価。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 区分15の10。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.63-65 区分15の10。改定の概要 p.39。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">在宅訪問薬剤管理指導の届出が前提。交通費は患家負担。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分15の10</div>
