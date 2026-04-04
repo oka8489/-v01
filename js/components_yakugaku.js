@@ -37,8 +37,10 @@ const YAKUGAKU_TEMPLATE = `
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
           <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">R7</th><th style="text-align:right">R8</th></tr></thead><tbody>
+            <tr><td>内服薬 7日分以下</td><td style="text-align:right">4点</td><td style="text-align:right;color:var(--pos);font-weight:600" rowspan="3">10点</td></tr>
+            <tr><td>内服薬 8〜14日分</td><td style="text-align:right">28点</td></tr>
+            <tr><td>内服薬 15〜27日分</td><td style="text-align:right">50点</td></tr>
             <tr><td>内服薬 28日分以上（長期処方）</td><td style="text-align:right">60点</td><td style="text-align:right">60点</td></tr>
-            <tr><td>内服薬 27日分以下</td><td style="text-align:right">4〜50点</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
             <tr><td>内服以外</td><td style="text-align:right">4点</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
           </tbody></table>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
