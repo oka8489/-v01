@@ -561,6 +561,13 @@ const R8_HOMECARE_FEES = [
     changeType: 'same',
     r8: { fixedPoints: 230 },
   },
+  {
+    id: 't_ishi_douji', label: '訪問薬剤管理医師同時指導料', category: 'homecare', inputType: 'fixed',
+    changeType: 'new',
+    changeNote: '訪問薬剤管理指導料1を算定する患者に対し、訪問診療医と同時に患家を訪問して薬学的管理指導を行った場合に算定。6月に1回。',
+    changePurpose: 'ポリファーマシー対策・残薬対策の観点から、医師と薬剤師の同時訪問による協働を評価。',
+    r8: { fixedPoints: 150 },
+  },
   // R8 新設
   {
     id: 't_kakaritsuke_houmon', label: 'かかりつけ薬剤師訪問加算', category: 'homecare', inputType: 'fixed',

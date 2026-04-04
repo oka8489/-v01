@@ -41,6 +41,9 @@ const app = createApp({
           r8fromR7.t_zanyaku_cnt = merged.t_jufuku_zan_cnt || 0
           // 電子的調剤情報連携体制整備加算 = DX8 + DX6 + DX10 の合算
           r8fromR7.k_dx8_cnt = (merged.k_dx8_cnt || 0) + (merged.k_dx6_cnt || 0) + (merged.k_dx10_cnt || 0)
+          // 服薬管理指導料4 ロ・ハ ← オンライン系の実績を引継ぎ
+          r8fromR7.t_fukuyaku_online_ro_cnt = merged.t_zaitaku_online_cnt || 0
+          r8fromR7.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0
           // 在宅薬学総合体制加算2 イ・ロ
           r8fromR7.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0  // 単一1人
           r8fromR7.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0  // 1人以外
@@ -97,6 +100,9 @@ const app = createApp({
           r8new.t_zanyaku_cnt = merged.t_jufuku_zan_cnt || 0
           // 電子的調剤情報連携体制整備加算 = DX8 + DX6 + DX10 の合算
           r8new.k_dx8_cnt = (merged.k_dx8_cnt || 0) + (merged.k_dx6_cnt || 0) + (merged.k_dx10_cnt || 0)
+          // 服薬管理指導料4 ロ・ハ ← オンライン系の実績を引継ぎ
+          r8new.t_fukuyaku_online_ro_cnt = merged.t_zaitaku_online_cnt || 0
+          r8new.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0
           r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
           r8new.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0
           // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
