@@ -356,6 +356,12 @@ const R8_MANAGEMENT_FEES = [
     r8: null,
   },
   {
+    id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
+    changeType: 'new',
+    countHint: '旧「かかりつけ薬剤師指導料」の件数とは異なります。\n\n【算定条件】以下の全てを満たす場合に3月に1回算定：\n① 服薬管理指導料1イ又は2イ（かかりつけ薬剤師）を算定している患者\n② 直近6ヶ月に以下のいずれかを算定済み：\n　・外来服薬支援料1\n　・服用薬剤調整支援料1又は2\n　・調剤時残薬調整加算\n　・薬学的有害事象等防止加算\n③ 前回調剤後〜次回処方箋持参までの間に、かかりつけ薬剤師が電話等で服薬状況・残薬状況を継続確認（双方向性が必要）\n\n【件数の目安】上記②の算定実績のある患者数 × 年4回（3月に1回）が上限です。',
+    r8: { fixedPoints: 50 },
+  },
+  {
     id: 't_mayaku_kanri', label: '麻薬管理指導加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r8: { fixedPoints: 22 },
@@ -457,12 +463,6 @@ const R8_MANAGEMENT_FEES = [
     id: 't_keikan', label: '経管投薬支援料', category: 'management', inputType: 'fixed',
     changeType: 'same',
     r8: { fixedPoints: 100 },
-  },
-  // R8 新設
-  {
-    id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
-    changeType: 'new',
-    r8: { fixedPoints: 50 },
   },
 ]
 

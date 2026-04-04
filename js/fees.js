@@ -358,6 +358,12 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 76 },
   },
   {
+    id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
+    changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師指導料・包括管理料の廃止に伴い、実績重視の評価として新設。かかりつけ薬剤師が服薬後に電話・ICT等でフォローアップを行った場合に50点。3月に1回。',
+    changePurpose: 'かかりつけ薬剤師の包括的評価から実績重視の評価への転換の一環として、服薬後のフォローアップ実務を個別に評価。',
+    r6: null,
+  },
+  {
     id: 't_mayaku_kanri', label: '麻薬管理指導加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r6: { fixedPoints: 22 },
@@ -462,13 +468,6 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 100 },
   },
   // R8 廃止（kakaritsuke_shido, kakaritsuke_hokatsu は上の特2A/2Bの後に移動済み）
-  // R8 新設（管理料）
-  {
-    id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'select',
-    changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師指導料・包括管理料の廃止に伴い、実績重視の評価として新設。かかりつけ薬剤師が服薬後に電話・ICT等でフォローアップを行った場合に50点。月1回算定可。',
-    changePurpose: 'かかりつけ薬剤師の包括的評価から実績重視の評価への転換の一環として、服薬後のフォローアップ実務を個別に評価。',
-    r6: null,
-  },
 ]
 
 const HOMECARE_FEES = [
