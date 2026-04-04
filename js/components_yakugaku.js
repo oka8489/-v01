@@ -36,13 +36,26 @@ const YAKUGAKU_TEMPLATE = `
             <li>隔日投与は実際の投与日数で判定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
-          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">R7</th><th style="text-align:right">R8</th></tr></thead><tbody>
-            <tr><td>内服薬 7日分以下</td><td style="text-align:right">4点</td><td style="text-align:right;color:var(--pos);font-weight:600" rowspan="3">10点</td></tr>
-            <tr><td>内服薬 8〜14日分</td><td style="text-align:right">28点</td></tr>
-            <tr><td>内服薬 15〜27日分</td><td style="text-align:right">50点</td></tr>
-            <tr><td>内服薬 28日分以上（長期処方）</td><td style="text-align:right">60点</td><td style="text-align:right">60点</td></tr>
-            <tr><td>内服以外</td><td style="text-align:right">4点</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
-          </tbody></table>
+          <div style="display:flex;gap:12px;margin-bottom:8px">
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
+              <div style="font-weight:700;margin-bottom:6px;font-size:11px;color:var(--text-faint)">R7（改定前）4区分</div>
+              <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">点数</th></tr></thead><tbody>
+                <tr><td>1 内服薬 イ 7日分以下</td><td style="text-align:right">4点</td></tr>
+                <tr><td>1 内服薬 ロ 8〜14日分</td><td style="text-align:right">28点</td></tr>
+                <tr><td>1 内服薬 ハ 15〜28日分</td><td style="text-align:right">50点</td></tr>
+                <tr><td>1 内服薬 ニ 29日分以上</td><td style="text-align:right">60点</td></tr>
+                <tr><td>2 内服以外</td><td style="text-align:right">4点</td></tr>
+              </tbody></table>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
+              <div style="font-weight:700;margin-bottom:6px;font-size:11px;color:var(--pos)">R8（改定後）2区分</div>
+              <table class="fee-table" style="font-size:12px"><thead><tr><th>区分</th><th style="text-align:right">点数</th></tr></thead><tbody>
+                <tr><td>1 内服薬 イ 28日分以上（長期処方）</td><td style="text-align:right">60点</td></tr>
+                <tr><td style="color:var(--pos);font-weight:600">1 内服薬 ロ 27日分以下</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
+                <tr><td style="color:var(--pos);font-weight:600">2 内服以外</td><td style="text-align:right;color:var(--pos);font-weight:600">10点</td></tr>
+              </tbody></table>
+            </div>
+          </div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px">4区分→2区分に簡素化し事務負担軽減。長期処方・リフィル処方推進に対応。調剤管理加算（3点）は廃止。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
