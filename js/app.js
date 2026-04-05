@@ -42,8 +42,14 @@ const app = createApp({
           r8fromR7.t_zanyaku_cnt = merged.t_jufuku_zan_cnt || 0
           // 電子的調剤情報連携体制整備加算 = DX8 + DX6 + DX10 の合算
           r8fromR7.k_dx8_cnt = (merged.k_dx8_cnt || 0) + (merged.k_dx6_cnt || 0) + (merged.k_dx10_cnt || 0)
-          // 服薬管理指導料4 ロ・ハ ← オンライン系の実績を引継ぎ
+          // 服薬管理指導料4: R7→R8マッピング
+          // R7の4イ(3月以内) → R8の4イ（そのまま）
+          r8fromR7.t_fukuyaku_online_i_cnt = merged.t_fukuyaku_online_cnt || merged.k_fukuyaku_online_cnt || 0
+          // R7の4ロ(4イ以外) → R8の4ニ（その他）
+          r8fromR7.t_fukuyaku_online_ni_cnt = merged.t_fukuyaku_online_ro_r6_cnt || merged.k_fukuyaku_online_ro_r6_cnt || 0
+          // 在宅患者オンライン薬剤管理指導料 → R8の4ロ
           r8fromR7.t_fukuyaku_online_ro_cnt = merged.t_zaitaku_online_cnt || 0
+          // 在宅患者緊急オンライン薬剤管理指導料 → R8の4ハ
           r8fromR7.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0
           // 在宅薬学総合体制加算2 イ・ロ
           r8fromR7.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0  // 単一1人
@@ -105,9 +111,11 @@ const app = createApp({
           r8new.t_zanyaku_cnt = merged.t_jufuku_zan_cnt || 0
           // 電子的調剤情報連携体制整備加算 = DX8 + DX6 + DX10 の合算
           r8new.k_dx8_cnt = (merged.k_dx8_cnt || 0) + (merged.k_dx6_cnt || 0) + (merged.k_dx10_cnt || 0)
-          // 服薬管理指導料4 ロ・ハ ← オンライン系の実績を引継ぎ
-          r8new.t_fukuyaku_online_ro_cnt = merged.t_zaitaku_online_cnt || 0
-          r8new.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0
+          // 服薬管理指導料4: R7→R8マッピング
+          r8new.t_fukuyaku_online_i_cnt = merged.t_fukuyaku_online_cnt || merged.k_fukuyaku_online_cnt || 0  // R7の4イ → R8の4イ
+          r8new.t_fukuyaku_online_ni_cnt = merged.t_fukuyaku_online_ro_r6_cnt || merged.k_fukuyaku_online_ro_r6_cnt || 0  // R7の4ロ → R8の4ニ
+          r8new.t_fukuyaku_online_ro_cnt = merged.t_zaitaku_online_cnt || 0  // 在宅オンライン → R8の4ロ
+          r8new.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0  // 緊急オンライン → R8の4ハ
           r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
           r8new.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0
           // 服薬管理指導料: R7→R8マッピング（R7はかかりつけ区分なし→全てロに）
