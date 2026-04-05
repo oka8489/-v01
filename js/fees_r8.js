@@ -312,12 +312,12 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_b', label: '服薬管理指導料1（3月以内・手帳なし）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_b', label: '服薬管理指導料2（3月以内・手帳なし→2で算定）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 59 },
   },
   {
-    id: 't_fukuyaku_c', label: '服薬管理指導料2（1以外の患者）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_c', label: '服薬管理指導料2（3月超）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 59 },
   },
