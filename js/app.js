@@ -48,6 +48,9 @@ const app = createApp({
           // 在宅薬学総合体制加算2 イ・ロ
           r8fromR7.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0  // 単一1人
           r8fromR7.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0  // 1人以外
+          // 服薬管理指導料: R7→R8マッピング（R7はかかりつけ区分なし→全てロに）
+          r8fromR7.t_fukuyaku_a_ro_cnt = merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0  // R7の1(手帳あり) → R8の1ロ
+          r8fromR7.t_fukuyaku_c_ro_cnt = (merged.t_fukuyaku_b_cnt || merged.k_fukuyaku_b_cnt || 0) + (merged.t_fukuyaku_c_cnt || merged.k_fukuyaku_c_cnt || 0)  // R7の1(手帳なし)+2 → R8の2ロ
           Object.assign(r8fromR7, r7selects)
           r8Data.r6 = r8fromR7
         }
@@ -107,6 +110,9 @@ const app = createApp({
           r8new.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0
           r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
           r8new.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0
+          // 服薬管理指導料: R7→R8マッピング（R7はかかりつけ区分なし→全てロに）
+          r8new.t_fukuyaku_a_ro_cnt = merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0
+          r8new.t_fukuyaku_c_ro_cnt = (merged.t_fukuyaku_b_cnt || merged.k_fukuyaku_b_cnt || 0) + (merged.t_fukuyaku_c_cnt || merged.k_fukuyaku_c_cnt || 0)
           // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
           Object.assign(r8new, selects)
           r8Data.r6 = r8new
