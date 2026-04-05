@@ -198,17 +198,6 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted)">1イ・2イ（かかりつけ薬剤師）は届出が必要（服薬管理指導料の注1）。特別調剤基本料Bの薬局は算定不可。</div>
         </div>
       </div>
-      <div class="section">
-        <div class="section-title" style="color:var(--del-text)">連携薬剤師特例（R6 注14・59点） <span style="font-size:12px;font-weight:400;color:var(--del-text)">→ R8で廃止</span></div>
-        <div style="font-size:12px;line-height:1.8">
-          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">R6では、かかりつけ薬剤師指導料又は包括管理料を算定していた患者が来局した際に、担当のかかりつけ薬剤師が<b>やむを得ない事情で不在</b>の場合、同一薬局の別の薬剤師（厚労大臣が定める要件を満たす者）が連携して指導すれば、<b>59点</b>で算定できる特例。</div>
-          <div style="font-weight:700;margin-bottom:6px">2. なぜ59点だったか</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">かかりつけ薬剤師指導料（76点）は算定できないが、通常の服薬管理指導料1（45点）に落ちるのではなく、連携して対応した場合は59点（服薬管理指導料2相当）を認めるという救済措置。</div>
-          <div style="font-weight:700;margin-bottom:6px">3. R8での扱い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--del-bg);border-radius:6px"><b style="color:var(--del-text)">R8で廃止。</b>かかりつけ薬剤師指導料（76点）自体が廃止されたため、この特例も不要に。R8ではかかりつけ薬剤師が不在の場合、単純に<b>1ロ・2ロ（かかりつけ薬剤師以外）</b>で算定すればよい。点数は45点/59点でイと同額。</div>
-        </div>
-      </div>
     </div>
 
     <div v-if="sub==='yg_mayaku'">
