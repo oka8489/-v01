@@ -302,6 +302,16 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 45 },
   },
   {
+    id: 't_fukuyaku_a_i', label: '1イ かかりつけ薬剤師', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
+    r8: { fixedPoints: 45 },
+  },
+  {
+    id: 't_fukuyaku_a_ro', label: '1ロ その他', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
+    r8: { fixedPoints: 45 },
+  },
+  {
     id: 't_fukuyaku_b', label: '服薬管理指導料1（3月以内・手帳なし）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 59 },
@@ -309,6 +319,16 @@ const R8_MANAGEMENT_FEES = [
   {
     id: 't_fukuyaku_c', label: '服薬管理指導料2（1以外の患者）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
+    r8: { fixedPoints: 59 },
+  },
+  {
+    id: 't_fukuyaku_c_i', label: '2イ かかりつけ薬剤師', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
+    r8: { fixedPoints: 59 },
+  },
+  {
+    id: 't_fukuyaku_c_ro', label: '2ロ その他', category: 'management', inputType: 'fixed', isDetail: true,
+    changeType: 'new',
     r8: { fixedPoints: 59 },
   },
   {
