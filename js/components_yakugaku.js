@@ -161,7 +161,8 @@ const YAKUGAKU_TEMPLATE = `
                 <tr style="border-top:2px solid var(--border)"><td>1 3月以内＋手帳持参</td><td style="text-align:right">45点</td></tr>
                 <tr><td>2 1以外（3月超、又は手帳なし）</td><td style="text-align:right">59点</td></tr>
                 <tr><td>3 介護施設入所者を訪問</td><td style="text-align:right">45点</td></tr>
-                <tr><td>4 情報通信機器を用いた場合</td><td style="text-align:right">45点</td></tr>
+                <tr><td>4イ 情報通信機器（3月以内）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>4ロ 情報通信機器（4イ以外）</td><td style="text-align:right">59点</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>在宅患者オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
                 <tr><td>在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>注14特例（かかりつけ不在時・連携薬剤師）</td><td style="text-align:right"><b>59点</b></td></tr>

@@ -341,9 +341,14 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_online', label: '服薬管理指導料4（情報通信機器）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_online', label: '服薬管理指導料4イ（情報通信・3月以内）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r6: { fixedPoints: 45 },
+  },
+  {
+    id: 't_fukuyaku_online_ro_r6', label: '服薬管理指導料4ロ（情報通信・4イ以外）', category: 'management', inputType: 'fixed',
+    changeType: 'modified',
+    r6: { fixedPoints: 59 },
   },
   {
     id: 't_fukuyaku_renkei', label: '服薬管理指導料（注14特例・連携薬剤師）', category: 'management', inputType: 'count-only',
