@@ -625,8 +625,14 @@ const YAKUGAKU_TEMPLATE = `
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅療養中の通院困難な患者に対し、医師の指示に基づき薬学的管理指導計画を策定し訪問薬剤管理指導を行った場合に算定。R8で算定間隔を<b style="color:var(--r8)">中6日以上→週1回</b>に見直し。</div>
+          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">点数</th><th>対象</th><th>イメージ</th><th>算定回数</th></tr></thead><tbody>
+            <tr><td><b>1</b></td><td style="text-align:right">650点</td><td>単一建物診療患者が<b>1人</b></td><td>個人宅への訪問</td><td>月4回（週1回限度）</td></tr>
+            <tr><td><b>2</b></td><td style="text-align:right">320点</td><td>同<b>2〜9人</b></td><td>小規模施設</td><td>同左</td></tr>
+            <tr><td><b>3</b></td><td style="text-align:right">290点</td><td>同<b>10人以上</b></td><td>大規模施設</td><td>同左</td></tr>
+          </tbody></table>
+          <div style="font-size:11px;color:var(--text-faint);margin-bottom:8px">※「単一建物診療患者」＝同一建物に居住する患者のうち、同一月に訪問薬剤管理指導を行った人数で判定。末期の悪性腫瘍等の患者は週2回かつ月8回。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">在宅で療養を行っている通院が困難な患者。独歩で来局できる者は対象外。<br><b>1:</b> 患家1人 / <b>2:</b> 同一建物居住者2〜9人 / <b>3:</b> 同一建物居住者10人以上。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">在宅で療養を行っている通院が困難な患者。独歩で来局できる者は対象外。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
             <li>医師の指示に基づく薬学的管理指導計画の策定（少なくとも月1回見直し）</li>
