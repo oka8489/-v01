@@ -78,61 +78,66 @@ const YAKUGAKU_TEMPLATE = `
     </div>
 
     <div v-if="sub==='yg_zanyaku_yugai'">
-      <div style="padding:8px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:12px;font-size:11px;color:var(--del-text)"><b>重複投薬・相互作用等防止加算</b>（残薬20点/残薬以外40点）→ 廃止して下記2つに発展的再編</div>
+      <div style="padding:8px 10px;background:var(--del-bg);border-radius:6px;margin-bottom:12px;font-size:12px;color:var(--del-text)">
+        <b>重複投薬・相互作用等防止加算</b>（調剤管理料の加算・残薬20点/残薬以外40点）→ 廃止<br>
+        <b>在宅患者重複投薬・相互作用等防止管理料</b>（在宅・残薬20点/残薬以外40点）→ 廃止<br>
+        上記2つを廃止し、下記2つの加算に発展的再編
+      </div>
       <div class="section">
         <div class="section-title"><span class="badge badge-new">新設</span> 調剤時残薬調整加算（注3）</div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">残薬が確認された患者において、処方医への照会の結果、残薬調整のための調剤日数変更が行われた場合に算定。旧「重複防止加算（残薬）20点」を発展的に再編。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">調剤管理料を算定する患者であって、飲み残した医薬品や飲み忘れた医薬品（残薬）が確認されたものに対し、残薬の調整のために処方医の指示の下に<b>7日分以上相当の調剤日数の変更</b>が行われた場合に算定。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">残薬が確認された患者。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">調剤管理料を算定する患者であって、残薬が確認されたもの。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>残薬確認後、処方医の指示又は処方医に対する照会の結果に基づき<b>7日分以上の調剤日数変更</b>が行われた場合</li>
-            <li>6日分以下でも薬剤師が必要と判断し処方医照会の結果に基づく場合は理由をレセプト記載で算定可</li>
-            <li>機械的な調整は不可。患者の意図的残薬かどうか確認必要</li>
+            <li>患者又は家族等からの情報等に基づいて残薬が確認された場合</li>
+            <li>処方医の指示の下に、<b>7日分以上相当の調剤日数の変更</b>が行われた場合</li>
+            <li>6日分以下の変更でも、薬剤師が必要と判断し処方医の指示に基づく場合はその理由をレセプトに記載して算定可</li>
+            <li>処方箋受付1回につき算定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
           <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">点数</th><th>対象</th></tr></thead><tbody>
-            <tr><td>イ</td><td style="text-align:right">50点</td><td>在宅患者＋処方前に処方医に相談し提案が反映</td></tr>
-            <tr><td>ロ</td><td style="text-align:right">50点</td><td>在宅患者（イ以外）</td></tr>
-            <tr><td>ハ</td><td style="text-align:right">50点</td><td>かかりつけ薬剤師（イ・ロ以外）</td></tr>
-            <tr><td>ニ</td><td style="text-align:right">30点</td><td>上記以外</td></tr>
+            <tr><td>イ</td><td style="text-align:right">50点</td><td>在宅患者へ処方箋交付前に処方医に相談し、提案が反映された処方箋を受付</td></tr>
+            <tr><td>ロ</td><td style="text-align:right">50点</td><td>在宅患者に対して実施（イの場合を除く）</td></tr>
+            <tr><td>ハ</td><td style="text-align:right">50点</td><td>かかりつけ薬剤師により調剤日数の変更が行われた場合（イ・ロを除く）</td></tr>
+            <tr><td>ニ</td><td style="text-align:right">30点</td><td>イからハまで以外の場合</td></tr>
           </tbody></table>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">残薬対策の強化。在宅・かかりつけ薬剤師の場合を50点に増点し、積極的な残薬調整を促進。</div>
-          <div style="font-weight:700;margin-bottom:6px">6. 通知</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.17-20。</div>
-          <div style="font-weight:700;margin-bottom:6px">7. 届出</div>
-          <div style="color:var(--text-muted)">届出不要。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">旧「重複投薬・相互作用等防止加算（残薬20点）」及び「在宅患者重複投薬・相互作用等防止管理料（残薬20点）」を廃止し、残薬調整に特化した加算として新設。在宅・かかりつけ薬剤師は50点、その他は30点。処方箋様式にも残薬確認時の対応欄（減数調剤の指示）が追加。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.17-20。改定の概要 p.42。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。調剤管理料を算定していない場合は算定不可。</div>
         </div>
       </div>
       <div class="section">
         <div class="section-title"><span class="badge badge-new">新設</span> 薬学的有害事象等防止加算（注4）</div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">重複投薬・相互作用等が確認された患者において、処方医への照会の結果、処方変更が行われた場合に算定（残薬調整を除く）。旧「重複防止加算（残薬以外）40点」を発展的に再編。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">調剤管理料を算定する患者であって、処方医に確認すべき点（残薬に係るものを除く）がある処方箋が交付されたものに対し、処方医に対する照会（残薬調整を除く）の結果、処方に変更が行われた場合に算定。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">重複投薬（薬理作用類似含む）、併用薬・飲食物との相互作用、その他薬学的に必要な事項が確認された患者。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">調剤管理料を算定する患者であって、以下の事項が確認されたもの:<br>ア 併用薬との重複投薬（薬理作用が類似する場合を含む）<br>イ 併用薬、飲食物等との相互作用<br>ウ そのほか薬学的観点から必要と認める事項</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>残薬調整を除く処方変更が対象</li>
-            <li>電子処方箋の仕組みを用いた重複投薬確認も対象</li>
-            <li>処方医に対する照会の結果、処方に変更が行われた場合</li>
+            <li>薬剤服用歴、電子処方箋の仕組みを用いた重複投薬の確認等に基づき、処方医に対する照会（残薬調整を除く）を実施</li>
+            <li>照会の結果、処方に変更が行われた場合に算定</li>
+            <li>処方箋受付1回につき算定</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
           <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">点数</th><th>対象</th></tr></thead><tbody>
-            <tr><td>イ</td><td style="text-align:right">50点</td><td>在宅患者＋処方前に処方医に相談し提案が反映</td></tr>
-            <tr><td>ロ</td><td style="text-align:right">50点</td><td>在宅患者（イ以外）</td></tr>
-            <tr><td>ハ</td><td style="text-align:right">50点</td><td>かかりつけ薬剤師（イ・ロ以外）</td></tr>
-            <tr><td>ニ</td><td style="text-align:right">30点</td><td>上記以外</td></tr>
+            <tr><td>イ</td><td style="text-align:right">50点</td><td>在宅患者へ処方箋交付前に処方医に相談し、提案が反映された処方箋を受付</td></tr>
+            <tr><td>ロ</td><td style="text-align:right">50点</td><td>在宅患者について処方に変更が行われた場合（イを除く）</td></tr>
+            <tr><td>ハ</td><td style="text-align:right">50点</td><td>かかりつけ薬剤師による照会の結果、処方に変更が行われた場合（イ・ロを除く）</td></tr>
+            <tr><td>ニ</td><td style="text-align:right">30点</td><td>イからハまで以外の場合</td></tr>
           </tbody></table>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">薬学的有害事象（重複投薬・相互作用・副作用等）の防止に向けた薬剤師の積極的介入を促進。</div>
-          <div style="font-weight:700;margin-bottom:6px">6. 通知</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.17-20。</div>
-          <div style="font-weight:700;margin-bottom:6px">7. 届出</div>
-          <div style="color:var(--text-muted)">届出不要。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">旧「重複投薬・相互作用等防止加算（残薬以外40点）」及び「在宅患者重複投薬・相互作用等防止管理料（残薬以外40点）」を廃止し、薬学的有害事象の防止に特化した加算として新設。在宅・かかりつけ薬剤師は50点に増点、その他は30点に減点。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.20。改定の概要 p.43。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。調剤管理料を算定していない場合は算定不可。</div>
         </div>
       </div>
     </div>
