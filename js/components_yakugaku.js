@@ -512,31 +512,72 @@ const YAKUGAKU_TEMPLATE = `
 
     <div v-if="sub==='yg_chosei'">
       <div class="section">
-        <div class="section-title">服用薬剤調整支援料（区分14の3） <span class="badge badge-modified">改定</span></div>
+        <div class="section-title">服用薬剤調整支援料1（区分14の3） <span style="font-size:12px;font-weight:400;color:var(--pos)">125点</span></div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">6種類以上の内服薬が処方されている患者への減薬提案・ポリファーマシー対策を評価。支援料2はR8で1,000点に大幅増点（R9年6月以降算定）。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">6種類以上の内服薬が処方されている患者について、処方医に文書で減薬を提案し、実際に2種類以上の減少が4週間以上継続した場合に算定。月1回。R8での変更なし。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
-          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>支援料1: 内服開始4週間以上経過した内服薬6種類以上を当該薬局で調剤している患者</li>
-            <li>支援料2: 複数の医療機関から内服薬合計6種類以上が処方されている患者</li>
-          </ul>
+          <div style="color:var(--text-muted);margin-bottom:8px">内服を開始して4週間以上経過した内服薬6種類以上を、当該保険薬局で調剤している患者。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
           <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
-            <li>支援料1: 処方医に文書で減薬提案し、2種類以上減少が4週間以上継続。月1回。</li>
-            <li>支援料2: かかりつけ薬剤師（老年薬学研修修了者）が服用薬剤総合評価を実施し処方医に文書提案。6月に1回、薬剤師1人月4回まで。<b style="color:var(--neg)">R9年6月以降算定開始。</b></li>
+            <li>処方医に対して文書を用いて減薬の提案を実施</li>
+            <li>提案により、当該患者の内服薬が<b>2種類以上減少</b>し、その状態が<b>4週間以上</b>継続</li>
+            <li>月1回に限り算定</li>
           </ul>
-          <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
-          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th style="text-align:right">R7</th><th style="text-align:right">R8</th></tr></thead><tbody>
-            <tr><td>支援料1</td><td style="text-align:right">125点</td><td style="text-align:right">125点</td></tr>
-            <tr><td>支援料2 <span class="badge badge-modified">改定</span></td><td style="text-align:right">110点</td><td style="text-align:right;color:var(--pos);font-weight:600">1,000点</td></tr>
-          </tbody></table>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">届出不要。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">MRP/DRP特定→推奨案提示→アウトカムモニターの薬物療法最適化サイクルの実践を促進。経過措置: R8年度中は算定不可。</div>
-          <div style="font-weight:700;margin-bottom:6px">6. 通知</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。ポリファーマシー対策として減薬の実績を評価。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.38-40。</div>
-          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許</div>
-          <div style="color:var(--text-muted)">支援料2は老年薬学服薬総合評価研修修了又は老年薬学認定薬剤師が必要。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分14の3</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">服用薬剤調整支援料2（区分14の3） <span class="badge badge-modified">改定</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">1,000点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">複数の医療機関から6種類以上の内服薬が処方されている患者について、<b style="color:var(--r8)">かかりつけ薬剤師</b>（研修修了者に限る）が薬物療法の最適化サイクルを実践し、処方医に文書で提案した場合に算定。R6の110点→R8で<b style="color:var(--r8)">1,000点</b>に大幅増点。<b style="color:var(--neg)">R9年6月1日から適用。</b></div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">複数の保険医療機関から6種類以上の内服薬（特に規定するものを除く）が処方されている患者。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>患者又は家族等の求めに応じて実施</li>
+            <li><b style="color:var(--r8)">かかりつけ薬剤師</b>（服薬状況等に係る総合的な管理及び評価を行うために必要な研修を受けた者に限る）が実施</li>
+            <li>服用中の薬剤を<b>継続的及び一元的に把握</b>し、薬剤調整を必要と認める場合に<b>必要な評価等を実施</b>した上で、処方医に文書で提案</li>
+            <li>6月に1回に限り算定。かかりつけ薬剤師1人につき<b>月4回まで</b></li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 具体的に必要な実施事項（留意事項通知）</div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px">
+            <ul style="padding-left:18px;color:var(--text-muted);margin:0">
+              <li>ア: 薬物治療に関する患者又は家族等からの<b>主観的情報</b>の聴取</li>
+              <li>イ: 検査値等の薬物治療に必要な<b>客観的情報</b>の収集</li>
+              <li>ウ: 服薬支援に必要な患者の<b>生活状況及び意向</b>に関する情報の聴取</li>
+              <li>エ: 各服用薬剤がもたらす<b>治療効果及び有害事象</b>の評価</li>
+              <li>オ: 解決すべき<b>薬剤関連問題（MRP/DRP）の特定</b>及び整理</li>
+              <li>カ: 服用薬剤調整後の<b>観察計画及び対応案</b>の立案</li>
+            </ul>
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">5. 点数比較</div>
+          <div style="display:flex;gap:12px;margin-bottom:8px">
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--text-faint)">R6（改定前）</div>
+              <div style="color:var(--text-muted)">イ 施設基準あり: <b>110点</b><br>ロ イ以外: <b>90点</b><br>頻度: 3月に1回<br>実施者: 保険薬剤師（誰でも可）<br>内容: 重複投薬等の確認→解消提案</div>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
+              <div style="color:var(--text-muted)"><b style="color:var(--pos)">1,000点</b>（一本化）<br>頻度: 6月に1回<br>実施者: <b>かかりつけ薬剤師（研修修了者）</b><br>内容: 薬物療法の最適化サイクル全体を実践→提案<br><b style="color:var(--neg)">R9年6月1日から適用</b></div>
+            </div>
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">6. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">「重複薬を見つけて報告」（受動的）→「薬物療法の最適化サイクルの包括的実践」（能動的）に転換。</b>MRP/DRP特定→推奨案提示→アウトカムモニターの循環を通じて、かかりつけ薬剤師によるポリファーマシー患者への包括的介入を高く評価。R8年度中は算定不可（R9年6月1日から適用）。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.38-40。改定の概要 p.32。</div>
+          <div style="font-weight:700;margin-bottom:6px">8. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)"><b style="color:var(--neg)">老年薬学服薬総合評価研修修了</b>又は<b style="color:var(--neg)">老年薬学認定薬剤師</b>が必要。かかりつけ薬剤師の施設基準の届出が前提。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分14の3。改定の概要 p.32。</div>
         </div>
       </div>
     </div>
