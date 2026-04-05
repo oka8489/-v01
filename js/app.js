@@ -23,6 +23,11 @@ const app = createApp({
           const merged = {}
           for (const [k,v] of Object.entries(json.r6.toukei||{})) { if (!k.startsWith('_')) merged[k] = v }
           for (const [k,v] of Object.entries(json.r6.kasan||{})) { if (!k.startsWith('_')) merged[k] = v }
+          // 服薬管理指導料2: b(手帳なし) + c(3月超) を合算して1行に
+          const fukuBr7 = merged.t_fukuyaku_b_cnt || merged.k_fukuyaku_b_cnt || 0
+          const fukuCr7 = merged.t_fukuyaku_c_cnt || merged.k_fukuyaku_c_cnt || 0
+          merged.t_fukuyaku_c_cnt = fukuBr7 + fukuCr7
+          merged.k_fukuyaku_c_cnt = fukuBr7 + fukuCr7
           data.r6 = merged
           // R8にも件数・統計値を反映（プルダウン選択値は保持）
           const r7selects = {}
