@@ -142,7 +142,7 @@ const YAKUGAKU_TEMPLATE = `
         <div class="section-title">服薬管理指導料（区分10の3） <span class="badge badge-modified">改定</span></div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">かかりつけ薬剤師指導料・包括管理料を廃止し統合。かかりつけ薬剤師による指導を高く評価。在宅オンライン薬剤管理指導料も4ロ・4ハに統合。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">かかりつけ薬剤師指導料（76点）を廃止し、服薬管理指導料に1イ/2イ（かかりつけ薬剤師）区分を新設。在宅オンライン薬剤管理指導料も4ロ・4ハに統合。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
           <div style="color:var(--text-muted);margin-bottom:8px">全患者。在宅訪問薬剤管理指導料算定患者は、別疾病の臨時処方のみ。</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
@@ -157,7 +157,6 @@ const YAKUGAKU_TEMPLATE = `
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--text-faint)">R6（改定前）</div>
               <table class="fee-table" style="font-size:12px"><tbody>
                 <tr><td>かかりつけ薬剤師指導料</td><td style="text-align:right"><b>76点</b></td></tr>
-                <tr><td>かかりつけ薬剤師包括管理料</td><td style="text-align:right"><b>291点</b></td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>1 3月以内＋手帳持参</td><td style="text-align:right">45点</td></tr>
                 <tr><td>2 1以外（手帳なし・3月超）</td><td style="text-align:right">59点</td></tr>
                 <tr><td>3 介護施設入所者を訪問</td><td style="text-align:right">45点</td></tr>
@@ -173,7 +172,6 @@ const YAKUGAKU_TEMPLATE = `
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
               <table class="fee-table" style="font-size:12px"><tbody>
                 <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師指導料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
-                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師包括管理料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>1イ 3月以内＋手帳・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">45点</td></tr>
                 <tr><td>1ロ 3月以内＋手帳・その他</td><td style="text-align:right">45点</td></tr>
                 <tr><td>2イ 1以外・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">59点</td></tr>
@@ -191,7 +189,7 @@ const YAKUGAKU_TEMPLATE = `
             </div>
           </div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">かかりつけ薬剤師の包括的評価から実績重視の評価へ転換。在宅オンラインを4ロ・4ハに統合し簡素化。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">かかりつけ薬剤師指導料（76点）を廃止し、服薬管理指導料にかかりつけ薬剤師区分（1イ/2イ）を新設。在宅オンライン薬剤管理指導料を4ロ・4ハに統合。連携薬剤師特例（注14・59点）も廃止。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.20-35。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
