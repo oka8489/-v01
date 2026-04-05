@@ -414,7 +414,8 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted);margin-bottom:4px">患家への訪問による服薬管理、残薬状況の確認等の実施、医療機関への情報提供を評価</div>
           <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-new">新設</span> <b>かかりつけ薬剤師訪問加算</b> 230点（6月に1回）</div>
           <div style="color:var(--text-muted);margin-bottom:4px">多剤服用患者の一元的・継続的な把握を通じて、包括的な薬物治療の評価・介入を実践する取組を評価</div>
-          <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-modified">改定</span> <b>服用薬剤調整支援料2</b> 1,000点（R9年6月以降算定）</div>
+          <div style="margin-bottom:4px;padding-left:12px"><span class="badge badge-modified">改定</span> <b>服用薬剤調整支援料2</b> 1,000点</div>
+          <div style="font-size:11px;color:var(--neg);margin-bottom:6px;padding-left:12px">※R8年度中（R8.6〜R9.5）は算定不可。R9年6月1日から適用。R8年度中はR6の基準（イ110点/ロ90点）で算定。</div>
           <div style="margin-top:12px"><img src="img/r8_kakarituke.png" alt="かかりつけ薬剤師フォローアップ加算・訪問加算の概要" style="width:100%;border-radius:var(--radius);border:1px solid var(--border)"></div>
           <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap"><iframe width="48%" height="200" src="https://www.youtube.com/embed/sane1HyzZKs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe><iframe width="48%" height="200" src="https://www.youtube.com/embed/1xepYKArb3M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe></div>
         </div>
