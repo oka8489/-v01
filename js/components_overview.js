@@ -208,10 +208,6 @@ const OverviewTab = {
           <div style="font-size:12px;font-weight:600;margin-bottom:2px">バイオ後続品の説明時の評価</div>
           <div style="font-size:12px;color:var(--text-muted)">バイオ後続品の選択に係る患者への説明を評価 → <b>特定薬剤管理指導料3ロ</b>の評価対象に追加</div>
         </div>
-        <div>
-          <div style="font-size:12px;font-weight:600;margin-bottom:2px">乳幼児の無菌製剤処理加算の対象を小児まで拡大</div>
-          <div style="font-size:12px;color:var(--text-muted)"><b>6歳未満</b>から<b style="color:var(--pos)">15歳未満</b>への対象年齢の引き上げ</div>
-        </div>
       </div>
     </div>
   </div>
