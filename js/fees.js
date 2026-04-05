@@ -346,9 +346,9 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_renkei', label: '服薬管理指導料（特定2A/2B・連携薬剤師）', category: 'management', inputType: 'count-only',
-    changeType: 'abolished_merged', changeNote: 'R8で廃止。かかりつけ薬剤師指導料・包括管理料の廃止に伴う服薬管理指導料の体系再編で統合。R6は特定薬剤管理指導加算2A/2B（59点）。',
-    changePurpose: '服薬管理指導料の体系再編に伴い、連携薬剤師の評価を統合して算定構造を簡素化。',
+    id: 't_fukuyaku_renkei', label: '服薬管理指導料（注14特例・連携薬剤師）', category: 'management', inputType: 'count-only',
+    changeType: 'abolished_merged', changeNote: 'R8で廃止。R6ではかかりつけ薬剤師が不在時に同一薬局の他の薬剤師が連携して指導した場合の特例（59点）。かかりつけ薬剤師指導料の廃止に伴いこの特例も廃止。R8では1ロ・2ロ（かかりつけ薬剤師以外）で算定。',
+    changePurpose: 'かかりつけ薬剤師指導料の廃止に伴い、連携薬剤師の特例も不要となり廃止。',
     r6: {},
   },
   {

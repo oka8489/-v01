@@ -346,8 +346,9 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 59 },
   },
   {
-    id: 't_fukuyaku_renkei', label: '服薬管理指導料（特定2A/2B・連携薬剤師）', category: 'management', inputType: 'count-only',
+    id: 't_fukuyaku_renkei', label: '服薬管理指導料（注14特例・連携薬剤師）', category: 'management', inputType: 'count-only',
     changeType: 'abolished_merged',
+    changeNote: 'R8で廃止。かかりつけ薬剤師不在時の連携薬剤師特例（R6注14・59点）。かかりつけ薬剤師指導料の廃止に伴い不要となり廃止。R8では1ロ・2ロで算定。',
     r8: null,
   },
   {
