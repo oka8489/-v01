@@ -315,15 +315,9 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_b', label: '服薬管理指導料2（3月以内・手帳なし→2で算定）', category: 'management', inputType: 'fixed',
-    changeType: 'same',
-    changeNote: 'R6と同じ。3月以内でも手帳なしは2（59点）で算定。',
-    r8: { fixedPoints: 59 },
-  },
-  {
-    id: 't_fukuyaku_c', label: '服薬管理指導料2（3月超）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_c', label: '服薬管理指導料2（3月超、又は手帳なし）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
-    changeNote: 'R8でかかりつけ薬剤師区分（2イ/2ロ）を新設。点数59点は据置。',
+    changeNote: 'R8でかかりつけ薬剤師区分（2イ/2ロ）を新設。3月以内でも手帳なしは2で算定。点数59点は据置。',
     r8: { fixedPoints: 59 },
   },
   {
