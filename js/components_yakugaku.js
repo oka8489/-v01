@@ -15,7 +15,10 @@ const YAKUGAKU_TEMPLATE = `
       <button class="btn" :style="sub==='yg_gairai'?'background:var(--teal);color:white':''" @click="sub='yg_gairai'" style="font-size:12px;padding:6px 12px">外来服薬支援料</button>
       <button class="btn" :style="sub==='yg_chosei'?'background:var(--teal);color:white':''" @click="sub='yg_chosei'" style="font-size:12px;padding:6px 12px">服用薬剤調整支援料</button>
       <button class="btn" :style="sub==='yg_chogo'?'background:var(--teal);color:white':''" @click="sub='yg_chogo'" style="font-size:12px;padding:6px 12px">調剤後薬剤管理指導料</button>
-      <button class="btn" :style="sub==='yg_zaitaku'?'background:var(--teal);color:white':''" @click="sub='yg_zaitaku'" style="font-size:12px;padding:6px 12px">在宅訪問薬剤管理指導</button>
+    </div>
+
+    <div v-if="subCategory==='zaitaku'" style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:12px">
+      <button class="btn" :style="sub==='yg_zaitaku'?'background:var(--teal);color:white':''" @click="sub='yg_zaitaku'" style="font-size:12px;padding:6px 12px">訪問薬剤管理指導</button>
       <button class="btn" :style="sub==='yg_zaitaku_new'?'background:var(--teal);color:white':''" @click="sub='yg_zaitaku_new'" style="font-size:12px;padding:6px 12px">在宅R8新設</button>
       <button class="btn" :style="sub==='yg_taiin'?'background:var(--teal);color:white':''" @click="sub='yg_taiin'" style="font-size:12px;padding:6px 12px">退院時共同指導料</button>
       <button class="btn" :style="sub==='yg_joho_keikan'?'background:var(--teal);color:white':''" @click="sub='yg_joho_keikan'" style="font-size:12px;padding:6px 12px">服薬情報等提供料・経管</button>

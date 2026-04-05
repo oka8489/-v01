@@ -1578,6 +1578,7 @@ const RequirementsTab = {
       <button class="sub-tab-item" :class="{active:subCategory==='taisei'}" @click="subCategory='taisei';sub='k_kihon'">体制加算</button>
       <button class="sub-tab-item" :class="{active:subCategory==='sonota_kasan'}" @click="subCategory='sonota_kasan';sub='ot_chozai'">薬剤調製料・薬剤料</button>
       <button class="sub-tab-item" :class="{active:subCategory==='yakugaku'}" @click="subCategory='yakugaku';sub='yg_kanri'">薬学管理料</button>
+      <button class="sub-tab-item" :class="{active:subCategory==='zaitaku'}" @click="subCategory='zaitaku';sub='yg_zaitaku'">在宅</button>
       <button class="sub-tab-item" :class="{active:subCategory==='memo'}" @click="subCategory='memo';sub='memo'">メモ</button>
     </div>
     <div v-if="subCategory==='chinage'" style="margin-bottom:12px">
