@@ -386,7 +386,7 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 10 },
   },
   {
-    id: 't_tokutei_1ro', label: '特定薬剤管理指導加算1ロ（変更時）', category: 'management', inputType: 'fixed', isSub: true,
+    id: 't_tokutei_1ro', label: '特定薬剤管理指導加算1ロ（ハイリスク変更）', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r6: { fixedPoints: 5 },
   },
