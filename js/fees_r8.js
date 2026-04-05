@@ -463,7 +463,9 @@ const R8_MANAGEMENT_FEES = [
     changeType: 'modified',
     changeNote: 'R8年度中はR6の基準（イ110点/ロ90点）で算定。R9年6月1日から1,000点に増点・要件変更。',
     changePurpose: 'かかりつけ薬剤師によるポリファーマシー患者への包括的介入を段階的に評価。',
-    r8: { options: [{ value: 0, label: '算定なし' }, { value: 110, label: 'イ 施設基準あり（110点）' }, { value: 90, label: 'ロ イ以外（90点）' }] },
+    judgeCategory: 'sonota',
+    judgeInfo: { title: '服用薬剤調整支援料2', desc: 'イ: かかりつけ薬剤師の届出をしている薬局（110点）\nロ: イ以外（90点）', checks: ['複数の医療機関から6種類以上の内服薬が処方されている患者が対象', '患者又は家族等の求めに応じて実施', '服用中の薬剤を一元的に把握し、重複投薬等が確認された場合に処方医に文書で提案', '3月に1回に限り算定', 'イの届出: かかりつけ薬剤師の施設基準（様式90）の届出があればイで算定可能', 'R9年6月以降は1,000点に改定（かかりつけ薬剤師・研修修了者が必要）'] },
+    r8: { options: [{ value: 0, label: '算定なし' }, { value: 110, label: 'イ かかりつけ届出あり（110点）' }, { value: 90, label: 'ロ イ以外（90点）' }] },
   },
   {
     id: 't_choseihi_2_r9', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed', isDetail: true,
