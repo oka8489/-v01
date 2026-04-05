@@ -297,22 +297,22 @@ const R8_MANAGEMENT_FEES = [
     r8: {},
   },
   {
-    id: 't_fukuyaku_a', label: '服薬管理指導料1（手帳あり3月以内）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_a', label: '服薬管理指導料1（3月以内・手帳あり）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 45 },
   },
   {
-    id: 't_fukuyaku_b', label: '服薬管理指導料2（手帳なし3月以内）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_b', label: '服薬管理指導料1（3月以内・手帳なし）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 59 },
   },
   {
-    id: 't_fukuyaku_c', label: '服薬管理指導料2（3月以外）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_c', label: '服薬管理指導料2（1以外の患者）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 59 },
   },
   {
-    id: 't_fukuyaku_3', label: '服薬管理指導料3（特養入居者）', category: 'management', inputType: 'fixed',
+    id: 't_fukuyaku_3', label: '服薬管理指導料3（介護施設入所者）', category: 'management', inputType: 'fixed',
     changeType: 'modified',
     r8: { fixedPoints: 45 },
   },
@@ -346,7 +346,7 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 59 },
   },
   {
-    id: 't_fukuyaku_renkei', label: '服薬管理指導料（特2A/2B）連携薬剤師', category: 'management', inputType: 'count-only',
+    id: 't_fukuyaku_renkei', label: '服薬管理指導料（特定2A/2B・連携薬剤師）', category: 'management', inputType: 'count-only',
     changeType: 'abolished_merged',
     r8: null,
   },
