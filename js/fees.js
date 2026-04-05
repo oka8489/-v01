@@ -470,6 +470,7 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_choseihi_2_r9', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed', isDetail: true,
+    disabled: true,
     changeType: 'modified',
     changeNote: '110点→1,000点に大幅増点（R9年6月1日から適用）。かかりつけ薬剤師（研修修了者に限る）が薬物療法最適化サイクルを実践し処方医に文書で提案した場合に算定。',
     changePurpose: 'MRP/DRP特定→推奨案提示→アウトカムモニターの薬物療法最適化サイクルの実践を促進。',

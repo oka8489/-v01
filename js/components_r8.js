@@ -59,7 +59,7 @@ const R8FeeTable = {
       const sel = props.data.r6?.[item.id] ?? props.data.r6?.[item.id + '_pts']; if (sel != null) return sel; return null
     }
     function getCount(item) { return props.data.r6?.[item.id + '_cnt'] || 0 }
-    function isDisabled(item) { return item.r8 === null }
+    function isDisabled(item) { return item.r8 === null || item.disabled === true }
     function isMissing(item) { if (isDisabled(item)) return false; if (item.inputType==='count-only') return (props.data.r6?.[item.id+'_amt'] ?? props.data.r6?.[item.id]) == null; return props.data.r6?.[item.id+'_cnt'] == null }
     function isComputed(item) { if (isDisabled(item)) return false; if (item.inputType==='count-only'||item.unit==='単位') return false; return getPoints(item) != null && !isMissing(item) }
     function getAmount(item) {
