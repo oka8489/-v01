@@ -416,6 +416,7 @@ const R8_MANAGEMENT_FEES = [
   {
     id: 't_kyunyu', label: '吸入薬指導加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'modified',
+    countHint: 'R8で算定間隔が3月に1回→6月に1回に変更。対象にインフルエンザの吸入薬を追加。\n\n【件数の目安】R7の件数÷2（算定間隔が倍に）＋インフルエンザ吸入薬の新規分',
     r8: { fixedPoints: 30 },
   },
   {
