@@ -148,7 +148,7 @@ const ImpactTab = {
     return{r6BT,r6PT,r6MT,r6HT,r6LT,r6Total,r8BT,r8PT,r8MT,r8HT,r8LT,r8Total,annualReward,gijutsuDiff,totalDiff,r8Forecast,totalDiffPct,formatYen,formatDiff,formatDiffPercent}
   },
   template:`<div>
-<div class="section"><div class="section-title">経営影響</div>
+<div class="section"><div class="section-title">経営影響シミュレーション</div>
 <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">R7実績 vs R8予測</div>
 <div class="kpi-card info" style="margin-bottom:8px"><div class="kpi-label">R7 年間売上</div><div class="kpi-value" style="font-size:16px">{{formatYen(annualReward)}}</div><div class="kpi-unit">円</div></div>
 <div class="kpi-card" :class="totalDiff>=0?'positive':'negative'" style="margin-bottom:8px"><div class="kpi-label">R8 予測</div><div class="kpi-value" style="font-size:16px">{{formatYen(r8Forecast)}}</div><div class="kpi-unit">円</div></div>
@@ -162,7 +162,41 @@ const ImpactTab = {
 <tr><td style="text-align:left">D.在宅</td><td>{{formatYen(r6HT)}}</td><td>{{formatYen(r8HT)}}</td><td :class="r8HT-r6HT>=0?'diff-pos':'diff-neg'">{{formatDiff(r8HT-r6HT)}}</td></tr>
 <tr><td style="text-align:left">E.介護</td><td>{{formatYen(r6LT)}}</td><td>{{formatYen(r8LT)}}</td><td :class="r8LT-r6LT>=0?'diff-pos':'diff-neg'">{{formatDiff(r8LT-r6LT)}}</td></tr>
 <tr class="total-row" style="font-weight:700"><td style="text-align:left">合計</td><td>{{formatYen(r6Total)}}</td><td>{{formatYen(r8Total)}}</td><td :class="gijutsuDiff>=0?'diff-pos':'diff-neg'">{{formatDiff(gijutsuDiff)}}</td></tr>
-</tbody></table></div></div>`
+</tbody></table></div>
+<div class="section"><div class="section-title" style="border-left:4px solid var(--pos);padding-left:8px;color:var(--pos)">A. 優先的に取り組む加算（ROI高）</div>
+<div style="font-size:12px;line-height:1.8;color:var(--text-muted)">
+<div style="font-size:11px;margin-bottom:8px;color:var(--text-faint)">売上インパクトが大きく、届出・体制整備の手間に対して十分なリターンが見込める加算です。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>地域支援・医薬品供給対応体制加算</b>（27〜67点/処方箋）<br>年間処方箋数 x 点数 = <b style="color:var(--pos)">最大インパクト</b>。後発品85%以上を維持し、9指標の実績を積み上げることで加算2以上を目指す。全加算の中で最も経営影響が大きい。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>在宅薬学総合体制加算</b>（加算1: 30点 / 加算2イ: 100点）<br>R8で加算2イ（個人宅）が50→100点に倍増。在宅訪問の実績があれば処方箋ごとに上乗せされるため、在宅を行っている薬局は必ず届出すべき。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>調剤ベースアップ評価料</b>（4点/処方箋）<br>届出するだけで全処方箋に4点加算。40歳未満の対象職員がいれば必ず届出。R9.6以降は8点に倍増。</div>
+</div></div>
+<div class="section"><div class="section-title" style="border-left:4px solid var(--amber);padding-left:8px;color:var(--amber)">B. 最低限維持する加算（守りの戦略）</div>
+<div style="font-size:12px;line-height:1.8;color:var(--text-muted)">
+<div style="font-size:11px;margin-bottom:8px;color:var(--text-faint)">加算自体の金額は小さいが、他の重要な加算の届出要件に関わるため、実績を維持すべきものです。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>かかりつけ薬剤師 1イ・2イの算定実績</b><br>地域支援・医薬品供給対応体制加算の実績要件④に「服薬管理指導料1イ・2イの算定回数20回以上（1万枚あたり）」がある。<b style="color:var(--neg)">これがゼロだと地域加算2〜5の届出ができなくなる。</b>旧かかりつけ薬剤師指導料の同意患者をそのまま1イ・2イで算定し続けることが重要。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>後発医薬品の使用割合 85%以上</b><br>地域加算の基礎要件。50%以下なら調剤基本料が<b style="color:var(--neg)">5点減算</b>。直近3か月の実績で判定（毎月）。</div>
+</div></div>
+<div class="section"><div class="section-title" style="border-left:4px solid var(--text-faint);padding-left:8px;color:var(--text-faint)">C. 様子見でよい加算（手間 > 収益）</div>
+<div style="font-size:12px;line-height:1.8;color:var(--text-muted)">
+<div style="font-size:11px;margin-bottom:8px;color:var(--text-faint)">点数は設定されているが、対象患者が限定的で算定件数が少ないため、積極的に取りに行くと手間ばかりかかるものです。実績が自然に出てきたときに算定する程度でOK。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>フォローアップ加算</b>（50点・3月に1回）<br>残薬調整加算等の実績がある患者に電話フォローが必要。対象患者が限定的で年間数件程度。年間数千円のために電話業務を増やすのは非効率。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>訪問加算</b>（230点・6月に1回）<br>かかりつけ薬剤師が患家訪問し残薬整理。訪問の手間・交通費を考慮すると年間数件では割に合わない。在宅業務の延長で自然に発生する場合のみ算定。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>服用薬剤調整支援料2</b>（1,000点・R9.6以降）<br>点数は高いが研修修了者が必要。R8年度中は算定不可。R9年6月までに研修修了者を育成し準備する段階。</div>
+</div></div>
+<div class="section"><div class="section-title" style="border-left:4px solid var(--neg);padding-left:8px;color:var(--neg)">D. 注意すべきリスク</div>
+<div style="font-size:12px;line-height:1.8;color:var(--text-muted)">
+<div style="padding:8px 10px;background:#fee;border-radius:6px;margin-bottom:8px"><b style="color:var(--neg)">かかりつけ薬剤師の算定実績ゼロ</b><br>→ 地域加算の要件④を満たせず、加算2〜5（32〜67点/処方箋）が届出不可に。年間数十万円規模の減収リスク。</div>
+<div style="padding:8px 10px;background:#fee;border-radius:6px;margin-bottom:8px"><b style="color:var(--neg)">後発医薬品の使用割合 50%以下</b><br>→ 調剤基本料が<b>5点減算</b>（月600回超の薬局）。加えて地域加算の基礎要件（85%以上）も満たせなくなる。</div>
+<div style="padding:8px 10px;background:#fee;border-radius:6px;margin-bottom:8px"><b style="color:var(--neg)">定例報告（8月）の未提出</b><br>→ 妥結率未報告減算・後発品減算の対象。報告するだけで回避できるため、必ず期限内に提出。</div>
+</div></div>
+<div class="section"><div class="section-title" style="font-size:13px">経営戦略のまとめ</div>
+<div style="font-size:12px;line-height:1.8;color:var(--text-muted);padding:10px;background:var(--surface2);border-radius:6px">
+<b>全ての加算を取りに行く必要はありません。</b>経営インパクトの大きい加算に集中し、小さい加算は自然に実績が出たときだけ算定するのが効率的な戦略です。<br><br>
+<b style="color:var(--pos)">集中すべき:</b> 地域加算 → 在宅薬学総合体制 → ベースアップ評価料<br>
+<b style="color:var(--amber)">守るべき:</b> かかりつけ1イ・2イの実績維持 → 後発品85%維持<br>
+<b style="color:var(--text-faint)">様子見:</b> フォローアップ加算・訪問加算・支援料2
+</div></div>
+</div>`
 }
 
 const TasksTab = {
