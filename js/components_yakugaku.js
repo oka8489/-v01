@@ -536,7 +536,7 @@ const YAKUGAKU_TEMPLATE = `
         </div>
       </div>
       <div class="section">
-        <div class="section-title">服用薬剤調整支援料2（区分14の3） <span class="badge badge-modified">改定</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">1,000点</span></div>
+        <div class="section-title">服用薬剤調整支援料2（区分14の3） <span class="badge badge-modified">改定</span> <span style="font-size:12px;font-weight:400;color:var(--pos)">R8: イ110点/ロ90点 → R9.6〜: 1,000点</span></div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
           <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">複数の医療機関から6種類以上の内服薬が処方されている患者について、<b style="color:var(--r8)">かかりつけ薬剤師</b>（研修修了者に限る）が薬物療法の最適化サイクルを実践し、処方医に文書で提案した場合に算定。R6の110点→R8で<b style="color:var(--r8)">1,000点</b>に大幅増点。<b style="color:var(--neg)">R9年6月1日から適用。</b></div>

@@ -181,7 +181,7 @@ const ImpactTab = {
 <div style="font-size:11px;margin-bottom:8px;color:var(--text-faint)">点数は設定されているが、対象患者が限定的で算定件数が少ないため、積極的に取りに行くと手間ばかりかかるものです。実績が自然に出てきたときに算定する程度でOK。</div>
 <div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>フォローアップ加算</b>（50点・3月に1回）<br>残薬調整加算等の実績がある患者に電話フォローが必要。対象患者が限定的で年間数件程度。年間数千円のために電話業務を増やすのは非効率。</div>
 <div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>訪問加算</b>（230点・6月に1回）<br>かかりつけ薬剤師が患家訪問し残薬整理。訪問の手間・交通費を考慮すると年間数件では割に合わない。在宅業務の延長で自然に発生する場合のみ算定。</div>
-<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>服用薬剤調整支援料2</b>（1,000点・R9.6以降）<br>点数は高いが研修修了者が必要。R8年度中は算定不可。R9年6月までに研修修了者を育成し準備する段階。</div>
+<div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:8px"><b>服用薬剤調整支援料2</b>（R8: イ110点/ロ90点 → R9.6以降: 1,000点）<br>R8年度中は現行点数で算定可能。R9.6以降の1,000点は研修修了者が必要。準備段階として研修修了者の育成を開始。</div>
 </div></div>
 <div class="section"><div class="section-title" style="border-left:4px solid var(--neg);padding-left:8px;color:var(--neg)">D. 注意すべきリスク</div>
 <div style="font-size:12px;line-height:1.8;color:var(--text-muted)">
