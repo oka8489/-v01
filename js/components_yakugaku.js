@@ -436,6 +436,45 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分10の3 注14</div>
         </div>
       </div>
+      <div class="section">
+        <div class="section-title" style="border-left:4px solid var(--amber);padding-left:8px">かかりつけ薬剤師の施設基準</div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="font-weight:700;margin-bottom:6px">1. かかりつけ薬剤師の要件（全て満たすこと）</div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:10px">
+            <div style="font-weight:600;margin-bottom:4px">(1) 勤務経験等</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:6px">
+              <li>保険薬剤師として<b>3年以上</b>の保険薬局勤務経験（病院薬剤師1年まで算入可）</li>
+              <li>当該薬局に<b>週31時間以上</b>勤務（育休等は週24時間以上かつ週4日以上）</li>
+              <li>当該薬局に継続して<b>6か月以上</b>在籍（産休・育休前の在籍期間は合算可）</li>
+            </ul>
+            <div style="font-weight:600;margin-bottom:4px">(2) 研修認定</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:6px">
+              <li>薬剤師認定制度認証機構が認証している<b>研修認定制度等の研修認定</b>を取得</li>
+            </ul>
+            <div style="font-weight:600;margin-bottom:4px">(3) 地域活動</div>
+            <ul style="padding-left:18px;color:var(--text-muted)">
+              <li>医療に係る<b>地域活動の取組</b>に参画していること</li>
+            </ul>
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">2. 薬局の要件（届出時点で全て満たすこと）</div>
+          <div style="padding:8px 10px;background:var(--surface2);border-radius:6px;margin-bottom:10px">
+            <div style="font-weight:600;margin-bottom:4px">(1) 以下のいずれかを満たすこと</div>
+            <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:6px">
+              <li>ア: 常勤の保険薬剤師の当該薬局の在籍期間が<b>平均1年以上</b></li>
+              <li>イ: 管理薬剤師が当該薬局に継続して<b>3年以上</b>在籍</li>
+            </ul>
+            <div style="font-weight:600;margin-bottom:4px">(2) プライバシー配慮</div>
+            <ul style="padding-left:18px;color:var(--text-muted)">
+              <li>患者との会話が他の患者に聞こえないようパーテーション等で区切られた<b>独立したカウンター</b>を有すること</li>
+            </ul>
+          </div>
+          <div style="font-weight:700;margin-bottom:6px">3. 経過措置</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--amber-l);border-radius:6px"><b style="color:var(--amber)">R8年5月31日まで</b>にかかりつけ薬剤師指導料に係る施設基準の届出を行っている場合は、同年<b style="color:var(--amber)">11月30日まで</b>の間は薬局の要件2(1)を満たすものとみなす。</div>
+          <div style="font-weight:700;margin-bottom:6px">4. 届出</div>
+          <div style="color:var(--text-muted)">かかりつけ薬剤師が服薬管理指導を行う旨の届出が必要。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：改定の概要 p.30。告示第71号 施設基準。</div>
+        </div>
+      </div>
     </div>
 
     <div v-if="sub==='yg_gairai'">
