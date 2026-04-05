@@ -459,10 +459,17 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 125 },
   },
   {
-    id: 't_choseihi_2', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed',
+    id: 't_choseihi_2', label: '服用薬剤調整支援料2', category: 'management', inputType: 'fixed',
     changeType: 'modified',
-    changeNote: '110点→1,000点に大幅増点（R9年6月1日から適用）。算定要件を見直し、かかりつけ薬剤師（服薬状況等に係る総合的な管理及び評価を行うために必要な研修を受けたものに限る）が、複数の医療機関から6種類以上の内服薬が処方されている患者について、服用中の薬剤を継続的・一元的に把握し、薬剤調整を必要と認める場合に必要な評価等を実施した上で処方医に文書で提案した場合に算定。同一患者に対し6月に1回、かかりつけ薬剤師1人につき月4回まで。',
-    changePurpose: 'かかりつけ薬剤師によるポリファーマシー患者への包括的介入（薬物療法の適正化支援）を高く評価し、MRP/DRP特定→推奨案提示→アウトカムモニターの薬物療法最適化サイクルの実践を促進。',
+    changeNote: 'R8年度中は現行の点数（イ110点/ロ90点）で算定可能。R9年6月1日から1,000点に増点・要件変更。',
+    changePurpose: 'かかりつけ薬剤師によるポリファーマシー患者への包括的介入を段階的に評価。',
+    r8: { fixedPoints: 110 },
+  },
+  {
+    id: 't_choseihi_2_r9', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed', isSub: true,
+    changeType: 'modified',
+    changeNote: '110点→1,000点に大幅増点（R9年6月1日から適用）。かかりつけ薬剤師（研修修了者に限る）が薬物療法の最適化サイクルを実践し処方医に文書で提案した場合に算定。6月に1回、薬剤師1人月4回まで。',
+    changePurpose: 'MRP/DRP特定→推奨案提示→アウトカムモニターの薬物療法最適化サイクルの実践を促進。',
     r8: { pointsNote: '1,000点（R9.6〜）' },
   },
   {
