@@ -582,7 +582,9 @@ const R8_HOMECARE_FEES = [
   },
   {
     id: 't_zaitaku_ikou', label: '在宅移行初期管理料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
+    changeType: 'new',
+    changeNote: 'R8新設。在宅療養へ移行が予定されている患者に対し、訪問薬剤管理指導の初回算定月に1回算定。退院時の処方内容を踏まえた薬剤調整・残薬整理等を実施。',
+    changePurpose: '入院→在宅のスムーズな移行を薬局が支援することを評価。',
     r8: { fixedPoints: 230 },
   },
   {
