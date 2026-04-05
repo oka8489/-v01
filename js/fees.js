@@ -370,6 +370,12 @@ const MANAGEMENT_FEES = [
     r6: null,
   },
   {
+    id: 't_kakaritsuke_houmon', label: 'かかりつけ薬剤師訪問加算', category: 'management', inputType: 'fixed',
+    changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師が患家を訪問し、残薬整理・服薬管理指導を実施し医療機関に情報提供した場合に230点。6月に1回。',
+    changePurpose: 'かかりつけ薬剤師の包括的評価から実績重視の評価への転換の一環として、在宅訪問の実務を個別に評価。',
+    r6: null,
+  },
+  {
     id: 't_mayaku_kanri', label: '麻薬管理指導加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r6: { fixedPoints: 22 },
@@ -562,12 +568,6 @@ const HOMECARE_FEES = [
     r6: { fixedPoints: 230 },
   },
   // R8 新設（在宅）
-  {
-    id: 't_kakaritsuke_houmon', label: 'かかりつけ薬剤師訪問加算', category: 'homecare', inputType: 'select',
-    changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師指導料・包括管理料の廃止に伴い、実績重視の評価として新設。かかりつけ薬剤師が在宅患者を訪問した場合に230点。残薬調整に係る患家訪問等を評価。',
-    changePurpose: 'かかりつけ薬剤師の包括的評価から実績重視の評価への転換の一環として、在宅訪問の実務を個別に評価し在宅医療の充実を促進。',
-    r6: null,
-  },
   {
     id: 't_fukusu_houmon', label: '複数名薬剤管理指導訪問料', category: 'homecare', inputType: 'select',
     changeType: 'new', changeNote: 'R8新設。複数の薬剤師が同時に患家を訪問して薬剤管理指導を行った場合に300点。在宅訪問薬剤管理指導の促進策の一つとして新設。',

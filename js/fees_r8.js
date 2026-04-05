@@ -367,6 +367,12 @@ const R8_MANAGEMENT_FEES = [
     r8: { fixedPoints: 50 },
   },
   {
+    id: 't_kakaritsuke_houmon', label: 'かかりつけ薬剤師訪問加算', category: 'management', inputType: 'fixed',
+    changeType: 'new',
+    countHint: '服薬管理指導料1イ又は2イ（かかりつけ薬剤師）を算定している患者に対し、患者又は家族等の求めに応じて患家を訪問し、服薬管理・残薬確認等を実施し医療機関に情報提供した場合に算定。6月に1回。\n\n外来服薬支援料1・在宅訪問薬剤管理指導料・服薬情報等提供料を算定中の患者は算定不可。',
+    r8: { fixedPoints: 230 },
+  },
+  {
     id: 't_mayaku_kanri', label: '麻薬管理指導加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
     r8: { fixedPoints: 22 },
@@ -569,11 +575,6 @@ const R8_HOMECARE_FEES = [
     r8: { fixedPoints: 150 },
   },
   // R8 新設
-  {
-    id: 't_kakaritsuke_houmon', label: 'かかりつけ薬剤師訪問加算', category: 'homecare', inputType: 'fixed',
-    changeType: 'new',
-    r8: { fixedPoints: 230 },
-  },
   {
     id: 't_fukusu_houmon', label: '複数名薬剤管理指導訪問料', category: 'homecare', inputType: 'fixed',
     changeType: 'new',
