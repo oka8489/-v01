@@ -164,6 +164,7 @@ const YAKUGAKU_TEMPLATE = `
                 <tr><td>4 情報通信機器を用いた場合</td><td style="text-align:right">45点</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>在宅患者オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
                 <tr><td>在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>注14特例（かかりつけ不在時・連携薬剤師）</td><td style="text-align:right"><b>59点</b></td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>特例（手帳活用率50%以下の薬局）</td><td style="text-align:right">13点</td></tr>
               </tbody></table>
               <div style="font-size:10px;color:var(--text-faint);margin-top:4px">※1の患者が手帳を持参しない場合は2で算定<br>※レセコンでは薬A（1・手帳あり）/薬B（1・手帳なし→59点）/薬C（2）と表記</div>
@@ -184,6 +185,7 @@ const YAKUGAKU_TEMPLATE = `
                 <tr><td>4ニ 情報通信機器・その他</td><td style="text-align:right">59点</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td style="color:var(--del-text);text-decoration:line-through">在宅患者オンライン薬剤管理指導料</td><td style="text-align:right;color:var(--del-text)">→4ロに統合</td></tr>
                 <tr><td style="color:var(--del-text);text-decoration:line-through">在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right;color:var(--del-text)">→4ハに統合</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td style="color:var(--del-text);text-decoration:line-through">注14特例（連携薬剤師）</td><td style="text-align:right;color:var(--del-text)">廃止→1ロ・2ロで算定</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>特例（手帳50%以下）</td><td style="text-align:right">13点</td></tr>
               </tbody></table>
             </div>
