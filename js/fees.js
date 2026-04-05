@@ -491,12 +491,16 @@ const MANAGEMENT_FEES = [
 const HOMECARE_FEES = [
   {
     id: 't_zaitaku_houmon_1', label: '在宅患者訪問薬剤管理指導料（単一1人）', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
+    changeType: 'modified',
+    changeNote: '算定間隔を中6日以上→週1回に見直し。夜間休日の連絡体制整備を要件に追加。点数650点は据置。',
+    changePurpose: '在宅医療の推進に伴い、柔軟な訪問スケジュールを可能にする。',
     r6: { fixedPoints: 650 },
   },
   {
     id: 't_zaitaku_houmon_2', label: '在宅患者訪問薬剤管理指導料（1人以外）', category: 'homecare', inputType: 'count-only',
-    changeType: 'same',
+    changeType: 'modified',
+    changeNote: '算定間隔を中6日以上→週1回に見直し。夜間休日の連絡体制整備を要件に追加。点数320点/290点は据置。',
+    changePurpose: '在宅医療の推進に伴い、柔軟な訪問スケジュールを可能にする。',
     r6: { pointsNote: '320点/290点' },
   },
   {
