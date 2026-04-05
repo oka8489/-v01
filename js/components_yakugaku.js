@@ -637,15 +637,37 @@ const YAKUGAKU_TEMPLATE = `
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.43-50。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">在宅訪問薬剤管理指導の届出が必要。交通費は患家負担。</div>
-          <div style="font-weight:700;margin-top:12px;margin-bottom:6px">主な加算</div>
-          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>加算</th><th style="text-align:right">点数</th></tr></thead><tbody>
-            <tr><td>麻薬管理指導加算</td><td style="text-align:right">100点</td></tr>
-            <tr><td>医療用麻薬持続注射療法加算</td><td style="text-align:right">250点</td></tr>
-            <tr><td>乳幼児加算</td><td style="text-align:right">100点</td></tr>
-            <tr><td>小児特定加算</td><td style="text-align:right">450点</td></tr>
-            <tr><td>在宅中心静脈栄養法加算</td><td style="text-align:right">150点</td></tr>
-          </tbody></table>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分15</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">麻薬管理指導加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">100点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">麻薬の投薬が行われている在宅患者に対し、服用状況・保管状況・副作用の有無等を確認し、必要な指導を行った場合に算定。麻薬小売業者の免許が必要。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">医療用麻薬持続注射療法加算 <span style="font-size:12px;font-weight:400;color:var(--pos)">250点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">医療用麻薬持続注射療法が行われている患者に対し、必要な薬学的管理指導を行った場合に算定。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">乳幼児加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">100点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">6歳未満の乳幼児に対する在宅訪問薬剤管理指導を行った場合に算定。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">小児特定加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">450点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">児童福祉法に規定する障害児（18歳未満）に対する在宅訪問薬剤管理指導を行った場合に算定。乳幼児加算と併算定不可。</div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-title">在宅中心静脈栄養法加算 <span style="font-size:12px;font-weight:400;color:var(--pos)">150点</span></div>
+        <div style="font-size:12px;line-height:1.8">
+          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">中心静脈栄養法を行っている患者に対し、輸液セットの使用状況等を確認し、必要な薬学的管理指導を行った場合に算定。</div>
         </div>
       </div>
       <div class="section">
