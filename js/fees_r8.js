@@ -464,7 +464,7 @@ const R8_MANAGEMENT_FEES = [
   },
   {
     id: 't_choseihi_2', label: '服用薬剤調整支援料2', category: 'management', inputType: 'select',
-    changeType: 'modified',
+    changeType: 'same',
     changeNote: 'R8年度中はR6の基準（イ110点/ロ90点）で算定。R9年6月1日から1,000点に増点・要件変更。',
     changePurpose: 'かかりつけ薬剤師によるポリファーマシー患者への包括的介入を段階的に評価。',
     judgeCategory: 'sonota',
