@@ -26,7 +26,8 @@ const YAKUGAKU_TEMPLATE = `
       <button class="btn" :style="sub==='zt_nyuji'?'background:var(--teal);color:white':''" @click="sub='zt_nyuji'" style="font-size:12px;padding:6px 12px">乳幼児加算</button>
       <button class="btn" :style="sub==='zt_shoni'?'background:var(--teal);color:white':''" @click="sub='zt_shoni'" style="font-size:12px;padding:6px 12px">小児特定加算</button>
       <button class="btn" :style="sub==='zt_chusin'?'background:var(--teal);color:white':''" @click="sub='zt_chusin'" style="font-size:12px;padding:6px 12px">中心静脈栄養法</button>
-      <button class="btn" :style="sub==='yg_zaitaku_new'?'background:var(--teal);color:white':''" @click="sub='yg_zaitaku_new'" style="font-size:12px;padding:6px 12px">在宅R8新設</button>
+      <button class="btn" :style="sub==='zt_ikou'?'background:var(--teal);color:white':''" @click="sub='zt_ikou'" style="font-size:12px;padding:6px 12px">在宅移行初期</button>
+      <button class="btn" :style="sub==='yg_zaitaku_new'?'background:var(--teal);color:white':''" @click="sub='yg_zaitaku_new'" style="font-size:12px;padding:6px 12px">R8新設（在宅）</button>
       <button class="btn" :style="sub==='yg_taiin'?'background:var(--teal);color:white':''" @click="sub='yg_taiin'" style="font-size:12px;padding:6px 12px">退院時共同指導料</button>
       <button class="btn" :style="sub==='yg_joho_keikan'?'background:var(--teal);color:white':''" @click="sub='yg_joho_keikan'" style="font-size:12px;padding:6px 12px">服薬情報等提供料・経管</button>
     </div>
@@ -754,12 +755,12 @@ const YAKUGAKU_TEMPLATE = `
       </div>
     </div>
 
-    <div v-if="sub==='yg_zaitaku_new'">
+    <div v-if="sub==='zt_ikou'">
       <div class="section">
-        <div class="section-title"><span class="badge badge-new">新設</span> 在宅移行初期管理料（区分15の8） <span style="font-size:12px;font-weight:400;color:var(--pos)">230点</span></div>
+        <div class="section-title">在宅移行初期管理料（区分15の8） <span style="font-size:12px;font-weight:400;color:var(--pos)">230点</span></div>
         <div style="font-size:12px;line-height:1.8">
           <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
-          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅療養へ移行が予定されている通院困難な患者に対し、退院前から医療機関と連携して必要な薬学的管理指導を行った場合に算定。訪問薬剤管理指導料の初回算定月に1回。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅療養へ移行が予定されている通院困難な患者に対し、退院前から医療機関と連携して必要な薬学的管理指導を行った場合に算定。訪問薬剤管理指導料の初回算定月に1回。R6新設。R8での変更なし。</div>
           <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
           <div style="color:var(--text-muted);margin-bottom:8px">以下のア及びイを満たす患者:<br>ア: 認知症・精神障害・18歳未満の障害児・6歳未満の乳幼児・末期がん・注射麻薬が必要な患者<br>イ: 訪問薬剤管理指導料（単一建物1人）・居宅/介護予防居宅療養管理指導費に係る医師の指示がある患者</div>
           <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
@@ -772,14 +773,17 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
           <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">在宅訪問薬剤管理指導の届出</b>が前提。</div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
-          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--r8)">R8新設。</b>入院→在宅のスムーズな移行を薬局が支援することを評価。ポリファーマシー対応や服用回数を減らす観点も含む。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R6新設。R8での変更なし。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
-          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.59-61 区分15の8。改定の概要 p.28。</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.59-61 区分15の8。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
           <div style="color:var(--text-muted)">在宅訪問薬剤管理指導の届出が前提。交通費は患家負担。</div>
           <div style="font-size:11px;color:var(--text-faint);margin-top:8px">出典：告示 区分15の8</div>
         </div>
       </div>
+    </div>
+
+    <div v-if="sub==='yg_zaitaku_new'">
       <div class="section">
         <div class="section-title"><span class="badge badge-new">新設</span> 訪問薬剤管理医師同時指導料（区分15の9） <span style="font-size:12px;font-weight:400;color:var(--pos)">150点</span></div>
         <div style="font-size:12px;line-height:1.8">
