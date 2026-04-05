@@ -158,15 +158,15 @@ const YAKUGAKU_TEMPLATE = `
               <table class="fee-table" style="font-size:12px"><tbody>
                 <tr><td>かかりつけ薬剤師指導料</td><td style="text-align:right"><b>76点</b></td></tr>
                 <tr><td>かかりつけ薬剤師包括管理料</td><td style="text-align:right"><b>291点</b></td></tr>
-                <tr style="border-top:2px solid var(--border)"><td>1 3月以内に再度処方箋を持参した患者</td><td style="text-align:right">45点</td></tr>
-                <tr><td>2 1以外の患者</td><td style="text-align:right">59点</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>1 3月以内＋手帳持参</td><td style="text-align:right">45点</td></tr>
+                <tr><td>2 1以外（手帳なし・3月超）</td><td style="text-align:right">59点</td></tr>
                 <tr><td>3 介護施設入所者を訪問</td><td style="text-align:right">45点</td></tr>
                 <tr><td>4 情報通信機器を用いた場合</td><td style="text-align:right">45点</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>在宅患者オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
                 <tr><td>在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
-                <tr style="border-top:2px solid var(--border)"><td>特例（手帳50%以下）</td><td style="text-align:right">13点</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>特例（手帳活用率50%以下の薬局）</td><td style="text-align:right">13点</td></tr>
               </tbody></table>
-              <div style="font-size:10px;color:var(--text-faint);margin-top:4px">※レセコンでは薬A/薬B/薬Cと表記</div>
+              <div style="font-size:10px;color:var(--text-faint);margin-top:4px">※1の患者が手帳を持参しない場合は2で算定<br>※レセコンでは薬A（1・手帳あり）/薬B（1・手帳なし→59点）/薬C（2）と表記</div>
             </div>
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
