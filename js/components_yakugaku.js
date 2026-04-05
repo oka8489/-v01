@@ -564,7 +564,7 @@ const YAKUGAKU_TEMPLATE = `
           <div style="display:flex;gap:12px;margin-bottom:8px">
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--text-faint)">R6（改定前）</div>
-              <div style="color:var(--text-muted)">イ 施設基準あり: <b>110点</b><br>ロ イ以外: <b>90点</b><br>頻度: 3月に1回<br>実施者: 保険薬剤師（誰でも可）<br>内容: 重複投薬等の確認→解消提案</div>
+              <div style="color:var(--text-muted)">イ かかりつけ薬剤師の届出をしている薬局: <b>110点</b><br>ロ イ以外: <b>90点</b><br>頻度: 3月に1回<br>実施者: 保険薬剤師（誰でも可）<br>内容: 重複投薬等の確認→解消提案</div>
             </div>
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
