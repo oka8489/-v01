@@ -31,7 +31,7 @@ const app = createApp({
           }
           const r8fromR7 = {}
           for (const [k,v] of Object.entries(merged)) {
-            if (k.includes('mukin')) continue  // 無菌はR8で手入力
+            if (k.includes('mukin') || k.includes('kyunyu')) continue  // 無菌・吸入薬はR8で手入力
             if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8fromR7[k] = v
           }
           if (merged.t_rx_count) {
@@ -90,7 +90,7 @@ const app = createApp({
           // mergedから件数・金額・統計値をコピー
           const r8new = {}
           for (const [k,v] of Object.entries(merged)) {
-            if (k.includes('mukin')) continue  // 無菌はR8で手入力
+            if (k.includes('mukin') || k.includes('kyunyu')) continue  // 無菌・吸入薬はR8で手入力
             if (k.endsWith('_cnt') || k.endsWith('_amt') || k.startsWith('t_')) r8new[k] = v
           }
           // 新設項目の件数をR7統計値から推定
