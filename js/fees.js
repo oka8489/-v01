@@ -358,6 +358,12 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 76 },
   },
   {
+    id: 't_kakaritsuke_hokatsu', label: 'かかりつけ薬剤師包括管理料', category: 'management', inputType: 'fixed',
+    changeType: 'abolished_merged', changeNote: 'R8で廃止。包括的評価（291点）から実績重視の評価へ転換。服薬管理指導料に統合した上で、フォローアップ加算（50点）・訪問加算（230点）等の個別実績を評価する体系に。',
+    changePurpose: 'かかりつけ薬剤師の包括的評価を廃止し、服薬管理指導の実務（フォローアップ・残薬調整・総合的管理等）に対する実績重視の評価へ転換。',
+    r6: { fixedPoints: 291 },
+  },
+  {
     id: 't_kakaritsuke_fu', label: 'かかりつけ薬剤師フォローアップ加算', category: 'management', inputType: 'fixed',
     changeType: 'new', changeNote: 'R8新設。かかりつけ薬剤師指導料・包括管理料の廃止に伴い、実績重視の評価として新設。かかりつけ薬剤師が服薬後に電話・ICT等でフォローアップを行った場合に50点。3月に1回。',
     changePurpose: 'かかりつけ薬剤師の包括的評価から実績重視の評価への転換の一環として、服薬後のフォローアップ実務を個別に評価。',
@@ -413,12 +419,6 @@ const MANAGEMENT_FEES = [
     id: 't_chozai_go', label: '調剤後薬剤管理指導料', category: 'management', inputType: 'fixed',
     changeType: 'same',
     r6: { fixedPoints: 60 },
-  },
-  {
-    id: 't_kakaritsuke_hokatsu', label: 'かかりつけ薬剤師包括管理料', category: 'management', inputType: 'fixed',
-    changeType: 'abolished_merged', changeNote: 'R8で廃止。包括的評価（291点）から実績重視の評価へ転換。服薬管理指導料に統合した上で、フォローアップ加算（50点）・訪問加算（230点）等の個別実績を評価する体系に。',
-    changePurpose: 'かかりつけ薬剤師の包括的評価を廃止し、服薬管理指導の実務（フォローアップ・残薬調整・総合的管理等）に対する実績重視の評価へ転換。',
-    r6: { fixedPoints: 291 },
   },
   {
     id: 't_joho_1', label: '服薬情報等提供料1（医師の求め）', category: 'management', inputType: 'fixed',
