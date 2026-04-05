@@ -380,7 +380,7 @@ const YAKUGAKU_TEMPLATE = `
           <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-new">新設</span> <b>かかりつけ薬剤師訪問加算</b> 230点（6月に1回）</div>
           <div style="color:var(--text-muted);margin-bottom:4px">多剤服用患者の一元的・継続的な把握を通じて、包括的な薬物治療の評価・介入を実践する取組を評価</div>
           <div style="margin-bottom:6px;padding-left:12px"><span class="badge badge-modified">改定</span> <b>服用薬剤調整支援料2</b> 1,000点（R9年6月以降算定）</div>
-          <div style="margin-top:12px"><iframe width="100%" height="250" src="https://www.youtube.com/embed/sane1HyzZKs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe></div>
+          <div style="margin-top:12px;display:flex;gap:12px;flex-wrap:wrap"><iframe width="48%" height="200" src="https://www.youtube.com/embed/sane1HyzZKs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe><iframe width="48%" height="200" src="https://www.youtube.com/embed/1xepYKArb3M" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius:var(--radius)"></iframe></div>
         </div>
       </div>
       <div class="section">
