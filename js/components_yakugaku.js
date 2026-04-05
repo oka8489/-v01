@@ -152,18 +152,41 @@ const YAKUGAKU_TEMPLATE = `
             <li>注17特例: 手帳活用実績50%以下の薬局は<b>13点</b>（注6〜14の加算は算定不可）</li>
           </ul>
           <div style="font-weight:700;margin-bottom:6px">4. 点数</div>
-          <table class="fee-table" style="font-size:12px;margin-bottom:8px"><thead><tr><th>区分</th><th>対象</th><th style="text-align:right">点数</th></tr></thead><tbody>
-            <tr><td>1イ</td><td>3月以内再来＋手帳・かかりつけ</td><td style="text-align:right">45点</td></tr>
-            <tr><td>1ロ</td><td>3月以内再来＋手帳・その他</td><td style="text-align:right">45点</td></tr>
-            <tr><td>2イ</td><td>上記以外・かかりつけ</td><td style="text-align:right">59点</td></tr>
-            <tr><td>2ロ</td><td>上記以外・その他</td><td style="text-align:right">59点</td></tr>
-            <tr><td>3</td><td>介護施設訪問</td><td style="text-align:right">45点</td></tr>
-            <tr><td>4イ</td><td>情報通信機器・3月以内再来</td><td style="text-align:right">45点</td></tr>
-            <tr><td>4ロ <span class="badge badge-new">新設</span></td><td>情報通信機器・在宅</td><td style="text-align:right">59点</td></tr>
-            <tr><td>4ハ <span class="badge badge-new">新設</span></td><td>情報通信機器・在宅急変</td><td style="text-align:right">59点</td></tr>
-            <tr><td>4ニ</td><td>情報通信機器・その他</td><td style="text-align:right">59点</td></tr>
-            <tr><td>特例</td><td>手帳活用50%以下の薬局</td><td style="text-align:right">13点</td></tr>
-          </tbody></table>
+          <div style="display:flex;gap:12px;margin-bottom:8px">
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--text-faint)">R6（改定前）</div>
+              <table class="fee-table" style="font-size:12px"><tbody>
+                <tr><td>かかりつけ薬剤師指導料</td><td style="text-align:right"><b>76点</b></td></tr>
+                <tr><td>かかりつけ薬剤師包括管理料</td><td style="text-align:right"><b>291点</b></td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>服薬管理指導料1（3月以内再来＋手帳）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>服薬管理指導料2（1以外）</td><td style="text-align:right">59点</td></tr>
+                <tr><td>服薬管理指導料3（介護施設訪問）</td><td style="text-align:right">45点</td></tr>
+                <tr><td>服薬管理指導料4（情報通信機器）</td><td style="text-align:right">45点</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>在宅患者オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
+                <tr><td>在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right"><b>59点</b></td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>特例（手帳50%以下）</td><td style="text-align:right">13点</td></tr>
+              </tbody></table>
+            </div>
+            <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
+              <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
+              <table class="fee-table" style="font-size:12px"><tbody>
+                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師指導料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
+                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師包括管理料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>1イ 3月以内＋手帳・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">45点</td></tr>
+                <tr><td>1ロ 3月以内＋手帳・その他</td><td style="text-align:right">45点</td></tr>
+                <tr><td>2イ 1以外・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">59点</td></tr>
+                <tr><td>2ロ 1以外・その他</td><td style="text-align:right">59点</td></tr>
+                <tr><td>3 介護施設訪問</td><td style="text-align:right">45点</td></tr>
+                <tr><td>4イ 情報通信機器・3月以内</td><td style="text-align:right">45点</td></tr>
+                <tr><td style="color:var(--pos);font-weight:600">4ロ 情報通信機器・在宅</td><td style="text-align:right;color:var(--pos)">59点</td></tr>
+                <tr><td style="color:var(--pos);font-weight:600">4ハ 情報通信機器・在宅急変</td><td style="text-align:right;color:var(--pos)">59点</td></tr>
+                <tr><td>4ニ 情報通信機器・その他</td><td style="text-align:right">59点</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td style="color:var(--del-text);text-decoration:line-through">在宅患者オンライン薬剤管理指導料</td><td style="text-align:right;color:var(--del-text)">→4ロに統合</td></tr>
+                <tr><td style="color:var(--del-text);text-decoration:line-through">在宅患者緊急オンライン薬剤管理指導料</td><td style="text-align:right;color:var(--del-text)">→4ハに統合</td></tr>
+                <tr style="border-top:2px solid var(--border)"><td>特例（手帳50%以下）</td><td style="text-align:right">13点</td></tr>
+              </tbody></table>
+            </div>
+          </div>
           <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
           <div style="color:var(--text-muted);margin-bottom:8px">かかりつけ薬剤師の包括的評価から実績重視の評価へ転換。在宅オンラインを4ロ・4ハに統合し簡素化。</div>
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
