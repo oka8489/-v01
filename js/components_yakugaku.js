@@ -172,8 +172,8 @@ const YAKUGAKU_TEMPLATE = `
             <div style="flex:1;padding:10px;background:var(--surface2);border-radius:6px;border:2px solid var(--pos)">
               <div style="font-weight:700;margin-bottom:4px;font-size:11px;color:var(--pos)">R8（改定後）</div>
               <table class="fee-table" style="font-size:12px"><tbody>
-                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師指導料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
-                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師包括管理料</td><td style="text-align:right;color:var(--del-text)">廃止</td></tr>
+                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師指導料</td><td style="text-align:right;color:var(--del-text)">廃止→1イ・2イで算定</td></tr>
+                <tr><td style="color:var(--del-text);text-decoration:line-through">かかりつけ薬剤師包括管理料</td><td style="text-align:right;color:var(--del-text)">廃止→1イ・2イで算定</td></tr>
                 <tr style="border-top:2px solid var(--border)"><td>1イ 3月以内＋手帳・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">45点</td></tr>
                 <tr><td>1ロ 3月以内＋手帳・その他</td><td style="text-align:right">45点</td></tr>
                 <tr><td>2イ 1以外・<b style="color:var(--pos)">かかりつけ</b></td><td style="text-align:right">59点</td></tr>
