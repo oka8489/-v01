@@ -714,7 +714,27 @@ const YAKUGAKU_TEMPLATE = `
       <div class="section">
         <div class="section-title">麻薬管理指導加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">100点</span></div>
         <div style="font-size:12px;line-height:1.8">
-          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">麻薬の投薬が行われている在宅患者に対し、服用状況・保管状況・副作用の有無等を確認し、必要な指導を行った場合に算定。麻薬小売業者の免許が必要。</div>
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">麻薬の投薬が行われている在宅患者に対し、定期的に服用状況・残薬の状況・保管状況を確認し、副作用の有無等の確認及び必要な指導を行い、処方医に情報提供した場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">麻薬の投薬が行われている在宅患者。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>麻薬の服用状況、残薬の状況及び保管状況の確認</li>
+            <li>残薬の適切な取扱方法を含めた保管取扱い上の注意等の指導</li>
+            <li>麻薬による鎮痛等の効果や副作用（疑われる症状）の有無の確認</li>
+            <li>処方医に対して必要な情報提供</li>
+            <li>訪問薬剤管理指導料・緊急訪問・緊急時等共同指導料が算定されていない場合は算定不可</li>
+            <li>医療用麻薬持続注射療法加算との併算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">麻薬小売業者の免許</b>が必要。在宅訪問薬剤管理指導の届出が前提。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.45-46（訪問薬剤管理指導料の加算2）、p.49（緊急訪問の加算9）、p.51（緊急時等共同指導の加算9）。がん疼痛の薬物療法に関するガイドライン等を参照して実施。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">麻薬小売業者の免許が必要。患者等から返納された麻薬の廃棄届の写しを薬剤服用歴等に添付。</div>
         </div>
       </div>
     </div>
@@ -723,7 +743,28 @@ const YAKUGAKU_TEMPLATE = `
       <div class="section">
         <div class="section-title">医療用麻薬持続注射療法加算 <span style="font-size:12px;font-weight:400;color:var(--pos)">250点</span></div>
         <div style="font-size:12px;line-height:1.8">
-          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">医療用麻薬持続注射療法が行われている患者に対し、必要な薬学的管理指導を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅において医療用麻薬持続注射療法を行っている患者又は家族等に対し、患家を訪問し、麻薬の投与状況・残液の状況・保管状況を確認し、必要な指導及び処方医への情報提供を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">在宅で医療用麻薬持続注射療法を行っている患者。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>麻薬の投与状況・残液の状況・保管状況の確認</li>
+            <li>残液の適切な取扱方法を含めた保管取扱い上の注意等の指導</li>
+            <li>麻薬による鎮痛等の効果や副作用の有無の確認</li>
+            <li>高度管理医療機器の保健衛生上の危害防止に必要な措置</li>
+            <li>処方医及び必要に応じて他の医療関係職種に情報提供</li>
+            <li>訪問薬剤管理指導料・緊急訪問・緊急時等共同指導料が算定されていない場合は算定不可</li>
+            <li>麻薬管理指導加算との併算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px"><b style="color:var(--neg)">麻薬小売業者の免許</b>が必要。在宅訪問薬剤管理指導の届出が前提。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.45-46（訪問薬剤管理指導料の加算3）、p.49-50（緊急訪問の加算10）、p.51-52（緊急時等共同指導の加算10）。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">麻薬小売業者の免許が必要。麻薬廃棄届の写しを薬剤服用歴等に添付。</div>
         </div>
       </div>
     </div>
@@ -732,7 +773,24 @@ const YAKUGAKU_TEMPLATE = `
       <div class="section">
         <div class="section-title">乳幼児加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">100点</span></div>
         <div style="font-size:12px;line-height:1.8">
-          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">6歳未満の乳幼児に対する在宅訪問薬剤管理指導を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">6歳未満の乳幼児に係る在宅訪問薬剤管理指導の際に、体重・適切な剤形等の確認を行い、家族等に対して適切な服薬方法・誤飲防止等の指導を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">6歳未満の乳幼児。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>体重、適切な剤形その他必要な事項等の確認</li>
+            <li>患者の家族等に対して適切な服薬方法、誤飲防止等の服薬指導</li>
+            <li>小児特定加算と併算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">届出不要。在宅訪問薬剤管理指導の届出が前提。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.46（訪問薬剤管理指導料の加算4）、p.50（緊急訪問の加算11）。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。</div>
         </div>
       </div>
     </div>
@@ -741,7 +799,24 @@ const YAKUGAKU_TEMPLATE = `
       <div class="section">
         <div class="section-title">小児特定加算（在宅） <span style="font-size:12px;font-weight:400;color:var(--pos)">450点</span></div>
         <div style="font-size:12px;line-height:1.8">
-          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">児童福祉法に規定する障害児（18歳未満）に対する在宅訪問薬剤管理指導を行った場合に算定。乳幼児加算と併算定不可。</div>
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">児童福祉法第56条の6第2項に規定する障害児（18歳未満）に係る在宅訪問薬剤管理指導の際に、服薬状況等を確認し、患者又は家族等に当該患者の状態に合わせた薬学的管理及び指導を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">児童福祉法に規定する障害児（18歳未満）。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>服薬状況等を確認し、患家を訪問</li>
+            <li>患者又は家族等に当該患者の状態に合わせた薬学的管理及び指導</li>
+            <li>乳幼児加算と併算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">届出不要。在宅訪問薬剤管理指導の届出が前提。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.46（訪問薬剤管理指導料の加算5）、p.50（緊急訪問の加算12）。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。</div>
         </div>
       </div>
     </div>
@@ -750,7 +825,26 @@ const YAKUGAKU_TEMPLATE = `
       <div class="section">
         <div class="section-title">在宅中心静脈栄養法加算 <span style="font-size:12px;font-weight:400;color:var(--pos)">150点</span></div>
         <div style="font-size:12px;line-height:1.8">
-          <div style="color:var(--text-muted);padding:8px 10px;background:var(--surface2);border-radius:6px">中心静脈栄養法を行っている患者に対し、輸液セットの使用状況等を確認し、必要な薬学的管理指導を行った場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">1. 概要</div>
+          <div style="color:var(--text-muted);margin-bottom:8px;padding:8px 10px;background:var(--surface2);border-radius:6px">在宅中心静脈栄養法を行っている患者に対し、患者の状態・投与環境等を確認し、保管方法・配合変化防止に係る対応方法等の指導を行い、処方医に情報提供した場合に算定。</div>
+          <div style="font-weight:700;margin-bottom:6px">2. 対象患者</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">在宅中心静脈栄養法を行っている患者。</div>
+          <div style="font-weight:700;margin-bottom:6px">3. 算定要件</div>
+          <ul style="padding-left:18px;color:var(--text-muted);margin-bottom:8px">
+            <li>患者の状態、投与環境その他必要な事項等の確認</li>
+            <li>保管方法、配合変化防止に係る対応方法等の薬学的管理指導</li>
+            <li>処方医に対して必要な情報提供</li>
+            <li>2種以上の注射薬が同時投与される場合は、配合変化に関する留意点・輸液バッグの遮光等について他の医療関係職種にも情報提供</li>
+            <li>訪問薬剤管理指導料・緊急訪問・緊急時等共同指導料が算定されていない場合は算定不可</li>
+          </ul>
+          <div style="font-weight:700;margin-bottom:6px">4. 施設基準</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">届出不要。在宅訪問薬剤管理指導の届出が前提。</div>
+          <div style="font-weight:700;margin-bottom:6px">5. 改定内容・狙い</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">R8での変更なし。</div>
+          <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
+          <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.46-47（訪問薬剤管理指導料の加算6）、p.50-51（緊急訪問の加算13）、p.52（緊急時等共同指導の加算11）。</div>
+          <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
+          <div style="color:var(--text-muted)">届出不要。</div>
         </div>
       </div>
     </div>
