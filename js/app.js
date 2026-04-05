@@ -59,13 +59,24 @@ const app = createApp({
           // 在宅薬学総合体制加算2 イ・ロ
           r8fromR7.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0  // 単一1人
           r8fromR7.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0  // 1人以外
-          // 服薬管理指導料: R7→R8マッピング（R7はかかりつけ区分なし→全てロに）
-          r8fromR7.t_fukuyaku_a_ro_cnt = merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0  // R7の1(手帳あり) → R8の1ロ
-          // R7の2(手帳なし) + 2(3月超) を合算して1行に → R8の2ロ
+          // 服薬管理指導料: R7→R8マッピング
+          const techoRate = (merged.t_techo_rate || 91) / 100  // 手帳持参率
+          const kakaShido = merged.t_kakaritsuke_shido_cnt || merged.k_kakaritsuke_shido_cnt || 0  // かかりつけ指導料
+          const kakaHokatsu = merged.t_kakaritsuke_hokatsu_cnt || merged.k_kakaritsuke_hokatsu_cnt || 0  // 包括管理料
+          const kakaTotal = kakaShido + kakaHokatsu
+          const renkei = merged.t_fukuyaku_renkei_cnt || merged.k_fukuyaku_renkei_cnt || merged.k_renkei_cnt || 0  // 連携薬剤師特例
+          // 指導料+包括管理料 → 1イ・2イ（手帳持参率で按分）
+          r8fromR7.t_fukuyaku_a_i_cnt = Math.round(kakaTotal * techoRate)
+          r8fromR7.t_fukuyaku_c_i_cnt = Math.round(kakaTotal * (1 - techoRate))
+          // 連携薬剤師特例 → 1ロ・2ロに加算（手帳持参率で按分）
+          const renkei1ro = Math.round(renkei * techoRate)
+          const renkei2ro = Math.round(renkei * (1 - techoRate))
+          // R7の通常分（かかりつけ以外）→ R8の1ロ・2ロ
+          r8fromR7.t_fukuyaku_a_ro_cnt = (merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0) + renkei1ro
           const fukuB = merged.t_fukuyaku_b_cnt || merged.k_fukuyaku_b_cnt || 0
           const fukuC = merged.t_fukuyaku_c_cnt || merged.k_fukuyaku_c_cnt || 0
-          r8fromR7.t_fukuyaku_c_cnt = fukuB + fukuC  // R7親行も合算
-          r8fromR7.t_fukuyaku_c_ro_cnt = fukuB + fukuC  // R8の2ロ
+          r8fromR7.t_fukuyaku_c_cnt = fukuB + fukuC
+          r8fromR7.t_fukuyaku_c_ro_cnt = fukuB + fukuC + renkei2ro
           Object.assign(r8fromR7, r7selects)
           r8Data.r6 = r8fromR7
         }
@@ -127,12 +138,21 @@ const app = createApp({
           r8new.t_fukuyaku_online_ha_cnt = merged.t_zaitaku_kinkyu_online_cnt || 0  // 緊急オンライン → R8の4ハ
           r8new.k_zaitaku_taisei2i_cnt = merged.k_zaitaku_houmon_1_cnt || 0
           r8new.k_zaitaku_taisei2ro_cnt = merged.k_zaitaku_houmon_other_cnt || 0
-          // 服薬管理指導料: R7→R8マッピング（R7はかかりつけ区分なし→全てロに）
-          r8new.t_fukuyaku_a_ro_cnt = merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0
+          // 服薬管理指導料: R7→R8マッピング
+          const techoRate2 = (merged.t_techo_rate || 91) / 100
+          const kakaShido2 = merged.t_kakaritsuke_shido_cnt || merged.k_kakaritsuke_shido_cnt || 0
+          const kakaHokatsu2 = merged.t_kakaritsuke_hokatsu_cnt || merged.k_kakaritsuke_hokatsu_cnt || 0
+          const kakaTotal2 = kakaShido2 + kakaHokatsu2
+          const renkei2 = merged.t_fukuyaku_renkei_cnt || merged.k_fukuyaku_renkei_cnt || merged.k_renkei_cnt || 0
+          r8new.t_fukuyaku_a_i_cnt = Math.round(kakaTotal2 * techoRate2)
+          r8new.t_fukuyaku_c_i_cnt = Math.round(kakaTotal2 * (1 - techoRate2))
+          const renkei1ro2 = Math.round(renkei2 * techoRate2)
+          const renkei2ro2 = Math.round(renkei2 * (1 - techoRate2))
+          r8new.t_fukuyaku_a_ro_cnt = (merged.t_fukuyaku_a_cnt || merged.k_fukuyaku_a_cnt || 0) + renkei1ro2
           const fukuB2 = merged.t_fukuyaku_b_cnt || merged.k_fukuyaku_b_cnt || 0
           const fukuC2 = merged.t_fukuyaku_c_cnt || merged.k_fukuyaku_c_cnt || 0
           r8new.t_fukuyaku_c_cnt = fukuB2 + fukuC2
-          r8new.t_fukuyaku_c_ro_cnt = fukuB2 + fukuC2
+          r8new.t_fukuyaku_c_ro_cnt = fukuB2 + fukuC2 + renkei2ro2
           // プルダウン値を戻してからr6を丸ごと置き換え（reactivity確保）
           Object.assign(r8new, selects)
           r8Data.r6 = r8new
