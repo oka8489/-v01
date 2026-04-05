@@ -393,6 +393,7 @@ const MANAGEMENT_FEES = [
   {
     id: 't_tokutei_2', label: '特定薬剤管理指導加算2（抗悪性腫瘍）', category: 'management', inputType: 'select', isSub: true,
     changeType: 'same',
+    judgeInfo: { title: '特定薬剤管理指導加算2', desc: '届出が必要（地域支援・医薬品供給対応体制加算）', checks: ['連携充実加算を届け出ている医療機関で抗悪性腫瘍剤を注射された患者が対象', 'レジメン等を確認し薬学的管理・指導を実施', '電話等で副作用・服薬状況を確認', '確認結果を医療機関に文書で情報提供', '月1回に限り算定（処方箋受付がない月でも算定可）'] },
     r6: { options: [{ value: 0, label: '算定なし' }, { value: 100, label: '加算（100点）' }] },
   },
   {
@@ -466,7 +467,8 @@ const MANAGEMENT_FEES = [
     id: 't_choseihi_2', label: '服用薬剤調整支援料2', category: 'management', inputType: 'select',
     description: '医師へ減薬提案',
     changeType: 'modified',
-    r6: { options: [{ value: 0, label: '算定なし' }, { value: 110, label: 'イ 施設基準あり（110点）' }, { value: 90, label: 'ロ イ以外（90点）' }] },
+    judgeInfo: { title: '服用薬剤調整支援料2', desc: 'イ: かかりつけ薬剤師の届出をしている薬局（110点）\nロ: イ以外（90点）', checks: ['複数の医療機関から6種類以上の内服薬が処方されている患者が対象', '患者又は家族等の求めに応じて実施', '服用中の薬剤を一元的に把握し、重複投薬等が確認された場合に処方医に文書で提案', '3月に1回に限り算定', 'イの届出: かかりつけ薬剤師の施設基準（様式90）の届出があればイで算定可能'] },
+    r6: { options: [{ value: 0, label: '算定なし' }, { value: 110, label: 'イ かかりつけ届出あり（110点）' }, { value: 90, label: 'ロ イ以外（90点）' }] },
   },
   {
     id: 't_choseihi_2_r9', label: '服用薬剤調整支援料2（R9年6月以降算定）', category: 'management', inputType: 'fixed', isDetail: true,
