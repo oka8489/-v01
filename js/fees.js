@@ -412,9 +412,9 @@ const MANAGEMENT_FEES = [
     r6: { fixedPoints: 12 },
   },
   {
-    id: 't_shoni', label: '小児特定加算', category: 'management', inputType: 'select', isSub: true,
+    id: 't_shoni', label: '小児特定加算', category: 'management', inputType: 'fixed', isSub: true,
     changeType: 'same',
-    r6: { options: [{ value: 0, label: '算定なし' }, { value: 350, label: '加算（350点）' }] },
+    r6: { fixedPoints: 350 },
   },
   {
     id: 't_kyunyu', label: '吸入薬指導加算', category: 'management', inputType: 'fixed', isSub: true,
@@ -533,9 +533,9 @@ const HOMECARE_FEES = [
     r6: { fixedPoints: 100 },
   },
   {
-    id: 't_zaitaku_shoni', label: '小児特定加算（在宅）', category: 'homecare', inputType: 'select', isSub: true,
+    id: 't_zaitaku_shoni', label: '小児特定加算（在宅）', category: 'homecare', inputType: 'fixed', isSub: true,
     changeType: 'same',
-    r6: { options: [{ value: 0, label: '算定なし' }, { value: 350, label: '加算（350点）' }] },
+    r6: { fixedPoints: 350 },
   },
   {
     id: 't_zaitaku_mayaku_chu', label: '医療用麻薬持続注射療法加算', category: 'homecare', inputType: 'fixed', isSub: true,
