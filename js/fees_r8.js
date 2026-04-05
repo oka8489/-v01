@@ -400,7 +400,10 @@ const R8_MANAGEMENT_FEES = [
   },
   {
     id: 't_tokutei_3ro', label: '特定薬剤管理指導加算3ロ（選定療養等）', category: 'management', inputType: 'fixed', isSub: true,
-    changeType: 'same',
+    changeType: 'modified',
+    changeNote: 'R8でバイオ後続品の選択に係る説明を算定対象に追加。バイオ医薬品の一般名処方又はバイオ後続品が処方された患者に品質・有効性・安全性を説明した場合も算定可能に。',
+    changePurpose: 'バイオ後続品の使用促進に向け、薬剤師による患者への適切な説明を評価。薬担規則改正と連動。',
+    countHint: 'R8で以下が算定対象に追加：\n・バイオ医薬品の一般名処方を受けた患者への説明\n・バイオ後続品が処方された患者への品質等の説明\n\nR7の件数に加え、バイオ後続品関連の新規分を上乗せして入力してください。',
     r8: { fixedPoints: 10 },
   },
   {

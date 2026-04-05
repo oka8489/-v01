@@ -403,7 +403,9 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_tokutei_3ro', label: '特定薬剤管理指導加算3ロ（選定療養等）', category: 'management', inputType: 'fixed', isSub: true,
-    changeType: 'same',
+    changeType: 'modified',
+    changeNote: 'R8でバイオ後続品の選択に係る説明を算定対象に追加。点数10点は据置。',
+    changePurpose: 'バイオ後続品の使用促進に向け、薬剤師による患者への適切な説明を評価。',
     r6: { fixedPoints: 10 },
   },
   {
