@@ -359,6 +359,7 @@ const R8_MANAGEMENT_FEES = [
   {
     id: 't_kakaritsuke_hokatsu', label: 'かかりつけ薬剤師包括管理料', category: 'management', inputType: 'fixed',
     changeType: 'abolished_merged',
+    changeNote: 'R8で廃止。地域包括診療料等の患者向けに調剤基本料・調製料・管理料等を291点に包括する仕組み。統合先はなく単純廃止。',
     r8: null,
   },
   {

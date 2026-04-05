@@ -353,14 +353,14 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_kakaritsuke_shido', label: 'かかりつけ薬剤師指導料', category: 'management', inputType: 'fixed',
-    changeType: 'abolished_merged', changeNote: 'R8で廃止。包括的評価から実績重視の評価へ転換。服薬管理指導料1イ/2イ（かかりつけ薬剤師区分）に統合した上で、フォローアップ加算（50点）・訪問加算（230点）を新設。R6は76点。',
+    changeType: 'abolished_merged', changeNote: 'R8で廃止（76点）。代わりに服薬管理指導料に1イ/2イ（かかりつけ薬剤師）区分を新設し、フォローアップ加算（50点）・訪問加算（230点）で実績を評価する体系に転換。',
     changePurpose: 'かかりつけ薬剤師の包括的評価を廃止し、電話等による患者フォローアップや残薬調整に係る患家訪問等の実務に対する実績重視の評価へ転換。',
     r6: { fixedPoints: 76 },
   },
   {
     id: 't_kakaritsuke_hokatsu', label: 'かかりつけ薬剤師包括管理料', category: 'management', inputType: 'fixed',
-    changeType: 'abolished_merged', changeNote: 'R8で廃止。包括的評価（291点）から実績重視の評価へ転換。服薬管理指導料に統合した上で、フォローアップ加算（50点）・訪問加算（230点）等の個別実績を評価する体系に。',
-    changePurpose: 'かかりつけ薬剤師の包括的評価を廃止し、服薬管理指導の実務（フォローアップ・残薬調整・総合的管理等）に対する実績重視の評価へ転換。',
+    changeType: 'abolished_merged', changeNote: 'R8で廃止。地域包括診療料等を算定する患者に対し、調剤基本料・調製料・管理料等を291点に包括して算定する仕組み。かかりつけ薬剤師指導料とともに廃止。統合先はなく単純廃止。',
+    changePurpose: 'かかりつけ薬剤師の包括的評価を廃止し、実績重視の評価へ転換。',
     r6: { fixedPoints: 291 },
   },
   {
