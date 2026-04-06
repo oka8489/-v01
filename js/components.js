@@ -1695,23 +1695,29 @@ const RequirementsTab = {
     }
     watch([ztStep, zt2Step, ztR7, ztResult, zt2Result, ztApplied, ztChecks, zt2Checks], saveZtJudge, { deep: true })
 
-    // ベースアップ評価料の試算
+    // ベースアップ評価料の試算（様式104に準拠）
     const buRxCount = ref(props.data.r6?.k_kihon_cnt || 0)
     const defaultStaff = [{ type: 'pharmacist', age: 0, monthlySalary: 0, bonus: 0 }]
     const buStaff = reactive(props.data.baseup?.staff ? JSON.parse(JSON.stringify(props.data.baseup.staff)) : defaultStaff)
     function buIsTarget(s) { return s.type === 'clerk' || (s.age > 0 && s.age < 40) }
     const buTargetCount = computed(() => buStaff.filter(buIsTarget).length)
-    // 年間人件費（法定福利費込）= (月額給与×12 + 賞与) × 1.15
-    function buAnnualCost(s) { return Math.ceil((s.monthlySalary * 12 + (s.bonus || 0)) * 1.15) }
-    // 必要賃上げ額 = 年間人件費 × 賃上げ率
+    function buRate(s) { return s.type === 'clerk' ? 0.057 : 0.032 }
+    // ベア等（様式104 (7)）= 基本給等(月額) × 率 × 12
+    function buBearAmount(s) { return Math.ceil(s.monthlySalary * buRate(s)) * 12 }
+    // それに伴う増加分（様式104 (9)）= 賞与増 + 法定福利費増
+    function buAssociated(s) {
+      const r = buRate(s)
+      const bonusInc = Math.ceil((s.bonus || 0) * r)
+      const fukuriInc = Math.ceil((s.monthlySalary * 12 * r + bonusInc) * 0.15)
+      return bonusInc + fukuriInc
+    }
+    // 必要額合計 = ベア等 + それに伴う増加分
+    function buPersonTotal(s) { return buBearAmount(s) + buAssociated(s) }
     const buRequiredTotal = computed(() => buStaff.reduce((sum, s) => {
-      if (buIsTarget(s) && s.monthlySalary > 0) {
-        const rate = s.type === 'clerk' ? 0.057 : 0.032
-        return sum + Math.ceil(buAnnualCost(s) * rate)
-      }
+      if (buIsTarget(s) && s.monthlySalary > 0) return sum + buPersonTotal(s)
       return sum
     }, 0))
-    const buRequiredWithFukuri = buRequiredTotal // 法定福利費は年間人件費に既に含む
+    const buRequiredWithFukuri = buRequiredTotal
     function buAddStaff() { buStaff.push({ type: 'pharmacist', age: 0, monthlySalary: 0, bonus: 0 }) }
     function buRemoveStaff() { if (buStaff.length > 1) buStaff.pop() }
     const buApplyVal = ref('4')
@@ -1800,7 +1806,7 @@ const RequirementsTab = {
              ztStep, ztR7, ztResult, ztApplied, ztChecks, ztCheckLabels, ztAllOk, ztNext, ztBack, ztReset, ztApplyToR8,
              zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
              ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
-             buRxCount, buStaff, buIsTarget, buAnnualCost, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
+             buRxCount, buStaff, buIsTarget, buRate, buBearAmount, buAssociated, buPersonTotal, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied,
              fukuyakuJudge, saveFukuyakuJudge, fjNext, fjReset, fjApplyToR8 }
   },
@@ -2900,7 +2906,7 @@ const RequirementsTab = {
           <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
-            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当（通勤手当除く）</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分の場合のみ</div></th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当（通勤手当除く）</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分の場合のみ</div></th><th style="width:40px;text-align:right">率</th><th style="width:100px;text-align:right"><div>ベア等</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給等×率×12</div></th><th style="width:100px;text-align:right"><div>伴う増加分</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">賞与増＋法定福利費増</div></th><th style="width:100px;text-align:right">必要額</th></tr></thead>
             <tbody>
               <tr v-for="(s, i) in buStaff" :key="i">
                 <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
@@ -2908,20 +2914,21 @@ const RequirementsTab = {
                 <td style="text-align:center"><input v-if="s.type==='pharmacist'" type="number" class="fee-input" style="max-width:45px;text-align:center;font-size:12px" v-model.number="s.age"><span v-else style="color:var(--text-faint);font-size:11px">不問</span></td>
                 <td style="text-align:right"><input type="text" class="fee-input" style="max-width:110px;text-align:right;font-size:12px" :value="fmtC(s.monthlySalary)" @change="s.monthlySalary=parseNum($event.target.value)"></td>
                 <td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px;text-align:right;font-size:12px" :value="fmtC(s.bonus||0)" @change="s.bonus=parseNum($event.target.value)"></td>
-                <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buAnnualCost(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
                 <td style="text-align:right"><span v-if="buIsTarget(s)">{{s.type==='clerk'?'5.7%':'3.2%'}}</span><span v-else>-</span></td>
-                <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(Math.ceil(buAnnualCost(s) * (s.type==='clerk'?0.057:0.032)))}}</span><span v-else>-</span></td>
+                <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buBearAmount(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
+                <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buAssociated(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
+                <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buPersonTotal(s))}}</span><span v-else>-</span></td>
               </tr>
             </tbody>
             <tfoot>
-              <tr style="font-weight:700"><td colspan="7" style="text-align:right">合計</td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
+              <tr style="font-weight:700"><td colspan="8" style="text-align:right">合計</td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
             </tfoot>
           </table>
           <div style="display:flex;gap:8px;margin-top:8px">
             <button class="btn" style="font-size:11px;padding:4px 12px" @click="buAddStaff()">＋ 職員追加</button>
             <button v-if="buStaff.length>1" class="btn" style="font-size:11px;padding:4px 12px" @click="buRemoveStaff()">－ 削除</button>
           </div>
-          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※年間人件費＝(月額給与×12＋賞与)×1.15（法定福利費）。通勤手当は月額給与に含めない。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※様式104に準拠。ベア等＝基本給等(月額)×賃上げ率×12ヶ月。伴う増加分＝賞与増＋法定福利費増(15%)。</div>
         </div>
 
         <div style="padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.8" :style="buRxCount>0&&buRequiredTotal>0?(buRxCount*40>=buRequiredTotal?'background:#e8f5e9;border:2px solid var(--pos)':'background:#fff3e0;border:2px solid var(--amber)'):'background:var(--surface2)'">
