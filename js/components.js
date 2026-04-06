@@ -2900,7 +2900,7 @@ const RequirementsTab = {
           <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
-            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right">月額給与</th><th style="width:100px;text-align:right">賞与（年額）</th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分</div></th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
             <tbody>
               <tr v-for="(s, i) in buStaff" :key="i">
                 <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
@@ -2921,7 +2921,7 @@ const RequirementsTab = {
             <button class="btn" style="font-size:11px;padding:4px 12px" @click="buAddStaff()">＋ 職員追加</button>
             <button v-if="buStaff.length>1" class="btn" style="font-size:11px;padding:4px 12px" @click="buRemoveStaff()">－ 削除</button>
           </div>
-          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※月額給与＝基本給＋毎月固定の手当（通勤手当除く）。賞与は基本給連動分がある場合に入力。年間人件費＝(月額給与×12＋賞与)×1.15。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※年間人件費＝(月額給与×12＋賞与)×1.15（法定福利費）。通勤手当は月額給与に含めない。</div>
         </div>
 
         <div style="padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.8" :style="buRxCount>0&&buRequiredTotal>0?(buRxCount*40>=buRequiredTotal?'background:#e8f5e9;border:2px solid var(--pos)':'background:#fff3e0;border:2px solid var(--amber)'):'background:var(--surface2)'">
