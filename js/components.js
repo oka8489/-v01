@@ -2900,7 +2900,7 @@ const RequirementsTab = {
           <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
-            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分</div></th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分の場合のみ</div></th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
             <tbody>
               <tr v-for="(s, i) in buStaff" :key="i">
                 <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
