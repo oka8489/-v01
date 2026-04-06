@@ -24,7 +24,7 @@ function r8CalcCategoryTotal(data, items) {
   if (!data?.r6) return 0
   for (const item of items) {
     if (item.id.startsWith('kaz_') || item.isGroupHeader || item.hideAmount) continue
-    if (item.id==='k_baseup_chinage') { const pts=data.r6?.['k_baseup']||0; const cnt=data.r6?.['k_baseup_cnt']||0; total -= cnt*pts*POINT_TO_YEN; continue }
+    if (item.id==='k_baseup_chinage') { if (data.r6?.['k_baseup_chinage_amt'] != null) { total += data.r6['k_baseup_chinage_amt']; } else { const pts=data.r6?.['k_baseup']||0; const cnt=data.r6?.['k_baseup_cnt']||0; total -= cnt*pts*POINT_TO_YEN; } continue }
     if (item.inputType === 'count-only' || item.unit === '単位') total += r8CalcGetAmountDirect(data, item)
     else if (item.subRows) {
       const sel = data.r6?.[item.id] ?? data.r6?.[item.id + '_pts']
@@ -65,7 +65,7 @@ const R8FeeTable = {
     function isComputed(item) { if (isDisabled(item)) return false; if (item.inputType==='count-only'||item.unit==='単位') return false; return getPoints(item) != null && !isMissing(item) }
     function getAmount(item) {
       // 賃上げ充当分: ベースアップ評価料の収入を全額マイナス
-      if (item.id==='k_baseup_chinage') { const pts=props.data.r6?.['k_baseup']||0; const cnt=props.data.r6?.['k_baseup_cnt']||0; return -(cnt*pts*POINT_TO_YEN) }
+      if (item.id==='k_baseup_chinage') { if (props.data.r6?.['k_baseup_chinage_amt'] != null) return props.data.r6['k_baseup_chinage_amt']; const pts=props.data.r6?.['k_baseup']||0; const cnt=props.data.r6?.['k_baseup_cnt']||0; return -(cnt*pts*POINT_TO_YEN) }
       if (item.inputType==='count-only'||item.unit==='単位') return props.data.r6?.[item.id+'_amt'] ?? props.data.r6?.[item.id] ?? 0
       // subRowsを持つ親アイテムで子が展開中なら、子の合計を返す
       if (item.subRows && String(getPoints(item)) === String(item.subRows.trigger)) {
