@@ -2914,7 +2914,7 @@ const RequirementsTab = {
               </tr>
             </tbody>
             <tfoot>
-              <tr style="font-weight:700"><td colspan="5" style="text-align:right">合計 {{buTargetCount}}名</td><td></td><td></td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
+              <tr style="font-weight:700"><td colspan="7" style="text-align:right">合計</td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
             </tfoot>
           </table>
           <div style="display:flex;gap:8px;margin-top:8px">
