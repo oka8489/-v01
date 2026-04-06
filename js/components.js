@@ -2894,7 +2894,8 @@ const RequirementsTab = {
         </div>
 
         <div style="margin-bottom:16px">
-          <div style="font-weight:700;margin-bottom:8px">対象職員（40歳未満）の入力</div>
+          <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
             <thead><tr><th style="width:40px"></th><th style="width:100px">職種</th><th style="width:60px;text-align:center">年齢</th><th style="width:140px;text-align:right">月額給与（税引前）</th><th style="width:60px;text-align:center">対象</th><th style="width:60px;text-align:right">賃上げ率</th><th style="width:120px;text-align:right">年間賃上げ必要額</th></tr></thead>
             <tbody>
