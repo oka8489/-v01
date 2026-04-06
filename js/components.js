@@ -1697,6 +1697,7 @@ const RequirementsTab = {
 
     // ベースアップ評価料の試算（様式104に準拠）
     const buRxCount = ref(props.data.r6?.k_kihon_cnt || 0)
+    const buBonusLinked = ref(props.data.baseup?.bonusLinked ?? false)
     const defaultStaff = [{ type: 'pharmacist', age: 0, monthlySalary: 0, bonus: 0 }]
     const buStaff = reactive(props.data.baseup?.staff ? JSON.parse(JSON.stringify(props.data.baseup.staff)) : defaultStaff)
     function buIsTarget(s) { return s.type === 'clerk' || (s.age > 0 && s.age < 40) }
@@ -1707,7 +1708,7 @@ const RequirementsTab = {
     // それに伴う増加分（様式104 (9)）= 賞与増 + 法定福利費増
     function buAssociated(s) {
       const r = buRate(s)
-      const bonusInc = Math.ceil((s.bonus || 0) * r)
+      const bonusInc = buBonusLinked.value ? Math.ceil((s.bonus || 0) * r) : 0
       const fukuriInc = Math.ceil((s.monthlySalary * 12 * r + bonusInc) * 0.15)
       return bonusInc + fukuriInc
     }
@@ -1731,9 +1732,10 @@ const RequirementsTab = {
         buApplied.value = true
       }
     }
-    watch([buRxCount, buStaff], () => {
+    watch([buRxCount, buStaff, buBonusLinked], () => {
       if (!props.data.baseup) props.data.baseup = {}
       props.data.baseup.staff = JSON.parse(JSON.stringify(buStaff))
+      props.data.baseup.bonusLinked = buBonusLinked.value
     }, { deep: true })
 
     const JUDGE_PAGES = {
@@ -1806,7 +1808,7 @@ const RequirementsTab = {
              ztStep, ztR7, ztResult, ztApplied, ztChecks, ztCheckLabels, ztAllOk, ztNext, ztBack, ztReset, ztApplyToR8,
              zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
              ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
-             buRxCount, buStaff, buIsTarget, buRate, buBearAmount, buAssociated, buPersonTotal, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
+             buRxCount, buBonusLinked, buStaff, buIsTarget, buRate, buBearAmount, buAssociated, buPersonTotal, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied,
              fukuyakuJudge, saveFukuyakuJudge, fjNext, fjReset, fjApplyToR8 }
   },
@@ -2906,14 +2908,14 @@ const RequirementsTab = {
           <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
-            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当（通勤手当除く）</div></th><th style="width:100px;text-align:right"><div>賞与（年額）</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動分の場合のみ</div></th><th style="width:40px;text-align:right">率</th><th style="width:100px;text-align:right"><div>ベア等</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給等×率×12</div></th><th style="width:100px;text-align:right"><div>伴う増加分</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">賞与増＋法定福利費増</div></th><th style="width:100px;text-align:right">必要額</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right"><div>月額給与</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給＋固定手当（通勤手当除く）</div></th><th style="width:100px;text-align:right"><div><label style="display:flex;align-items:center;justify-content:flex-end;gap:4px;cursor:pointer"><input type="checkbox" v-model="buBonusLinked" style="margin:0"> 賞与（年額）</label></div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給連動の場合</div></th><th style="width:40px;text-align:right">率</th><th style="width:100px;text-align:right"><div>ベア等</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">基本給等×率×12</div></th><th style="width:100px;text-align:right"><div>伴う増加分</div><div style="font-weight:400;font-size:10px;color:var(--text-faint)">賞与増＋法定福利費増</div></th><th style="width:100px;text-align:right">必要額</th></tr></thead>
             <tbody>
               <tr v-for="(s, i) in buStaff" :key="i">
                 <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
                 <td><select class="fee-select" style="font-size:12px;padding:2px 4px" v-model="s.type"><option value="pharmacist">薬剤師</option><option value="clerk">事務職員</option></select></td>
                 <td style="text-align:center"><input v-if="s.type==='pharmacist'" type="number" class="fee-input" style="max-width:45px;text-align:center;font-size:12px" v-model.number="s.age"><span v-else style="color:var(--text-faint);font-size:11px">不問</span></td>
                 <td style="text-align:right"><input type="text" class="fee-input" style="max-width:110px;text-align:right;font-size:12px" :value="fmtC(s.monthlySalary)" @change="s.monthlySalary=parseNum($event.target.value)"></td>
-                <td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px;text-align:right;font-size:12px" :value="fmtC(s.bonus||0)" @change="s.bonus=parseNum($event.target.value)"></td>
+                <td style="text-align:right"><input v-if="buBonusLinked" type="text" class="fee-input" style="max-width:90px;text-align:right;font-size:12px" :value="fmtC(s.bonus||0)" @change="s.bonus=parseNum($event.target.value)"><span v-else style="color:var(--text-faint);font-size:11px">-</span></td>
                 <td style="text-align:right"><span v-if="buIsTarget(s)">{{s.type==='clerk'?'5.7%':'3.2%'}}</span><span v-else>-</span></td>
                 <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buBearAmount(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
                 <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buAssociated(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
