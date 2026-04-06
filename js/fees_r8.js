@@ -19,7 +19,7 @@ const R8_BASIC_FEES = [
     ]},
   },
   {
-    id: 'k_baseup_chinage', label: '賃上げ充当分（控除）', category: 'basic', inputType: 'count-only', isDetail: true,
+    id: 'k_baseup_chinage', label: '賃上げ充当分（控除）', category: 'basic', inputType: 'count-only', isDetail: true, hideCount: true,
     changeType: 'new', goToJudgeId: 'k_baseup',
     countHint: 'ベースアップ評価料の収入は全額を対象職員の賃上げに充当する必要があります。判定ページで職員情報を入力しR8予測に反映してください。',
     r8: {},
