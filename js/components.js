@@ -2941,10 +2941,9 @@ const RequirementsTab = {
               <div><div style="color:var(--text-muted);font-size:11px">差額</div><div style="font-weight:700" :style="buRxCount*40>=buRequiredTotal?'color:var(--pos)':'color:var(--neg)'">{{formatYen(buRxCount*40 - buRequiredTotal)}} 円</div></div>
             </div>
             <div style="font-weight:700;margin-bottom:4px">
-              <span v-if="buRxCount*40>=buRequiredTotal" style="color:var(--pos)">収入が賃上げ必要額を上回ります → 届出を推奨</span>
-              <span v-else style="color:var(--amber)">収入が賃上げ必要額を下回ります → 持ち出しが発生</span>
+              <span v-if="buRxCount*40>=buRequiredTotal" style="color:var(--pos)">収入が賃上げ必要額を上回ります</span>
+              <span v-else style="color:var(--amber)">収入が賃上げ必要額を下回ります（持ち出しが発生）</span>
             </div>
-            <div v-if="buRxCount*40<buRequiredTotal" style="font-size:12px;color:var(--text-muted)">ただし賃上げ自体は経営上の判断であり、持ち出しがあっても届出するケースもあります。</div>
           </template>
           <template v-else>
             <div style="color:var(--text-muted)">処方箋受付回数と対象職員の情報を入力すると、試算結果を表示します。</div>
