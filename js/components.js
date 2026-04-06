@@ -1697,19 +1697,22 @@ const RequirementsTab = {
 
     // ベースアップ評価料の試算
     const buRxCount = ref(props.data.r6?.k_kihon_cnt || 0)
-    const defaultStaff = [{ type: 'pharmacist', age: 0, monthlySalary: 0 }]
+    const defaultStaff = [{ type: 'pharmacist', age: 0, monthlySalary: 0, bonus: 0 }]
     const buStaff = reactive(props.data.baseup?.staff ? JSON.parse(JSON.stringify(props.data.baseup.staff)) : defaultStaff)
     function buIsTarget(s) { return s.type === 'clerk' || (s.age > 0 && s.age < 40) }
     const buTargetCount = computed(() => buStaff.filter(buIsTarget).length)
+    // 年間人件費（法定福利費込）= (月額給与×12 + 賞与) × 1.15
+    function buAnnualCost(s) { return Math.ceil((s.monthlySalary * 12 + (s.bonus || 0)) * 1.15) }
+    // 必要賃上げ額 = 年間人件費 × 賃上げ率
     const buRequiredTotal = computed(() => buStaff.reduce((sum, s) => {
       if (buIsTarget(s) && s.monthlySalary > 0) {
         const rate = s.type === 'clerk' ? 0.057 : 0.032
-        return sum + Math.ceil(s.monthlySalary * 12 * rate)
+        return sum + Math.ceil(buAnnualCost(s) * rate)
       }
       return sum
     }, 0))
-    const buRequiredWithFukuri = computed(() => Math.ceil(buRequiredTotal.value * 1.15))
-    function buAddStaff() { buStaff.push({ type: 'pharmacist', age: 0, monthlySalary: 0 }) }
+    const buRequiredWithFukuri = buRequiredTotal // 法定福利費は年間人件費に既に含む
+    function buAddStaff() { buStaff.push({ type: 'pharmacist', age: 0, monthlySalary: 0, bonus: 0 }) }
     function buRemoveStaff() { if (buStaff.length > 1) buStaff.pop() }
     const buApplyVal = ref('4')
     const buApplied = ref(false)
@@ -1717,8 +1720,8 @@ const RequirementsTab = {
       if (props.r8Data) {
         if (!props.r8Data.r6) props.r8Data.r6 = {}
         props.r8Data.r6.k_baseup = Number(buApplyVal.value)
-        // 賃上げ充当分（控除）: 必要賃上げ額（法定福利費込み）をマイナスで反映
-        props.r8Data.r6.k_baseup_chinage_amt = -(buRequiredWithFukuri.value)
+        // 賃上げ充当分（控除）: 必要賃上げ額をマイナスで反映
+        props.r8Data.r6.k_baseup_chinage_amt = -(buRequiredTotal.value)
         buApplied.value = true
       }
     }
@@ -1797,7 +1800,7 @@ const RequirementsTab = {
              ztStep, ztR7, ztResult, ztApplied, ztChecks, ztCheckLabels, ztAllOk, ztNext, ztBack, ztReset, ztApplyToR8,
              zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
              ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
-             buRxCount, buStaff, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
+             buRxCount, buStaff, buIsTarget, buAnnualCost, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
              JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied,
              fukuyakuJudge, saveFukuyakuJudge, fjNext, fjReset, fjApplyToR8 }
   },
@@ -2897,41 +2900,42 @@ const RequirementsTab = {
           <div style="font-weight:700;margin-bottom:4px">対象職員の入力</div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">対象外: 事業主・開設者・管理薬剤師・40歳以上の薬剤師・業務委託者</div>
           <table class="fee-table" style="font-size:12px">
-            <thead><tr><th style="width:40px"></th><th style="width:100px">職種</th><th style="width:60px;text-align:center">年齢</th><th style="width:140px;text-align:right">月額給与（税引前）</th><th style="width:60px;text-align:center">対象</th><th style="width:60px;text-align:right">賃上げ率</th><th style="width:120px;text-align:right">年間賃上げ必要額</th></tr></thead>
+            <thead><tr><th style="width:30px"></th><th style="width:100px">職種</th><th style="width:50px;text-align:center">年齢</th><th style="width:120px;text-align:right">月額給与</th><th style="width:100px;text-align:right">賞与（年額）</th><th style="width:110px;text-align:right">年間人件費</th><th style="width:50px;text-align:right">率</th><th style="width:100px;text-align:right">必要額</th></tr></thead>
             <tbody>
               <tr v-for="(s, i) in buStaff" :key="i">
                 <td style="text-align:center;color:var(--text-faint)">{{i+1}}</td>
                 <td><select class="fee-select" style="font-size:12px;padding:2px 4px" v-model="s.type"><option value="pharmacist">薬剤師</option><option value="clerk">事務職員</option></select></td>
-                <td style="text-align:center"><input v-if="s.type==='pharmacist'" type="number" class="fee-input" style="max-width:50px;text-align:center;font-size:12px" v-model.number="s.age"><span v-else style="color:var(--text-faint);font-size:11px">不問</span></td>
-                <td style="text-align:right"><input type="text" class="fee-input" style="max-width:120px;text-align:right;font-size:12px" :value="fmtC(s.monthlySalary)" @change="s.monthlySalary=parseNum($event.target.value)"></td>
-                <td style="text-align:center"><span v-if="s.type==='clerk'" style="color:var(--pos);font-weight:600">対象</span><span v-else-if="s.age>0&&s.age<40" style="color:var(--pos);font-weight:600">対象</span><span v-else-if="s.age>=40" style="color:var(--text-faint)">対象外</span><span v-else style="color:var(--text-faint)">-</span></td>
-                <td style="text-align:right"><span v-if="s.type==='clerk'">5.7%</span><span v-else-if="s.age>0&&s.age<40">3.2%</span><span v-else>-</span></td>
-                <td style="text-align:right"><span v-if="(s.type==='clerk'||(s.age>0&&s.age<40))&&s.monthlySalary>0">{{formatYen(Math.ceil(s.monthlySalary * 12 * (s.type==='clerk'?0.057:0.032)))}}</span><span v-else>-</span></td>
+                <td style="text-align:center"><input v-if="s.type==='pharmacist'" type="number" class="fee-input" style="max-width:45px;text-align:center;font-size:12px" v-model.number="s.age"><span v-else style="color:var(--text-faint);font-size:11px">不問</span></td>
+                <td style="text-align:right"><input type="text" class="fee-input" style="max-width:110px;text-align:right;font-size:12px" :value="fmtC(s.monthlySalary)" @change="s.monthlySalary=parseNum($event.target.value)"></td>
+                <td style="text-align:right"><input type="text" class="fee-input" style="max-width:90px;text-align:right;font-size:12px" :value="fmtC(s.bonus||0)" @change="s.bonus=parseNum($event.target.value)"></td>
+                <td style="text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11px"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(buAnnualCost(s))}}</span><span v-else style="color:var(--text-faint)">-</span></td>
+                <td style="text-align:right"><span v-if="buIsTarget(s)">{{s.type==='clerk'?'5.7%':'3.2%'}}</span><span v-else>-</span></td>
+                <td style="text-align:right"><span v-if="buIsTarget(s)&&s.monthlySalary>0">{{formatYen(Math.ceil(buAnnualCost(s) * (s.type==='clerk'?0.057:0.032)))}}</span><span v-else>-</span></td>
               </tr>
             </tbody>
             <tfoot>
-              <tr style="font-weight:700"><td colspan="4" style="text-align:right">対象職員合計</td><td style="text-align:center">{{buTargetCount}}名</td><td></td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
+              <tr style="font-weight:700"><td colspan="5" style="text-align:right">合計 {{buTargetCount}}名</td><td></td><td></td><td style="text-align:right;color:var(--neg)">{{formatYen(buRequiredTotal)}}</td></tr>
             </tfoot>
           </table>
           <div style="display:flex;gap:8px;margin-top:8px">
             <button class="btn" style="font-size:11px;padding:4px 12px" @click="buAddStaff()">＋ 職員追加</button>
             <button v-if="buStaff.length>1" class="btn" style="font-size:11px;padding:4px 12px" @click="buRemoveStaff()">－ 削除</button>
           </div>
-          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※月額給与は基本給＋毎月固定の手当（通勤手当除く）。法定福利費（約15%）は自動加算されます。</div>
+          <div style="font-size:11px;color:var(--text-faint);margin-top:6px">※月額給与＝基本給＋毎月固定の手当（通勤手当除く）。賞与は基本給連動分がある場合に入力。年間人件費＝(月額給与×12＋賞与)×1.15。</div>
         </div>
 
-        <div style="padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.8" :style="buRxCount>0&&buRequiredTotal>0?(buRxCount*40>=buRequiredWithFukuri?'background:#e8f5e9;border:2px solid var(--pos)':'background:#fff3e0;border:2px solid var(--amber)'):'background:var(--surface2)'">
+        <div style="padding:14px;border-radius:var(--radius);font-size:14px;line-height:1.8" :style="buRxCount>0&&buRequiredTotal>0?(buRxCount*40>=buRequiredTotal?'background:#e8f5e9;border:2px solid var(--pos)':'background:#fff3e0;border:2px solid var(--amber)'):'background:var(--surface2)'">
           <template v-if="buRxCount>0&&buRequiredTotal>0">
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:8px;font-size:13px">
               <div><div style="color:var(--text-muted);font-size:11px">評価料収入</div><div style="font-weight:700;color:var(--pos)">{{formatYen(buRxCount*40)}} 円</div></div>
-              <div><div style="color:var(--text-muted);font-size:11px">賃上げ必要額（法定福利費込）</div><div style="font-weight:700;color:var(--neg)">{{formatYen(buRequiredWithFukuri)}} 円</div></div>
-              <div><div style="color:var(--text-muted);font-size:11px">差額</div><div style="font-weight:700" :style="buRxCount*40>=buRequiredWithFukuri?'color:var(--pos)':'color:var(--neg)'">{{formatYen(buRxCount*40 - buRequiredWithFukuri)}} 円</div></div>
+              <div><div style="color:var(--text-muted);font-size:11px">賃上げ必要額</div><div style="font-weight:700;color:var(--neg)">{{formatYen(buRequiredTotal)}} 円</div></div>
+              <div><div style="color:var(--text-muted);font-size:11px">差額</div><div style="font-weight:700" :style="buRxCount*40>=buRequiredTotal?'color:var(--pos)':'color:var(--neg)'">{{formatYen(buRxCount*40 - buRequiredTotal)}} 円</div></div>
             </div>
             <div style="font-weight:700;margin-bottom:4px">
-              <span v-if="buRxCount*40>=buRequiredWithFukuri" style="color:var(--pos)">収入が賃上げ必要額を上回ります → 届出を推奨</span>
+              <span v-if="buRxCount*40>=buRequiredTotal" style="color:var(--pos)">収入が賃上げ必要額を上回ります → 届出を推奨</span>
               <span v-else style="color:var(--amber)">収入が賃上げ必要額を下回ります → 持ち出しが発生</span>
             </div>
-            <div v-if="buRxCount*40<buRequiredWithFukuri" style="font-size:12px;color:var(--text-muted)">ただし賃上げ自体は経営上の判断であり、持ち出しがあっても届出するケースもあります。</div>
+            <div v-if="buRxCount*40<buRequiredTotal" style="font-size:12px;color:var(--text-muted)">ただし賃上げ自体は経営上の判断であり、持ち出しがあっても届出するケースもあります。</div>
           </template>
           <template v-else>
             <div style="color:var(--text-muted)">処方箋受付回数と対象職員の情報を入力すると、試算結果を表示します。</div>
