@@ -285,14 +285,14 @@ const MANAGEMENT_FEES = [
   },
   {
     id: 't_jufuku_other', label: '重複防止加算（残薬以外）', category: 'management', inputType: 'fixed', isSub: true,
-    changeType: 'abolished_merged', changeNote: '重複投薬・相互作用等防止加算を廃止し、薬学的有害事象等防止加算（30/50点）に発展的再編。R6は40点。処方変更に繋がる疑義照会等の薬学的介入をより広く評価する体系に。',
-    changePurpose: '重複投薬等防止の評価を薬学的有害事象防止として再定義し、薬剤師による積極的な処方介入を促進。',
+    changeType: 'abolished_merged', changeNote: 'R8で廃止（R6: 40点）。在宅患者重複投薬・相互作用等防止管理料（残薬以外40点）とともに廃止し、薬学的有害事象等防止加算（ニ30点/イロハ50点）に再編。',
+    changePurpose: '重複投薬等防止の評価を薬学的有害事象防止として再定義し、在宅・かかりつけ薬剤師を優遇。',
     r6: { fixedPoints: 40 },
   },
   {
     id: 't_yugai', label: '薬学的有害事象等防止加算', category: 'management', inputType: 'select', isSub: true,
-    changeType: 'new', changeNote: 'R8新設。旧「重複投薬・相互作用等防止加算（残薬以外）」を発展的に再編。重複投薬・相互作用・副作用等の薬学的有害事象防止に係る介入内容により30点または50点。',
-    changePurpose: '薬学的有害事象（重複投薬・相互作用・副作用等）の防止に向けた薬剤師の積極的介入と処方変更に繋がる疑義照会を推進。',
+    changeType: 'new', changeNote: 'R8新設。旧「重複防止加算（残薬以外）40点」と「在宅患者重複投薬・相互作用等防止管理料（残薬以外）40点」を廃止し再編。ニ30点（減点）、イロハ50点（在宅・かかりつけは増点）。',
+    changePurpose: '重複投薬・相互作用等の防止に特化し、在宅・かかりつけ薬剤師の積極的介入を促進。',
     r6: null,
   },
   {
@@ -568,8 +568,15 @@ const HOMECARE_FEES = [
     r6: { fixedPoints: 1000 },
   },
   {
-    id: 't_zaitaku_boushi', label: '在宅患者重複投薬等管理料', category: 'homecare', inputType: 'fixed',
-    changeType: 'same',
+    id: 't_zaitaku_boushi_other', label: '在宅患者重複投薬等管理料（残薬以外）', category: 'homecare', inputType: 'fixed',
+    changeType: 'abolished_merged',
+    changeNote: 'R8で廃止（R6: 40点）。薬学的有害事象等防止加算イロハ（50点）に再編。',
+    r6: { fixedPoints: 40 },
+  },
+  {
+    id: 't_zaitaku_boushi_zan', label: '在宅患者重複投薬等管理料（残薬）', category: 'homecare', inputType: 'fixed',
+    changeType: 'abolished_merged',
+    changeNote: 'R8で廃止（R6: 20点）。調剤時残薬調整加算イロハ（50点）に再編。',
     r6: { fixedPoints: 20 },
   },
   {

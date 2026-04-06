@@ -221,6 +221,13 @@ body { font-family: 'Noto Sans JP', sans-serif; background: var(--bg); color: va
 .flow-step { font-size: 13px; line-height: 1.6; padding: 3px 0; color: var(--text); position: relative; padding-left: 16px; }
 .flow-step::before { content: '•'; position: absolute; left: 0; color: var(--text-faint); }
 .flow-arrow { text-align: center; font-size: 14px; color: var(--text-faint); padding: 4px 0; }
+.flow-check { display: flex; align-items: center; gap: 8px; font-size: 13px; line-height: 1.6; padding: 4px 0; color: var(--text); cursor: pointer; }
+.flow-check input[type="checkbox"] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--teal); flex-shrink: 0; }
+.flow-check.done { color: var(--text-faint); text-decoration: line-through; }
+.flow-check.sub { padding-left: 28px; }
+.todoke-deadline { margin-left: auto; font-size: 11px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+tr.done td { color: var(--text-faint) !important; text-decoration: line-through; }
+tr.done td input[type="checkbox"] { accent-color: var(--teal); }
 
 /* ── TO DO ── */
 .todo-input-row { display: flex; gap: 8px; margin-bottom: 16px; }

@@ -12,7 +12,6 @@
       "id": "system",
       "label": "システム・運用",
       "keys": [
-        "t03",
         "t04"
       ]
     },
@@ -79,30 +78,6 @@
         {
           "id": "s4",
           "label": "九州厚生局へ提出",
-          "done": false
-        }
-      ]
-    },
-    "t03": {
-      "title": "レセコンマスター更新",
-      "detail": "R8改定に対応したマスターデータの更新。ベンダーへの確認含む。",
-      "deadline": "2026-05-31",
-      "status": "todo",
-      "tag": "system",
-      "subtasks": [
-        {
-          "id": "s1",
-          "label": "ベンダーに更新日程確認",
-          "done": false
-        },
-        {
-          "id": "s2",
-          "label": "マスター更新実施",
-          "done": false
-        },
-        {
-          "id": "s3",
-          "label": "テスト入力で動作確認",
           "done": false
         }
       ]

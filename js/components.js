@@ -203,7 +203,8 @@ const ImpactTab = {
 }
 
 const TasksTab = {
-  setup() {
+  props: ['data', 'forceView', 'todokeCategory', 'goToJudge'],
+  setup(props) {
 
     // Reactive task store (loaded from API)
     const store = reactive({ categories: [], tasks: {}, events: [] })
@@ -237,8 +238,8 @@ const TasksTab = {
     loadTasks()
 
     // View mode (calendar / kanban)
-    const viewMode = ref(localStorage.getItem('task-view') || 'kanban')
-    watch(viewMode, v => localStorage.setItem('task-view', v))
+    const viewMode = ref(props.forceView || localStorage.getItem('task-view') || 'kanban')
+    watch(viewMode, v => { if (!props.forceView) localStorage.setItem('task-view', v) })
 
     // Status
     function status(id) { return store.tasks[id]?.status || 'todo' }
@@ -493,26 +494,111 @@ const TasksTab = {
       saveTasks()
     }
 
-    return { store, loading, viewMode, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
+    // Todoke checklist
+    const TODOKE_KEY = 'houshu-todoke-checks'
+    const todokeChecks = reactive(JSON.parse(localStorage.getItem(TODOKE_KEY) || '{}'))
+    function saveTodokeChecks() { localStorage.setItem(TODOKE_KEY, JSON.stringify(todokeChecks)) }
+    const todokeCounts = { shinki: 9, houkoku: 2, keika: 3, menkyo: 2 }
+    function todokeProgress(cat) {
+      const total = todokeCounts[cat]
+      let done = 0
+      for (const [k,v] of Object.entries(todokeChecks)) { if (k.startsWith(cat + '_') && v === true) done++ }
+      return done + '/' + total
+    }
+    // 届出テーブルデータ（cat: サブタブカテゴリ）
+    const allTodokeItems = [
+      // R8新設（新たに施設基準が創設されたもの）
+      { cat: 'r8shinsetsu', key: 'sn_1', label: '調剤ベースアップ評価料', youshiki: '様式103', jisseki: '賃金改善計画', handan: '−', tekiyou: '届出月翌月〜', noR7: true, kikan: '5/7〜6/1', judgeId: 'k_baseup', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'r8shinsetsu', key: 'sn_2a', label: '地域支援・医薬品供給対応体制加算（加算1）', youshiki: '様式87の3の1', jisseki: '在宅指導実績等（基本要件）', handan: '直近1年', tekiyou: '6月〜翌年5月末', noR7: true, kikan: '5/7〜6/1', judgeId: 'k_chiiki', r8options: [{v:'shinki',l:'新体系で届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'r8shinsetsu', key: 'sn_2b', label: '地域支援・医薬品供給対応体制加算（加算2〜5）', youshiki: '様式87の3の2', jisseki: '9指標の実績（後発品率等）', handan: '後発品: 直近3月 / その他: 直近1年', tekiyou: '6月〜翌年5月末', noR7: true, kikan: '5/7〜6/1', judgeId: 'k_chiiki', r8options: [{v:'shinki',l:'新体系で届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'r8shinsetsu', key: 'sn_3', label: '在宅薬学総合体制加算2イ・ロ', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '届出翌月〜翌年5月末', noR7: true, kikan: '5/7〜6/1', judgeId: 'k_zaitaku', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'r8shinsetsu', key: 'sn_4', label: 'バイオ後続品調剤体制加算', youshiki: '−', jisseki: 'バイオ後続品の保管・説明体制', handan: '−', tekiyou: '届出月翌月〜', noR7: true, kikan: '随時届出可', judgeId: 'k_bio', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'r8shinsetsu', key: 'sn_5', label: '服薬管理指導料の注1（かかりつけ薬剤師）', youshiki: '様式90', jisseki: '薬剤師の経験・勤務時間等', handan: '−', tekiyou: '届出月翌月〜', noR7: true, kikan: '5/7〜6/1', judgeId: 'yg_fukuyaku', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      // R8減算（新設）
+      { cat: 'r8gensan', key: 'gs_1', label: '門前薬局等立地依存減算', youshiki: '様式84', jisseki: '立地・集中率', handan: '直近1年', tekiyou: '6月〜翌年5月末', noR7: true, kikan: '調剤基本料と同時届出', judgeId: 'k_kihon', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      // R8改定（施設基準が改正されたもの）
+      { cat: 'r8kaitei', key: 'ka_1', label: '調剤基本料', youshiki: '様式84・85', jisseki: '処方箋受付回数・集中率', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_kihon_cnt', kikan: '区分変更時のみ届出', judgeId: 'k_kihon', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'henkou',l:'区分変更→届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'r8kaitei', key: 'ka_2', label: '在宅薬学総合体制加算1', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_zaitaku_taisei_cnt', kikan: '区分変更なし→届出不要', judgeId: 'k_zaitaku', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'henkou',l:'変更→届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'r8kaitei', key: 'ka_3', label: '連携強化加算', youshiki: '様式87の3の3', jisseki: '連携体制の整備', handan: '−', tekiyou: '届出月翌月〜', r7key: 'k_renkei_cnt', kikan: '変更なし→届出不要', judgeId: 'k_renkei', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'jitai',l:'辞退'}] },
+      { cat: 'r8kaitei', key: 'ka_4', label: '電子的調剤情報連携体制整備加算', youshiki: '様式87の3の6', jisseki: '電子処方箋チェック機能', handan: '−', tekiyou: '届出月翌月〜', r7key: 'k_dx8_cnt', kikan: '名称変更のみ→届出不要', judgeId: 'k_dx8', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'jitai',l:'辞退'}] },
+      { cat: 'r8kaitei', key: 'ka_5', label: '特定薬剤管理指導加算2（抗悪性腫瘍）', youshiki: '様式92', jisseki: '薬剤師5年以上・研修等', handan: '−', tekiyou: '届出月翌月〜', r7key: 't_tokutei_2_cnt', kikan: '変更なし→届出不要', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'jitai',l:'辞退'}] },
+      // 賃上げ
+      { cat: 'chinage', key: 'ch_1', label: '調剤ベースアップ評価料', youshiki: '様式103', jisseki: '賃金改善計画の策定', handan: '−', tekiyou: '届出月翌月〜', r7key: null, kikan: '5/7〜6/1', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'chinage', key: 'ch_2', label: '調剤物価対応料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: null, kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      // 体制加算
+      { cat: 'taisei', key: 'ta_1', label: '調剤基本料', youshiki: '様式84・85', jisseki: '処方箋受付回数・集中率', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_kihon_cnt', kikan: '区分変更時', r8options: [{v:'keizoku',l:'継続'},{v:'shinki',l:'新規届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'taisei', key: 'ta_2a', label: '地域支援・医薬品供給対応体制加算（加算1）', youshiki: '様式87の3の1', jisseki: '在宅指導実績等（基本要件）', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_chiiki_cnt', kikan: '5/7〜6/1', judgeId: 'k_chiiki', r8options: [{v:'shinki',l:'新体系で届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'taisei', key: 'ta_2b', label: '地域支援・医薬品供給対応体制加算（加算2〜5）', youshiki: '様式87の3の2', jisseki: '9指標の実績（後発品率等）', handan: '後発品: 直近3月 / その他: 直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_chiiki_cnt', kikan: '5/7〜6/1', judgeId: 'k_chiiki', r8options: [{v:'shinki',l:'新体系で届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'taisei', key: 'ta_3', label: '連携強化加算', youshiki: '様式87の3の3', jisseki: '連携体制の整備', handan: '−', tekiyou: '届出月翌月〜', r7key: 'k_renkei_cnt', kikan: '変更なし→届出不要', r8options: [{v:'keizoku',l:'継続'},{v:'jitai',l:'辞退'}] },
+      { cat: 'taisei', key: 'ta_4', label: '電子的調剤情報連携体制整備加算', youshiki: '様式87の3の6', jisseki: '電子処方箋チェック機能', handan: '−', tekiyou: '届出月翌月〜', r7key: 'k_dx8_cnt', kikan: '名称変更のみ→届出不要', r8options: [{v:'keizoku',l:'継続'},{v:'jitai',l:'辞退'}] },
+      { cat: 'taisei', key: 'ta_5', label: '在宅薬学総合体制加算', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_zaitaku_taisei_cnt', kikan: '5/7〜6/1', r8options: [{v:'keizoku',l:'継続'},{v:'shinki',l:'新規届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'taisei', key: 'ta_6', label: 'バイオ後続品調剤体制加算', youshiki: '−', jisseki: 'バイオ後続品の保管・説明体制', handan: '−', tekiyou: '届出月翌月〜', r7key: null, kikan: '随時届出可', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'taisei', key: 'ta_7', label: '時間外加算', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 'k_jikangai_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      { cat: 'taisei', key: 'ta_8', label: '夜間・休日等加算', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 'k_yakan_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      // 薬剤調製料・薬剤料
+      { cat: 'chozai', key: 'cz_1', label: '薬剤調製料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 'k_naifuku_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      { cat: 'chozai', key: 'cz_2', label: '無菌製剤処理加算', youshiki: '様式88', jisseki: '無菌調製設備・薬剤師体制', handan: '−', tekiyou: '届出月翌月〜', r7key: 't_mukin_cnt', kikan: '随時届出可', r8options: [{v:'keizoku',l:'継続'},{v:'shinki',l:'新規届出'},{v:'jitai',l:'辞退'}] },
+      // 薬学管理料
+      { cat: 'yakugaku', key: 'yg_1', label: '服薬管理指導料の注1（かかりつけ薬剤師）', youshiki: '様式90', jisseki: '薬剤師の経験・勤務時間等', handan: '−', tekiyou: '届出月翌月〜', r7key: null, kikan: '5/7〜6/1', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
+      { cat: 'yakugaku', key: 'yg_2', label: '特定薬剤管理指導加算2（抗悪性腫瘍）', youshiki: '様式92', jisseki: '薬剤師5年以上・研修等', handan: '−', tekiyou: '届出月翌月〜', r7key: 't_tokutei_2_cnt', kikan: '随時届出可', r8options: [{v:'keizoku',l:'継続'},{v:'shinki',l:'新規届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'yakugaku', key: 'yg_3', label: '調剤管理料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 't_kanri_nai_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      { cat: 'yakugaku', key: 'yg_4', label: '服薬管理指導料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 't_fukuyaku_a_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      // 在宅
+      { cat: 'zaitaku', key: 'zt_1', label: '在宅薬学総合体制加算', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_zaitaku_taisei_cnt', kikan: '5/7〜6/1', r8options: [{v:'keizoku',l:'継続'},{v:'shinki',l:'新規届出'},{v:'jitai',l:'辞退'}] },
+      { cat: 'zaitaku', key: 'zt_2', label: '在宅患者訪問薬剤管理指導料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 't_zaitaku_houmon_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
+      { cat: 'zaitaku', key: 'zt_3', label: '麻薬小売業者の免許', youshiki: '−', jisseki: '免許の取得', handan: '−', tekiyou: '常時', r7key: null, kikan: '常時保持', r8options: [{v:'ari',l:'取得済'},{v:'nashi',l:'未取得'}] },
+      { cat: 'zaitaku', key: 'zt_4', label: '高度管理医療機器の販売業許可', youshiki: '−', jisseki: '許可の取得', handan: '−', tekiyou: '常時', r7key: null, kikan: '常時保持', r8options: [{v:'ari',l:'取得済'},{v:'nashi',l:'未取得'}] },
+    ]
+    const todokeCategory = computed(() => props.todokeCategory || 'r8')
+    const todokeItemsShinsetsu = computed(() => allTodokeItems.filter(i => i.cat === 'r8shinsetsu'))
+    const todokeItemsKaitei = computed(() => allTodokeItems.filter(i => i.cat === 'r8kaitei'))
+    const todokeItemsGensan = computed(() => allTodokeItems.filter(i => i.cat === 'r8gensan'))
+    const todokeItems = computed(() => {
+      if (todokeCategory.value === 'r8') return [] // r8は専用テンプレートで表示
+      return allTodokeItems.filter(i => i.cat === todokeCategory.value)
+    })
+    function r7Status(item) {
+      if (item.noR7) return { text: '−', color: 'var(--text-muted)' }
+      if (!item.r7key) return { text: '−', color: 'var(--text-muted)' }
+      const v = props.data?.r6?.[item.r7key]
+      if (v && v > 0) return { text: '届出済', color: 'var(--teal)' }
+      return { text: '未届出', color: 'var(--text-faint)' }
+    }
+
+    // Flow checklist
+    const FLOW_KEY = 'houshu-flow-checks'
+    const flowChecks = reactive(JSON.parse(localStorage.getItem(FLOW_KEY) || '{}'))
+    function saveFlowChecks() { localStorage.setItem(FLOW_KEY, JSON.stringify(flowChecks)) }
+    const phaseCounts = { phase0: 4, phase1: 4, phase2: 8, phase3: 5, phase4: 4 }
+    function phaseProgress(phase) {
+      const total = phaseCounts[phase]
+      let done = 0
+      for (const [k,v] of Object.entries(flowChecks)) { if (k.startsWith(phase) && v) done++ }
+      return done + '/' + total
+    }
+
+    return { store, loading, viewMode, forceView: props.forceView, todokeCategory, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
              showAddForm, addForm, openAddForm, addTask, addSubtaskToForm, removeSubtaskFromForm, deleteTask,
              currentMonth, selectedDate, prevMonth, nextMonth, goToday, monthLabel, calendarDays,
              todayStr, tasksForDate, dotsForDate, selectDate, deadlineClass, formatDeadlineShort, selectedDateLabel,
              subtaskProgress, toggleSubtask,
-             showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate }
+             showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate,
+             flowChecks, saveFlowChecks, phaseProgress,
+             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge }
   },
   template: `<div>
-    <div v-if="loading" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
+    <div v-if="loading&&!forceView" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
     <template v-else>
     <!-- View Toggle + Add Button -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+    <div v-if="!forceView" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
       <div class="view-toggle">
         <button class="view-toggle-btn" :class="{active: viewMode==='flow'}" @click="viewMode='flow'">事務フロー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='calendar'}" @click="viewMode='calendar'">カレンダー</button>
         <button class="view-toggle-btn" :class="{active: viewMode==='kanban'}" @click="viewMode='kanban'">カンバン</button>
       </div>
-      <div v-if="viewMode!=='flow'" style="display:flex;gap:6px">
+      <div v-if="viewMode!=='flow'&&viewMode!=='todoke'" style="display:flex;gap:6px">
         <button v-if="viewMode==='calendar'" class="btn" @click="openAddEvent" style="border-color:var(--purple);color:var(--purple)">+ 予定追加</button>
         <button class="btn" @click="openAddForm" style="background:var(--text);color:white;border:none">+ タスク追加</button>
       </div>
@@ -677,21 +763,128 @@ const TasksTab = {
       </div>
     </div>
 
+    <!-- ═══ Todoke View ═══ -->
+    <div v-if="viewMode==='todoke'" class="section">
+
+      <!-- R8カテゴリ: 新設と改定を2ボックスで表示 -->
+      <template v-if="todokeCategory==='r8'">
+      <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--new-text)">新設（届出必須）</div>
+      <div style="overflow-x:auto;margin-bottom:24px">
+      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+        <tr v-for="item in todokeItemsShinsetsu" :key="item.key">
+          <td style="font-weight:600">{{item.label}}</td>
+          <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
+          <td><select class="fee-select" style="font-size:12px;min-width:90px" v-model="todokeChecks[item.key+'_r8']" @change="saveTodokeChecks"><option v-for="o in item.r8options" :key="o.v" :value="o.v">{{o.l}}</option></select></td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.handan}}</td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
+          <td>{{item.youshiki}}</td>
+          <td style="font-size:11px">{{item.kikan}}</td>
+        </tr>
+      </tbody></table>
+      </div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--mod-text)">改定（変更なければ届出不要）</div>
+      <div style="overflow-x:auto;margin-bottom:24px">
+      <table class="fee-table" style="min-width:1100px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:80px">前回（R7）</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+        <tr v-for="item in todokeItemsKaitei" :key="item.key">
+          <td style="font-weight:600">{{item.label}}</td>
+          <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
+          <td :style="{color:r7Status(item).color,fontWeight:600}">{{r7Status(item).text}}</td>
+          <td><select class="fee-select" style="font-size:12px;min-width:90px" v-model="todokeChecks[item.key+'_r8']" @change="saveTodokeChecks"><option v-for="o in item.r8options" :key="o.v" :value="o.v">{{o.l}}</option></select></td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.handan}}</td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
+          <td>{{item.youshiki}}</td>
+          <td style="font-size:11px">{{item.kikan}}</td>
+        </tr>
+      </tbody></table>
+      </div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--neg)">減算（新設）</div>
+      <div style="overflow-x:auto;margin-bottom:24px">
+      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+        <tr v-for="item in todokeItemsGensan" :key="item.key">
+          <td style="font-weight:600">{{item.label}}</td>
+          <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
+          <td><select class="fee-select" style="font-size:12px;min-width:90px" v-model="todokeChecks[item.key+'_r8']" @change="saveTodokeChecks"><option v-for="o in item.r8options" :key="o.v" :value="o.v">{{o.l}}</option></select></td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.handan}}</td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
+          <td>{{item.youshiki}}</td>
+          <td style="font-size:11px">{{item.kikan}}</td>
+        </tr>
+      </tbody></table>
+      </div>
+      </template>
+
+      <!-- その他カテゴリ: 通常の1テーブル -->
+      <template v-else>
+      <div style="overflow-x:auto">
+      <table class="fee-table" style="min-width:1100px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:80px">前回（R7）</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+        <tr v-for="item in todokeItems" :key="item.key">
+          <td style="font-weight:600">{{item.label}}</td>
+          <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
+          <td :style="{color:r7Status(item).color,fontWeight:600}">{{r7Status(item).text}}</td>
+          <td><select class="fee-select" style="font-size:12px;min-width:90px" v-model="todokeChecks[item.key+'_r8']" @change="saveTodokeChecks"><option v-for="o in item.r8options" :key="o.v" :value="o.v">{{o.l}}</option></select></td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.handan}}</td>
+          <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
+          <td>{{item.youshiki}}</td>
+          <td style="font-size:11px">{{item.kikan}}</td>
+        </tr>
+      </tbody></table>
+      </div>
+      </template>
+
+      <template v-if="todokeCategory==='r8'">
+      <div style="font-weight:700;font-size:14px;margin-top:24px;margin-bottom:8px;color:var(--amber)">定例報告 <span style="font-size:11px;font-weight:400;color:var(--text-muted)">{{todokeProgress('houkoku')}}</span></div>
+      <table class="fee-table" style="margin-bottom:24px"><thead><tr><th style="width:32px"></th><th>報告内容</th><th style="width:160px">報告期間</th></tr></thead><tbody>
+        <tr :class="{done:todokeChecks.houkoku_1}"><td><input type="checkbox" v-model="todokeChecks.houkoku_1" @change="saveTodokeChecks"></td><td>妥結率・後発品使用率の定例報告</td><td>毎年8月</td></tr>
+        <tr :class="{done:todokeChecks.houkoku_2}"><td><input type="checkbox" v-model="todokeChecks.houkoku_2" @change="saveTodokeChecks"></td><td>未妥結減算に係る報告</td><td>毎年11月末まで</td></tr>
+      </tbody></table>
+
+      <div style="font-weight:700;font-size:14px;margin-bottom:8px;color:var(--teal)">経過措置の期限管理 <span style="font-size:11px;font-weight:400;color:var(--text-muted)">{{todokeProgress('keika')}}</span></div>
+      <table class="fee-table" style="margin-bottom:24px"><thead><tr><th style="width:32px"></th><th>項目</th><th style="width:160px">経過措置期間</th></tr></thead><tbody>
+        <tr :class="{done:todokeChecks.keika_1}"><td><input type="checkbox" v-model="todokeChecks.keika_1" @change="saveTodokeChecks"></td><td>かかりつけ薬剤師の経過措置終了への対応</td><td>R8.6.1〜R8.11.30</td></tr>
+        <tr :class="{done:todokeChecks.keika_2}"><td><input type="checkbox" v-model="todokeChecks.keika_2" @change="saveTodokeChecks"></td><td>後発品旧加算の経過措置終了→新体系届出</td><td>R8.6.1〜R9.5.31</td></tr>
+        <tr :class="{done:todokeChecks.keika_3}"><td><input type="checkbox" v-model="todokeChecks.keika_3" @change="saveTodokeChecks"></td><td>地域支援体制加算の経過措置終了→新体系届出</td><td>R8.6.1〜R9.5.31</td></tr>
+      </tbody></table>
+
+      <div style="font-weight:700;font-size:14px;margin-bottom:8px">免許・許可 <span style="font-size:11px;font-weight:400;color:var(--text-muted)">{{todokeProgress('menkyo')}}</span></div>
+      <table class="fee-table"><thead><tr><th style="width:32px"></th><th>免許・許可</th><th>関連加算</th><th style="width:100px">状態</th></tr></thead><tbody>
+        <tr :class="{done:todokeChecks.menkyo_1}"><td><input type="checkbox" v-model="todokeChecks.menkyo_1" @change="saveTodokeChecks"></td><td>麻薬小売業者の免許</td><td>在宅薬学総合体制加算</td><td>常時保持</td></tr>
+        <tr :class="{done:todokeChecks.menkyo_2}"><td><input type="checkbox" v-model="todokeChecks.menkyo_2" @change="saveTodokeChecks"></td><td>高度管理医療機器の販売業許可</td><td>在宅薬学総合体制加算2</td><td>常時保持</td></tr>
+      </tbody></table>
+      </template>
+    </div>
+
     <!-- ═══ Flow View ═══ -->
     <div v-if="viewMode==='flow'" class="section">
       <div class="section-title">令和8年度 改定対応フロー</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">チェック状態はブラウザに保存されます</div>
       <div class="flow-timeline">
+        <div class="flow-phase">
+          <div class="flow-phase-header" style="border-color:var(--text-muted)">
+            <span class="flow-phase-period">2026年2月</span>
+            <span class="flow-phase-title">事前準備</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto">{{phaseProgress('phase0')}}</span>
+          </div>
+          <div class="flow-steps">
+            <label class="flow-check" :class="{done:flowChecks.phase0_1}"><input type="checkbox" v-model="flowChecks.phase0_1" @change="saveFlowChecks">短冊（個別改定項目）の確認（12月〜1月公表）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase0_6}"><input type="checkbox" v-model="flowChecks.phase0_6" @change="saveFlowChecks">中医協答申・改定骨子の確認（1月末〜2月）</label>
+
+            <label class="flow-check" :class="{done:flowChecks.phase0_4}"><input type="checkbox" v-model="flowChecks.phase0_4" @change="saveFlowChecks">レセコンベンダーとの改定対応スケジュール確認</label>
+            <label class="flow-check" :class="{done:flowChecks.phase0_5}"><input type="checkbox" v-model="flowChecks.phase0_5" @change="saveFlowChecks">経過措置終了項目の確認（届出し直しが必要な加算の洗い出し）</label>
+          </div>
+        </div>
+        <div class="flow-arrow">▼</div>
         <div class="flow-phase">
           <div class="flow-phase-header" style="border-color:var(--teal)">
             <span class="flow-phase-period">2026年3月〜4月</span>
             <span class="flow-phase-title">情報収集・準備</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto">{{phaseProgress('phase1')}}</span>
           </div>
           <div class="flow-steps">
-            <div class="flow-step">告示・通知の確認（3/5発出）</div>
-            <div class="flow-step">疑義解釈の確認（その1: 3/23、その2: 3/31）</div>
-            <div class="flow-step">届出様式のダウンロード（4月中旬に厚生局HPに掲載）</div>
-            <div class="flow-step">薬価マスター更新（4/1施行）</div>
-            <div class="flow-step">施設基準判定ツールで自局の要件確認</div>
+            <label class="flow-check" :class="{done:flowChecks.phase1_1}"><input type="checkbox" v-model="flowChecks.phase1_1" @change="saveFlowChecks">告示・通知の確認（3/5発出）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase1_2}"><input type="checkbox" v-model="flowChecks.phase1_2" @change="saveFlowChecks">疑義解釈の確認（その1: 3/23、その2: 3/31）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase1_4}"><input type="checkbox" v-model="flowChecks.phase1_4" @change="saveFlowChecks">薬価マスター更新（4/1施行）</label>
+
+            <label class="flow-check" :class="{done:flowChecks.phase1_3}"><input type="checkbox" v-model="flowChecks.phase1_3" @change="saveFlowChecks">届出様式のダウンロード（4月中旬に厚生局HPに掲載）</label>
           </div>
         </div>
         <div class="flow-arrow">▼</div>
@@ -699,16 +892,17 @@ const TasksTab = {
           <div class="flow-phase-header" style="border-color:var(--purple)">
             <span class="flow-phase-period">2026年5月</span>
             <span class="flow-phase-title">届出・実績集計</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto">{{phaseProgress('phase2')}}</span>
           </div>
           <div class="flow-steps">
-            <div class="flow-step">前年5月〜当年4月の実績集計（調剤基本料・体制加算の区分判定）</div>
-            <div class="flow-step">処方箋集中率の再計算（医療モール新方式対応）</div>
-            <div class="flow-step">届出書類の作成・提出（5/7受付開始 → 5/18推奨 → 6/1必着）</div>
-            <div class="flow-step" style="padding-left:24px">・調剤基本料（様式84・85）</div>
-            <div class="flow-step" style="padding-left:24px">・地域支援・医薬品供給対応体制加算（様式87の3）</div>
-            <div class="flow-step" style="padding-left:24px">・調剤ベースアップ評価料（様式103、メール提出）</div>
-            <div class="flow-step" style="padding-left:24px">・在宅薬学総合体制加算2（様式87の3の5、再届出）</div>
-            <div class="flow-step" style="padding-left:24px">・その他新設加算（バイオ後続品、服薬管理指導料注1）</div>
+            <label class="flow-check" :class="{done:flowChecks.phase2_1}"><input type="checkbox" v-model="flowChecks.phase2_1" @change="saveFlowChecks">前年5月〜当年4月の実績集計（調剤基本料・体制加算の区分判定）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase2_2}"><input type="checkbox" v-model="flowChecks.phase2_2" @change="saveFlowChecks">処方箋集中率の再計算（医療モール新方式対応）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase2_3}"><input type="checkbox" v-model="flowChecks.phase2_3" @change="saveFlowChecks">届出書類の作成・提出（5/7受付開始 → 5/18推奨 → 6/1必着）</label>
+            <label class="flow-check sub" :class="{done:flowChecks.phase2_3a}"><input type="checkbox" v-model="flowChecks.phase2_3a" @change="saveFlowChecks">調剤基本料（様式84・85）</label>
+            <label class="flow-check sub" :class="{done:flowChecks.phase2_3b}"><input type="checkbox" v-model="flowChecks.phase2_3b" @change="saveFlowChecks">地域支援・医薬品供給対応体制加算（様式87の3）</label>
+            <label class="flow-check sub" :class="{done:flowChecks.phase2_3c}"><input type="checkbox" v-model="flowChecks.phase2_3c" @change="saveFlowChecks">調剤ベースアップ評価料（様式103、メール提出）</label>
+            <label class="flow-check sub" :class="{done:flowChecks.phase2_3d}"><input type="checkbox" v-model="flowChecks.phase2_3d" @change="saveFlowChecks">在宅薬学総合体制加算2（様式87の3の5、再届出）</label>
+            <label class="flow-check sub" :class="{done:flowChecks.phase2_3e}"><input type="checkbox" v-model="flowChecks.phase2_3e" @change="saveFlowChecks">その他新設加算（バイオ後続品、服薬管理指導料注1）</label>
           </div>
         </div>
         <div class="flow-arrow">▼</div>
@@ -716,13 +910,14 @@ const TasksTab = {
           <div class="flow-phase-header" style="border-color:var(--amber)">
             <span class="flow-phase-period">2026年6月1日〜</span>
             <span class="flow-phase-title">施行・運用開始</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto">{{phaseProgress('phase3')}}</span>
           </div>
           <div class="flow-steps">
-            <div class="flow-step">レセコン算定ロジックの最終確認・テスト</div>
-            <div class="flow-step">院内掲示物・ウェブサイトの更新</div>
-            <div class="flow-step">算定フロー変更の周知（調剤管理料、かかりつけ薬剤師）</div>
-            <div class="flow-step">長期収載品の選定療養（患者負担額変更）対応</div>
-            <div class="flow-step">新制度での算定開始</div>
+            <label class="flow-check" :class="{done:flowChecks.phase3_1}"><input type="checkbox" v-model="flowChecks.phase3_1" @change="saveFlowChecks">レセコン算定ロジックの最終確認・テスト</label>
+            <label class="flow-check" :class="{done:flowChecks.phase3_2}"><input type="checkbox" v-model="flowChecks.phase3_2" @change="saveFlowChecks">院内掲示物・ウェブサイトの更新</label>
+            <label class="flow-check" :class="{done:flowChecks.phase3_3}"><input type="checkbox" v-model="flowChecks.phase3_3" @change="saveFlowChecks">算定フロー変更の周知（調剤管理料、かかりつけ薬剤師）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase3_4}"><input type="checkbox" v-model="flowChecks.phase3_4" @change="saveFlowChecks">長期収載品の選定療養（患者負担額変更）対応</label>
+            <label class="flow-check" :class="{done:flowChecks.phase3_5}"><input type="checkbox" v-model="flowChecks.phase3_5" @change="saveFlowChecks">新制度での算定開始</label>
           </div>
         </div>
         <div class="flow-arrow">▼</div>
@@ -730,12 +925,13 @@ const TasksTab = {
           <div class="flow-phase-header" style="border-color:var(--text-muted)">
             <span class="flow-phase-period">2026年7月〜</span>
             <span class="flow-phase-title">継続管理</span>
+            <span style="font-size:11px;color:var(--text-muted);margin-left:auto">{{phaseProgress('phase4')}}</span>
           </div>
           <div class="flow-steps">
-            <div class="flow-step">月次実績集計・モニタリング</div>
-            <div class="flow-step">経過措置の期限管理（かかりつけ: 11/30、後発品旧加算: R9.5.31）</div>
-            <div class="flow-step">追加の疑義解釈・訂正通知の確認</div>
-            <div class="flow-step">定例報告（未妥結減算: 11月末）</div>
+            <label class="flow-check" :class="{done:flowChecks.phase4_1}"><input type="checkbox" v-model="flowChecks.phase4_1" @change="saveFlowChecks">月次実績集計・モニタリング</label>
+            <label class="flow-check" :class="{done:flowChecks.phase4_2}"><input type="checkbox" v-model="flowChecks.phase4_2" @change="saveFlowChecks">経過措置の期限管理（かかりつけ: 11/30、後発品旧加算: R9.5.31）</label>
+            <label class="flow-check" :class="{done:flowChecks.phase4_3}"><input type="checkbox" v-model="flowChecks.phase4_3" @change="saveFlowChecks">追加の疑義解釈・訂正通知の確認</label>
+            <label class="flow-check" :class="{done:flowChecks.phase4_4}"><input type="checkbox" v-model="flowChecks.phase4_4" @change="saveFlowChecks">定例報告（未妥結減算: 11月末）</label>
           </div>
         </div>
       </div>
@@ -869,7 +1065,7 @@ const TodoTab = {
 }
 
 const RequirementsTab = {
-  props:['data','r8Data','activeSub'],
+  props:['data','r8Data','activeSub','hideNav'],
   emits:['update:activeSub'],
   setup(props, { emit }) {
     const sub = computed({ get:()=>props.activeSub||'k_kihon', set:v=>emit('update:activeSub',v) })
@@ -1521,6 +1717,8 @@ const RequirementsTab = {
       if (props.r8Data) {
         if (!props.r8Data.r6) props.r8Data.r6 = {}
         props.r8Data.r6.k_baseup = Number(buApplyVal.value)
+        // 賃上げ充当分（控除）: 必要賃上げ額（法定福利費込み）をマイナスで反映
+        props.r8Data.r6.k_baseup_chinage_amt = -(buRequiredWithFukuri.value)
         buApplied.value = true
       }
     }
@@ -1559,7 +1757,37 @@ const RequirementsTab = {
     function jpApplied(pageId) { return !!props.data.judge?.[pageId + '_applied'] }
     const judgePageIds = Object.keys(JUDGE_PAGES).filter(k => JUDGE_PAGES[k] !== null)
 
-    return { sub, subCategory, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
+    // 服薬管理指導料の注1 施設基準判定
+    const FJ_KEY = 'houshu-fukuyaku-judge'
+    const fukuyakuJudge = reactive(JSON.parse(localStorage.getItem(FJ_KEY) || '{}'))
+    function saveFukuyakuJudge() { localStorage.setItem(FJ_KEY, JSON.stringify(fukuyakuJudge)) }
+    function fjNext() {
+      if ((fukuyakuJudge.step || 1) === 1) {
+        const allOk = fukuyakuJudge.k1 && fukuyakuJudge.k2 && fukuyakuJudge.k3
+        fukuyakuJudge.result = allOk
+          ? { pts: 1, label: '1イ・2イ 算定可', reason: '施設基準を満たしています。様式90で届出してください。' }
+          : { pts: 0, label: '1イ・2イ 算定不可', reason: '施設基準に未達の項目があります。1ロ・2ロで算定してください。' }
+        fukuyakuJudge.step = 2
+        saveFukuyakuJudge()
+      }
+    }
+    function fjReset() { fukuyakuJudge.step = 1; fukuyakuJudge.result = null; fukuyakuJudge.applied = false; fukuyakuJudge.k1 = false; fukuyakuJudge.k2 = false; fukuyakuJudge.k3 = false; saveFukuyakuJudge() }
+    function fjApplyToR8() {
+      if (!fukuyakuJudge.result || !props.r8Data) return
+      if (!props.r8Data.r6) props.r8Data.r6 = {}
+      if (fukuyakuJudge.result.pts > 0) {
+        props.r8Data.r6['t_fukuyaku_a_i'] = 45
+        props.r8Data.r6['t_fukuyaku_c_i'] = 59
+      } else {
+        props.r8Data.r6['t_fukuyaku_a_i'] = 0
+        props.r8Data.r6['t_fukuyaku_c_i'] = 0
+      }
+      fukuyakuJudge.applied = true
+      saveFukuyakuJudge()
+    }
+    watch(fukuyakuJudge, saveFukuyakuJudge, { deep: true })
+
+    return { sub, subCategory, hideNav: props.hideNav, groups, isChecked, toggle, groupDone, groupPct, totalItems, doneItems, pct,
              jStep, jResult, jError, jApplied, j1Todokede, j1Shikichi, showShikichiModal, j2IsChain, j2GroupTotal, j3RxAnnual, j3RxMonths, j3RxCount, j3Conc, j3Top3Conc, j3SpecificRx, j3IsCity, j4IsNew, jJudge, jApplyToR8, jReset, jNext, jBack,
              cStep, c2Step, cKihonType, cKeikaSochi, cGe85actual, cRoOk, cBase, cBaseChecksA, cIchiOk, cBaseOk, cAimHigher, cInd, cIndLabels, cIndCount, cIndRxAnnual, cIndActual, cIndPer10k, cIndMet, cIndLoadR7, cIndClear, c2HelpModal, c2OpenHelp, c2CloseHelp, c2GetHelp, c2Facility, c2FacilityChecks, c2FacilityOk, c2FacHelpModal, c2FacOpenHelp, c2FacCloseHelp, c2FacGetHelp, c2FacGetLabel, cResult, cApplied, cError, cNext, cBack, cReset, c2Next, c2Back, c2Reset, cJudgeHigher, cApplyToR8,
              cHelpModal, openHelp, closeHelp, getHelp,
@@ -1570,10 +1798,11 @@ const RequirementsTab = {
              zt2Step, zt2Result, zt2Checks, zt2CheckLabels, zt2AllOk, zt2Next, zt2Back, zt2Reset, zt2ApplyToR8,
              ztHelpModal, ztOpenHelp, ztCloseHelp, ztGetHelp,
              buRxCount, buStaff, buTargetCount, buRequiredTotal, buRequiredWithFukuri, buAddStaff, buRemoveStaff, buApplyVal, buApplied, buApplyToR8, formatYen, fmtC: v=>(v||0).toLocaleString(), parseNum,
-             JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied }
+             JUDGE_PAGES, judgePageIds, jpChecked, jpToggle, jpSelectedOption, jpSelectOption, jpApply, jpApplied,
+             fukuyakuJudge, saveFukuyakuJudge, fjNext, fjReset, fjApplyToR8 }
   },
   template: `<div>
-    <div class="sub-tabs-row">
+    <div v-if="!hideNav" class="sub-tabs-row">
       <button class="sub-tab-item" :class="{active:subCategory==='chinage'}" @click="subCategory='chinage';sub='k_baseup'">賃上げ</button>
       <button class="sub-tab-item" :class="{active:subCategory==='taisei'}" @click="subCategory='taisei';sub='k_kihon'">体制加算</button>
       <button class="sub-tab-item" :class="{active:subCategory==='sonota_kasan'}" @click="subCategory='sonota_kasan';sub='ot_chozai'">薬剤調製料・薬剤料</button>

@@ -201,7 +201,49 @@ const YAKUGAKU_TEMPLATE = `
           <div style="font-weight:700;margin-bottom:6px">6. 通知・疑義解釈</div>
           <div style="color:var(--text-muted);margin-bottom:8px">保医発0305第6号 別添3 p.20-35。</div>
           <div style="font-weight:700;margin-bottom:6px">7. 届出・免許・報告</div>
-          <div style="color:var(--text-muted)">1イ・2イ（かかりつけ薬剤師）は届出が必要（服薬管理指導料の注1）。特別調剤基本料Bの薬局は算定不可。</div>
+          <div style="color:var(--text-muted)">1イ・2イ（かかりつけ薬剤師）は届出が必要（服薬管理指導料の注1・様式90）。特別調剤基本料Bの薬局は算定不可。</div>
+        </div>
+      </div>
+      <div class="section" style="margin-top:16px">
+        <div class="section-title">服薬管理指導料の注1 判定ツール <span class="badge badge-new">新設</span></div>
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">ステップ {{fukuyakuJudge.step||1}} / 2</div>
+        <div class="req-progress" style="margin-bottom:16px"><div class="req-progress-bar" :style="{width:((fukuyakuJudge.step||1)/2*100)+'%'}"></div></div>
+
+        <div v-if="(fukuyakuJudge.step||1)===1" style="font-size:14px;line-height:1.8">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 1：薬局の施設基準の確認</div>
+          <p style="font-size:12px;color:var(--text-muted);margin-bottom:12px">1イ・2イ（かかりつけ薬剤師）を算定するための<b>薬局の施設基準</b>です。<br>※かかりつけ薬剤師個人の要件（経験3年以上・研修認定等）は「かかりつけ薬剤師加算」ページを参照。</p>
+          <ul class="task-list">
+            <li class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="fukuyakuJudge.k1">
+              <div style="font-size:13px;flex:1" :style="fukuyakuJudge.k1?'text-decoration:line-through;opacity:0.5':''">かかりつけ薬剤師の要件を満たす薬剤師を配置している（派遣含む、休職中は除く）</div>
+            </li>
+            <li class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="fukuyakuJudge.k2">
+              <div style="font-size:13px;flex:1" :style="fukuyakuJudge.k2?'text-decoration:line-through;opacity:0.5':''">常勤薬剤師の平均在籍期間1年以上、又は管理薬剤師が3年以上在籍（いずれか一方）</div>
+            </li>
+            <li class="task-item" style="align-items:center">
+              <input type="checkbox" class="task-check" v-model="fukuyakuJudge.k3">
+              <div style="font-size:13px;flex:1" :style="fukuyakuJudge.k3?'text-decoration:line-through;opacity:0.5':''">プライバシーに配慮した独立カウンター（パーテーション等で区切られた構造）</div>
+            </li>
+          </ul>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:8px;padding:8px 10px;background:var(--surface2);border-radius:6px"><b>経過措置:</b> R7.5.31時点でかかりつけ薬剤師指導料を届出済みの薬局は、R8.11.30まで在籍要件（2番目）を満たすものとみなす。</div>
+        </div>
+
+        <div v-if="(fukuyakuJudge.step||1)===2">
+          <div style="font-weight:700;font-size:16px;margin-bottom:12px">Step 2：判定結果</div>
+          <div v-if="fukuyakuJudge.result" style="padding:20px;border-radius:var(--radius);margin-bottom:12px" :style="fukuyakuJudge.result.pts>0?'background:var(--new-bg);border:1px solid #b3d4f7':'background:#fee;border:1px solid #f5c6c6'">
+            <div style="font-size:22px;font-weight:700;margin-bottom:6px">{{fukuyakuJudge.result.label}}</div>
+            <div style="font-size:14px;color:var(--text-muted)">{{fukuyakuJudge.result.reason}}</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="fjApplyToR8()">R8予測に反映</button>
+            <span v-if="fukuyakuJudge.applied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          </div>
+          <button class="btn" style="margin-top:12px;font-size:12px" @click="fjReset()">最初からやり直す</button>
+        </div>
+
+        <div v-if="(fukuyakuJudge.step||1)<2" style="margin-top:20px;display:flex;gap:8px">
+          <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 24px" @click="fjNext()">次へ</button>
         </div>
       </div>
     </div>
