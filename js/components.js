@@ -839,6 +839,14 @@ const TasksTab = {
 
       <!-- R8カテゴリ: 新設と改定を2ボックスで表示 -->
       <template v-if="todokeCategory==='r8'">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px">
+        <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 20px" @click="loadR8ToTodoke()">R8予測を読込</button>
+        <button class="btn" style="font-weight:600;padding:8px 20px" @click="clearR8Todoke()">読込をクリア</button>
+        <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 20px" @click="addTodokeTask()">届出項目をタスクに追加</button>
+        <span v-if="todokeR8Loaded" style="font-size:12px;color:var(--pos);font-weight:600">R8予測を読み込みました</span>
+        <span v-if="todokeR8Cleared" style="font-size:12px;color:var(--text-muted);font-weight:600">クリアしました</span>
+        <span v-if="todokeTaskAdded" style="font-size:12px;color:var(--pos);font-weight:600">タスクに追加しました</span>
+      </div>
       <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--new-text)">新設（届出必須）</div>
       <div style="overflow-x:auto;margin-bottom:24px">
       <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
@@ -921,15 +929,6 @@ const TasksTab = {
         <tr :class="{done:todokeChecks.menkyo_1}"><td><input type="checkbox" v-model="todokeChecks.menkyo_1" @change="saveTodokeChecks"></td><td>麻薬小売業者の免許</td><td>在宅薬学総合体制加算</td><td>常時保持</td></tr>
         <tr :class="{done:todokeChecks.menkyo_2}"><td><input type="checkbox" v-model="todokeChecks.menkyo_2" @change="saveTodokeChecks"></td><td>高度管理医療機器の販売業許可</td><td>在宅薬学総合体制加算2</td><td>常時保持</td></tr>
       </tbody></table>
-
-      <div style="margin-top:24px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 20px" @click="loadR8ToTodoke()">R8予測を読込</button>
-        <button class="btn" style="font-weight:600;padding:8px 20px" @click="clearR8Todoke()">読込をクリア</button>
-        <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 20px" @click="addTodokeTask()">届出項目をタスクに追加</button>
-        <span v-if="todokeR8Loaded" style="font-size:12px;color:var(--pos);font-weight:600">R8予測を読み込みました</span>
-        <span v-if="todokeR8Cleared" style="font-size:12px;color:var(--text-muted);font-weight:600">クリアしました</span>
-        <span v-if="todokeTaskAdded" style="font-size:12px;color:var(--pos);font-weight:600">タスクに追加しました</span>
-      </div>
 
       </template>
     </div>
