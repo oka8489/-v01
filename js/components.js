@@ -641,23 +641,20 @@ const TasksTab = {
     function closeTodokeTaskModal() { todokeTaskModal.value = null }
     function registerTodokeTask() {
       if (!todokeTaskModal.value) return
-      const key = todokeTaskModal.value.key
-      todokeTaskRegistered[key] = true
-      localStorage.setItem(TODOKE_TASK_KEY, JSON.stringify(todokeTaskSelections))
-      todokeTaskModal.value = null
-    }
-    function addTodokeItemTask(item) {
+      const item = todokeTaskModal.value
       const def = todokeTaskDefs[item.key]
       const sel = todokeTaskSelections[item.key]
       if (!def || !sel) return
       const checked = def.tasks.filter((_, i) => sel[i])
-      if (checked.length === 0) return
+      if (checked.length === 0) { todokeTaskModal.value = null; return }
       const id = 'todoke_' + item.key + '_' + Date.now()
       const title = item.label + (item.youshiki !== '−' ? '（' + item.youshiki + '）' : '')
       const subtasks = checked.map((label, i) => ({ id: 's' + (i + 1), label, done: false }))
       store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag: 'todoke', subtasks }
       saveTasks()
       todokeItemTaskAdded[item.key] = true
+      localStorage.setItem(TODOKE_TASK_KEY, JSON.stringify(todokeTaskSelections))
+      todokeTaskModal.value = null
     }
 
     const todokeTaskAdded = ref(false)
@@ -895,7 +892,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><button class="btn" style="font-size:10px;padding:2px 8px;white-space:nowrap" :style="todokeItemTaskAdded[item.key]?'background:#ccc;color:white':'background:#e91e63;color:white'" @click="openTodokeTaskModal(item)" :disabled="todokeItemTaskAdded[item.key]">{{todokeItemTaskAdded[item.key]?'登録済':'タスク'}}</button></template></td>
         </tr>
       </tbody></table>
       </div>
@@ -911,7 +908,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><button class="btn" style="font-size:10px;padding:2px 8px;white-space:nowrap" :style="todokeItemTaskAdded[item.key]?'background:#ccc;color:white':'background:#e91e63;color:white'" @click="openTodokeTaskModal(item)" :disabled="todokeItemTaskAdded[item.key]">{{todokeItemTaskAdded[item.key]?'登録済':'タスク'}}</button></template></td>
         </tr>
       </tbody></table>
       </div>
@@ -926,7 +923,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><button class="btn" style="font-size:10px;padding:2px 8px;white-space:nowrap" :style="todokeItemTaskAdded[item.key]?'background:#ccc;color:white':'background:#e91e63;color:white'" @click="openTodokeTaskModal(item)" :disabled="todokeItemTaskAdded[item.key]">{{todokeItemTaskAdded[item.key]?'登録済':'タスク'}}</button></template></td>
         </tr>
       </tbody></table>
       </div>
@@ -985,7 +982,7 @@ const TasksTab = {
           </div>
           <div style="display:flex;gap:8px;justify-content:flex-end">
             <button class="btn" style="padding:8px 20px" @click="closeTodokeTaskModal()">キャンセル</button>
-            <button class="btn" style="background:#e91e63;color:white;font-weight:600;padding:8px 20px" @click="registerTodokeTask()">登録</button>
+            <button class="btn" style="background:#e91e63;color:white;font-weight:600;padding:8px 20px" @click="registerTodokeTask()">タスク登録</button>
           </div>
         </div>
       </div>
