@@ -522,8 +522,12 @@ const TasksTab = {
       { cat: 'r8shinsetsu', key: 'sn_3', label: '在宅薬学総合体制加算2イ・ロ', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '届出翌月〜翌年5月末', noR7: true, kikan: '5/7〜6/1', judgeId: 'k_zaitaku', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
       { cat: 'r8shinsetsu', key: 'sn_4', label: 'バイオ後続品調剤体制加算', youshiki: '−', jisseki: 'バイオ後続品の保管・説明体制', handan: '−', tekiyou: '届出月翌月〜', noR7: true, kikan: '随時届出可', judgeId: 'k_bio', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
       { cat: 'r8shinsetsu', key: 'sn_5', label: '服薬管理指導料の注1（かかりつけ薬剤師）', youshiki: '様式90', jisseki: '薬剤師の経験・勤務時間等', handan: '−', tekiyou: '届出月翌月〜', noR7: true, kikan: '5/7〜6/1', judgeId: 'yg_fukuyaku', r8options: [{v:'shinki',l:'新規届出'},{v:'fusantei',l:'算定しない'}] },
-      // R8減算（新設）
-      { cat: 'r8gensan', key: 'gs_1', label: '門前薬局等立地依存減算', youshiki: '様式84', jisseki: '立地・集中率', handan: '直近1年', tekiyou: '6月〜翌年5月末', noR7: true, kikan: '調剤基本料と同時届出', judgeId: 'k_kihon', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      // R8減算
+      { cat: 'r8gensan', key: 'gs_1', label: '未妥結減算', youshiki: '様式85', jisseki: '妥結率・流通改善取組', handan: '4/1〜9/30の実績', tekiyou: '翌年6月〜翌々年5月末', r7key: null, kikan: '届出不要（定例報告で判断）', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      { cat: 'r8gensan', key: 'gs_2', label: 'かかりつけ減算', youshiki: '−', jisseki: 'かかりつけ機能の算定回数', handan: '前年5/1〜当年4/30の1年', tekiyou: '当年6月〜翌年5月末', r7key: null, kikan: '届出不要（自局で判断）', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      { cat: 'r8gensan', key: 'gs_3', label: '手帳減算', youshiki: '−', jisseki: '手帳持参患者の割合', handan: '前年5/1〜当年4/30の1年', tekiyou: '当年6月〜翌年5月末', r7key: null, kikan: '届出不要（自局で判断）', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      { cat: 'r8gensan', key: 'gs_4', label: '後発医薬品減算', youshiki: '−', jisseki: '後発品調剤割合・定例報告', handan: '直近3ヶ月（毎月判断）', tekiyou: '翌月〜', r7key: null, kikan: '届出不要（定例報告で判断）', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
+      { cat: 'r8gensan', key: 'gs_5', label: '門前薬局等立地依存減算', youshiki: '様式84', jisseki: '立地・集中率', handan: '前年5/1〜当年4/30の1年', tekiyou: '当年6月〜翌年5月末', noR7: true, kikan: '調剤基本料と同時届出', judgeId: 'k_kihon', r8options: [{v:'gaitou',l:'該当'},{v:'higaitou',l:'非該当'}] },
       // R8改定（施設基準が改正されたもの）
       { cat: 'r8kaitei', key: 'ka_1', label: '調剤基本料', youshiki: '様式84・85', jisseki: '処方箋受付回数・集中率', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_kihon_cnt', kikan: '区分変更時のみ届出', judgeId: 'k_kihon', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'henkou',l:'区分変更→届出'},{v:'jitai',l:'辞退'}] },
       { cat: 'r8kaitei', key: 'ka_2', label: '在宅薬学総合体制加算1', youshiki: '様式87の3の5', jisseki: '在宅患者への指導実績', handan: '直近1年', tekiyou: '6月〜翌年5月末', r7key: 'k_zaitaku_taisei_cnt', kikan: '区分変更なし→届出不要', judgeId: 'k_zaitaku', r8options: [{v:'keizoku',l:'継続（届出不要）'},{v:'henkou',l:'変更→届出'},{v:'jitai',l:'辞退'}] },
@@ -941,7 +945,7 @@ const TasksTab = {
         </tr>
       </tbody></table>
       </div>
-      <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--neg)">減算（新設）</div>
+      <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--neg)">減算</div>
       <div style="overflow-x:auto;margin-bottom:24px">
       <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th><th style="width:60px"></th></tr></thead><tbody>
         <tr v-for="item in todokeItemsGensan" :key="item.key">
