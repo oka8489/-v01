@@ -643,18 +643,26 @@ const TasksTab = {
       if (!todokeTaskModal.value) return
       const item = todokeTaskModal.value
       const def = todokeTaskDefs[item.key]
-      if (!def) return
-      const all = flatTasks(def)
+      if (!def || !def.categories) return
       const sel = todokeTaskSelections[item.key]
       if (!sel) return
-      const checked = all.filter((_, i) => sel[i])
-      if (checked.length === 0) { todokeTaskModal.value = null; return }
-      const id = 'todoke_' + item.key + '_' + Date.now()
-      const title = item.label + (item.youshiki !== '−' ? '（' + item.youshiki + '）' : '')
-      const subtasks = checked.map((label, i) => ({ id: 's' + (i + 1), label, done: false }))
-      store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag: 'todoke', subtasks }
-      saveTasks()
-      todokeItemTaskAdded[item.key] = true
+      let idx = 0
+      let added = false
+      for (const cat of def.categories) {
+        const catChecked = cat.tasks.filter((_, ti) => sel[idx + ti])
+        if (catChecked.length > 0) {
+          const id = 'todoke_' + item.key + '_' + cat.name + '_' + Date.now()
+          const title = item.label + '：' + cat.name
+          const subtasks = catChecked.map((label, i) => ({ id: 's' + (i + 1), label, done: false }))
+          store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag: 'todoke', subtasks }
+          added = true
+        }
+        idx += cat.tasks.length
+      }
+      if (added) {
+        saveTasks()
+        todokeItemTaskAdded[item.key] = true
+      }
       localStorage.setItem(TODOKE_TASK_KEY, JSON.stringify(todokeTaskSelections))
       todokeTaskModal.value = null
     }
