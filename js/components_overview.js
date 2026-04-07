@@ -242,16 +242,5 @@ const OverviewTab = {
     </div>
   </div>
 </div>
-
-<div class="section">
-  <div class="section-title">このシステムの使い方</div>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;font-size:12px">
-    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)"><div style="font-weight:700;margin-bottom:4px">1. R7実績</div><div style="color:var(--text-muted)">レセコンPDFから実績データを取り込みます。</div></div>
-    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)"><div style="font-weight:700;margin-bottom:4px">2. R8予測</div><div style="color:var(--text-muted)">R8改定後の点数で売上予測を確認できます。</div></div>
-    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)"><div style="font-weight:700;margin-bottom:4px">3. 経営影響</div><div style="color:var(--text-muted)">R7→R8のカテゴリ別増減を試算します。</div></div>
-    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)"><div style="font-weight:700;margin-bottom:4px">4. 事務タスク</div><div style="color:var(--text-muted)">届出変更・システム更新等をチェックリストで管理。</div></div>
-    <div style="padding:12px;background:var(--surface2);border-radius:var(--radius)"><div style="font-weight:700;margin-bottom:4px">5. 施設基準</div><div style="color:var(--text-muted)">地域支援体制等の施設基準の要件を確認。</div></div>
-  </div>
-</div>
 </div>`
 }
