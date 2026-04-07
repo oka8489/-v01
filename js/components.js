@@ -1033,7 +1033,6 @@ const TasksTab = {
             <label class="flow-check" :class="{done:flowChecks.phase0_6}"><input type="checkbox" v-model="flowChecks.phase0_6" @change="saveFlowChecks">中医協答申・改定骨子の確認（1月末〜2月）</label>
 
             <label class="flow-check" :class="{done:flowChecks.phase0_4}"><input type="checkbox" v-model="flowChecks.phase0_4" @change="saveFlowChecks">レセコンベンダーとの改定対応スケジュール確認</label>
-            <label class="flow-check" :class="{done:flowChecks.phase0_5}"><input type="checkbox" v-model="flowChecks.phase0_5" @change="saveFlowChecks">経過措置終了項目の確認（届出し直しが必要な加算の洗い出し）</label>
           </div>
         </div>
         <div class="flow-arrow">▼</div>
