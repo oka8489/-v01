@@ -895,7 +895,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">タスクに追加</button><button v-else class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:var(--teal);color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
         </tr>
       </tbody></table>
       </div>
@@ -911,7 +911,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">タスクに追加</button><button v-else class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:var(--teal);color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
         </tr>
       </tbody></table>
       </div>
@@ -926,7 +926,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
-          <td><template v-if="todokeTaskDefs[item.key]"><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">タスクに追加</button><button v-else class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button></template></td>
+          <td><template v-if="todokeTaskDefs[item.key]"><div style="display:flex;gap:4px"><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="openTodokeTaskModal(item)">タスク</button><button v-if="todokeItemTaskAdded[item.key]" class="btn" style="font-size:10px;padding:2px 8px;background:#ccc;color:white;white-space:nowrap" disabled>追加済</button><button v-else-if="isTodokeTaskRegistered(item.key)" class="btn" style="font-size:10px;padding:2px 8px;background:var(--teal);color:white;white-space:nowrap" @click="addTodokeItemTask(item)">追加</button></div></template></td>
         </tr>
       </tbody></table>
       </div>
