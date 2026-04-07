@@ -253,9 +253,12 @@ const TasksTab = {
     // Tags
     const tagDefs = {
       todoke: { label: '届出', color: 'var(--purple)' },
+      todoke_youken: { label: '要件・手続き', color: 'var(--teal)' },
+      todoke_unyo: { label: '運用', color: 'var(--amber)' },
       system: { label: 'システム', color: 'var(--teal)' },
       operation: { label: '運用・施設', color: 'var(--amber)' }
     }
+    const taskSubTab = ref('youken')
     function tagLabel(t) { return tagDefs[t?.tag]?.label || '' }
     function tagColor(t) { return tagDefs[t?.tag]?.color || 'var(--text-faint)' }
 
@@ -267,7 +270,12 @@ const TasksTab = {
       }
       return list
     })
-    function tasksInColumn(col) { return allTasks.value.filter(t => status(t.id) === col) }
+    function tasksInColumn(col) {
+      let tasks = allTasks.value.filter(t => status(t.id) === col)
+      if (taskSubTab.value === 'youken') tasks = tasks.filter(t => t.task.tag !== 'todoke_unyo')
+      else if (taskSubTab.value === 'unyo') tasks = tasks.filter(t => t.task.tag === 'todoke_unyo')
+      return tasks
+    }
 
     // ── Calendar logic ──
     const currentMonth = ref(new Date())
@@ -654,7 +662,8 @@ const TasksTab = {
           const id = 'todoke_' + item.key + '_' + cat.name + '_' + Date.now()
           const title = item.label + '：' + cat.name
           const subtasks = catChecked.map((label, i) => ({ id: 's' + (i + 1), label, done: false }))
-          store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag: 'todoke', subtasks }
+          const tag = cat.name === '運用' ? 'todoke_unyo' : 'todoke_youken'
+          store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag, subtasks }
           added = true
         }
         idx += cat.tasks.length
@@ -694,7 +703,7 @@ const TasksTab = {
       todokeTaskAdded.value = true
     }
 
-    return { store, loading, viewMode, forceView: props.forceView, todokeCategory, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
+    return { store, loading, viewMode, forceView: props.forceView, todokeCategory, taskSubTab, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
              showAddForm, addForm, openAddForm, addTask, addSubtaskToForm, removeSubtaskFromForm, deleteTask,
@@ -818,6 +827,12 @@ const TasksTab = {
     </div>
 
     <!-- ═══ Kanban View ═══ -->
+    <div v-if="viewMode==='kanban'">
+      <div style="display:flex;gap:4px;margin-bottom:12px">
+        <button class="sub-tab-item" :class="{active:taskSubTab==='youken'}" @click="taskSubTab='youken'" style="font-size:12px;padding:4px 12px">要件・手続き</button>
+        <button class="sub-tab-item" :class="{active:taskSubTab==='unyo'}" @click="taskSubTab='unyo'" style="font-size:12px;padding:4px 12px">運用</button>
+      </div>
+    </div>
     <div v-if="viewMode==='kanban'" class="kb-board">
       <div v-for="col in columns" :key="col.key" class="kb-col" :class="'kb-col-'+col.key"
            @dragover="onDragOver" @drop="onDrop($event, col.key)">
