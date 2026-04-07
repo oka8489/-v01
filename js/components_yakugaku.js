@@ -236,8 +236,8 @@ const YAKUGAKU_TEMPLATE = `
             <div style="font-size:14px;color:var(--text-muted)">{{fukuyakuJudge.result.reason}}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="fjApplyToR8()">R8予測に反映</button>
-            <span v-if="fukuyakuJudge.applied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="fjApplyToR8()">R8予測/届出に反映</button>
+            <span v-if="fukuyakuJudge.applied" style="font-size:13px;color:var(--pos);font-weight:600">反映しました</span>
           </div>
           <button class="btn" style="margin-top:12px;font-size:12px" @click="fjReset()">最初からやり直す</button>
         </div>

@@ -1171,6 +1171,7 @@ const RequirementsTab = {
       if (props.r8Data) {
         if (!props.r8Data.r6) props.r8Data.r6 = {}
         props.r8Data.r6['k_kihon'] = jResult.value.pts
+        todokeChecks['ka_1_r8'] = 'henkou'; todokeChecks['ta_1_r8'] = 'keizoku'; saveTodokeChecks()
         jApplied.value = true
         saveJudge()
       }
@@ -1444,7 +1445,7 @@ const RequirementsTab = {
     function cReset() { cStep.value = 1; cResult.value = null; cApplied.value = false; cKeikaSochi.value = null; cGe85actual.value = false }
     function cApplyToR8() {
       if (!cResult.value) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_chiiki'] = cResult.value.pts; cApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_chiiki'] = cResult.value.pts; todokeChecks['sn_2a_r8'] = 'shinki'; todokeChecks['sn_2b_r8'] = 'shinki'; todokeChecks['ta_2a_r8'] = 'shinki'; todokeChecks['ta_2b_r8'] = 'shinki'; saveTodokeChecks(); cApplied.value = true }
     }
     function saveCJudge() {
       props.data.judge = {
@@ -1505,7 +1506,7 @@ const RequirementsTab = {
     function rkReset() { rkStep.value = 1; rkR7.value = null; rkResult.value = null; rkApplied.value = false }
     function rkApplyToR8() {
       if (!rkResult.value) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_renkei'] = rkResult.value.pts; rkApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_renkei'] = rkResult.value.pts; todokeChecks['ka_3_r8'] = 'keizoku'; todokeChecks['ta_3_r8'] = 'keizoku'; saveTodokeChecks(); rkApplied.value = true }
     }
     function saveRkJudge() {
       props.data.judge = {
@@ -1555,7 +1556,7 @@ const RequirementsTab = {
     function dxReset() { dxStep.value = 1; dxR7.value = null; dxResult.value = null; dxApplied.value = false }
     function dxApplyToR8() {
       if (!dxResult.value) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_dx8'] = dxResult.value.pts; dxApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_dx8'] = dxResult.value.pts; todokeChecks['ka_4_r8'] = 'keizoku'; todokeChecks['ta_4_r8'] = 'keizoku'; saveTodokeChecks(); dxApplied.value = true }
     }
     const dxHelpModal = ref(null)
     function dxOpenHelp(key) { dxHelpModal.value = key }
@@ -1590,7 +1591,7 @@ const RequirementsTab = {
     function bioReset() { bioStep.value = 1; bioResult.value = null; bioApplied.value = false; for (const k of Object.keys(bioChecks)) bioChecks[k] = false }
     function bioApplyToR8() {
       if (!bioResult.value) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_bio'] = bioResult.value.pts; bioApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_bio'] = bioResult.value.pts; todokeChecks['sn_4_r8'] = 'shinki'; saveTodokeChecks(); bioApplied.value = true }
     }
     const bioHelpModal = ref(null)
     function bioOpenHelp(key) { bioHelpModal.value = key }
@@ -1644,7 +1645,7 @@ const RequirementsTab = {
     function ztReset() { ztStep.value = 1; ztR7.value = null; ztResult.value = null; ztApplied.value = false; for (const k of Object.keys(ztChecks)) ztChecks[k] = false }
     function ztApplyToR8() {
       if (!ztResult.value) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = ztResult.value.pts; ztApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = ztResult.value.pts; todokeChecks['ka_2_r8'] = 'keizoku'; todokeChecks['sn_3_r8'] = 'shinki'; todokeChecks['ta_5_r8'] = 'keizoku'; saveTodokeChecks(); ztApplied.value = true }
     }
     // 加算2 判定（2段目）
     const zt2Step = ref(cjd.zt2_step || 1)
@@ -1678,7 +1679,7 @@ const RequirementsTab = {
     function zt2Reset() { zt2Step.value = 1; zt2Result.value = null; for (const k of Object.keys(zt2Checks)) zt2Checks[k] = false }
     function zt2ApplyToR8() {
       if (!zt2Result.value || zt2Result.value.pts === 0) return
-      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = 'zt2'; ztApplied.value = true }
+      if (props.r8Data) { if (!props.r8Data.r6) props.r8Data.r6 = {}; props.r8Data.r6['k_zaitaku_taisei'] = 'zt2'; todokeChecks['ka_2_r8'] = 'henkou'; todokeChecks['sn_3_r8'] = 'shinki'; todokeChecks['ta_5_r8'] = 'shinki'; saveTodokeChecks(); ztApplied.value = true }
     }
     const ztHelpModal = ref(null)
     function ztOpenHelp(key) { ztHelpModal.value = key }
@@ -1793,10 +1794,13 @@ const RequirementsTab = {
       if (fukuyakuJudge.result.pts > 0) {
         props.r8Data.r6['t_fukuyaku_a_i'] = 45
         props.r8Data.r6['t_fukuyaku_c_i'] = 59
+        todokeChecks['sn_5_r8'] = 'shinki'
       } else {
         props.r8Data.r6['t_fukuyaku_a_i'] = 0
         props.r8Data.r6['t_fukuyaku_c_i'] = 0
+        todokeChecks['sn_5_r8'] = 'fusantei'
       }
+      saveTodokeChecks()
       fukuyakuJudge.applied = true
       saveFukuyakuJudge()
     }
@@ -1961,9 +1965,8 @@ const RequirementsTab = {
             <div v-if="jResult.gensan>0" style="font-size:14px;color:var(--text-muted)">実質：{{jResult.pts - jResult.gensan}}点</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="jApplyToR8()">R8予測に反映</button>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="jApplyToR8()">R8予測/届出に反映</button><span v-if="jApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             <button class="btn" @click="jReset()">最初からやり直す</button>
-            <span v-if="jApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映しました。シミュレータ→R8予測で確認できます。</span>
           </div>
         </div>
 
@@ -2048,9 +2051,8 @@ const RequirementsTab = {
             </div>
           </div>
           <div v-if="cBaseOk" style="display:flex;gap:8px;align-items:center">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">加算1（27点）をR8予測に反映</button>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="cApplyToR8()">加算1（27点）をR8予測/届出に反映</button><span v-if="cApplied && (!cResult || cResult.pts===27)" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             <button class="btn" @click="cReset()">最初からやり直す</button>
-            <span v-if="cApplied && (!cResult || cResult.pts===27)" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
           </div>
         </div>
 
@@ -2141,9 +2143,8 @@ const RequirementsTab = {
               <div style="font-size:14px;color:var(--text-muted)">{{cResult.reason}}</div>
             </div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-              <button v-if="cResult&&cResult.pts>27" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">{{cResult.label}}をR8予測に反映</button>
+              <button v-if="cResult&&cResult.pts>27" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="cApplyToR8()">{{cResult.label}}をR8予測/届出に反映</button><span v-if="cApplied && cResult && cResult.pts>27" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
               <button class="btn" @click="c2Reset()">最初からやり直す</button>
-              <span v-if="cApplied && cResult && cResult.pts>27" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
             </div>
           </div>
 
@@ -2205,9 +2206,8 @@ const RequirementsTab = {
             <div style="font-size:14px;color:var(--text-muted)">{{rkResult.reason}}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="rkApplyToR8()">R8予測に反映</button>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="rkApplyToR8()">R8予測/届出に反映</button><span v-if="rkApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             <button class="btn" @click="rkReset()">最初からやり直す</button>
-            <span v-if="rkApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
           </div>
         </div>
 
@@ -2278,9 +2278,8 @@ const RequirementsTab = {
             <div style="font-size:14px;color:var(--text-muted)">{{dxResult.reason}}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="dxApplyToR8()">R8予測に反映</button>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 24px" @click="dxApplyToR8()">R8予測/届出に反映</button><span v-if="dxApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             <button class="btn" @click="dxReset()">最初からやり直す</button>
-            <span v-if="dxApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
           </div>
         </div>
 
@@ -2352,9 +2351,8 @@ const RequirementsTab = {
             <div v-else style="font-size:13px;color:var(--del-text)">施設基準に未チェック項目があります。</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <button v-if="ztAllOk" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="ztApplyToR8()">加算1（30点）をR8予測に反映</button>
+            <button v-if="ztAllOk" class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="ztApplyToR8()">加算1（30点）をR8予測/届出に反映</button><span v-if="ztApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             <button class="btn" @click="ztReset()">最初からやり直す</button>
-            <span v-if="ztApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
           </div>
         </div>
 
@@ -2406,8 +2404,7 @@ const RequirementsTab = {
               <div v-else style="font-size:13px;color:var(--del-text)">追加要件に未チェック項目があります。加算1（30点）で算定可能です。</div>
             </div>
             <div v-if="zt2AllOk" style="display:flex;gap:8px;align-items:center">
-              <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="zt2ApplyToR8()">加算2でR8予測に反映</button>
-              <span v-if="ztApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+              <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="zt2ApplyToR8()">加算2でR8予測/届出に反映</button><span v-if="ztApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
             </div>
             <button class="btn" style="margin-top:12px;font-size:12px" @click="zt2Reset()">加算2をやり直す</button>
           </div>
@@ -2549,8 +2546,7 @@ const RequirementsTab = {
             <div style="font-size:14px;color:var(--text-muted)">{{bioResult.reason}}</div>
           </div>
           <div style="display:flex;gap:8px;align-items:center">
-            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="bioApplyToR8()">R8予測に反映</button>
-            <span v-if="bioApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+            <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 16px" @click="bioApplyToR8()">R8予測/届出に反映</button><span v-if="bioApplied" style="font-size:12px;color:var(--pos);font-weight:600;margin-left:8px">反映しました</span>
           </div>
           <button class="btn" style="margin-top:12px;font-size:12px" @click="bioReset()">最初からやり直す</button>
         </div>
@@ -2808,14 +2804,13 @@ const RequirementsTab = {
         </div>
       </div>
       <div class="section">
-        <div class="section-title">R8予測に反映</div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <select class="fee-select" :value="jpSelectedOption(pid)" @change="jpSelectOption(pid, $event.target.value)">
             <option :value="null" disabled>選択してください</option>
             <option v-for="opt in JUDGE_PAGES[pid].options" :key="opt.value" :value="opt.value">{{opt.label}}</option>
           </select>
-          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="jpApply(pid)">R8予測に反映</button>
-          <span v-if="jpApplied(pid)" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="jpApply(pid)">R8予測/届出に反映</button>
+          <span v-if="jpApplied(pid)" style="font-size:13px;color:var(--pos);font-weight:600">反映しました</span>
         </div>
       </div>
     </div></template>
@@ -2960,7 +2955,7 @@ const RequirementsTab = {
           <option value="0">届出しない（0点）</option>
         </select>
         <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="buApplyToR8()">R8予測/届出に反映</button>
-        <span v-if="buApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
+        <span v-if="buApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映しました</span>
       </div>
     </div>
 
