@@ -560,6 +560,12 @@ const TasksTab = {
       { cat: 'zaitaku', key: 'zt_2', label: '在宅患者訪問薬剤管理指導料', youshiki: '−', jisseki: '−（届出不要）', handan: '−', tekiyou: '−', r7key: 't_zaitaku_houmon_cnt', kikan: '届出不要', r8options: [{v:'keizoku',l:'自動算定'}] },
       { cat: 'zaitaku', key: 'zt_3', label: '麻薬小売業者の免許', youshiki: '−', jisseki: '免許の取得', handan: '−', tekiyou: '常時', r7key: null, kikan: '常時保持', r8options: [{v:'ari',l:'取得済'},{v:'nashi',l:'未取得'}] },
       { cat: 'zaitaku', key: 'zt_4', label: '高度管理医療機器の販売業許可', youshiki: '−', jisseki: '許可の取得', handan: '−', tekiyou: '常時', r7key: null, kikan: '常時保持', r8options: [{v:'ari',l:'取得済'},{v:'nashi',l:'未取得'}] },
+      // 介護
+      { cat: 'kaigo', key: 'kg_1', label: '居宅療養管理指導費', youshiki: '−', jisseki: '介護保険事業所の指定', handan: '−', tekiyou: '常時', r7key: null, kikan: '指定更新（6年ごと）', r8options: [{v:'santei',l:'算定中'},{v:'fusantei',l:'算定なし'}] },
+      { cat: 'kaigo', key: 'kg_2', label: '介護予防居宅療養管理指導費', youshiki: '−', jisseki: '介護保険事業所の指定', handan: '−', tekiyou: '常時', r7key: null, kikan: '指定更新（6年ごと）', r8options: [{v:'santei',l:'算定中'},{v:'fusantei',l:'算定なし'}] },
+      { cat: 'kaigo', key: 'kg_3', label: '介護保険事業所の指定更新', youshiki: '更新申請書', jisseki: '指定有効期間の確認', handan: '−', tekiyou: '6年ごと', r7key: null, kikan: '有効期限の6ヶ月前〜', r8options: [{v:'kakunin',l:'確認済'},{v:'mikanryo',l:'未確認'}] },
+      { cat: 'kaigo', key: 'kg_4', label: '介護給付費の請求', youshiki: '−', jisseki: '国保連への毎月請求', handan: '−', tekiyou: '毎月', r7key: null, kikan: '毎月10日まで', r8options: [{v:'jisshi',l:'実施中'},{v:'mijisshi',l:'未実施'}] },
+      { cat: 'kaigo', key: 'kg_5', label: '体制届出（変更時）', youshiki: '体制届出書', jisseki: '体制変更の有無', handan: '−', tekiyou: '変更時', r7key: null, kikan: '変更の届出月の翌月〜', r8options: [{v:'henkou_nashi',l:'変更なし'},{v:'henkou_ari',l:'変更あり'}] },
     ]
     const todokeCategory = computed(() => props.todokeCategory || 'r8')
     const todokeItemsShinsetsu = computed(() => allTodokeItems.filter(i => i.cat === 'r8shinsetsu'))
