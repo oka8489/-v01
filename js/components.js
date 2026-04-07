@@ -1729,6 +1729,10 @@ const RequirementsTab = {
         props.r8Data.r6.k_baseup = Number(buApplyVal.value)
         // 賃上げ充当分（控除）: 必要賃上げ額をマイナスで反映
         props.r8Data.r6.k_baseup_chinage_amt = -(buRequiredTotal.value)
+        // 届出ページのプルダウンにも反映
+        todokeChecks['ch_1_r8'] = Number(buApplyVal.value) > 0 ? 'shinki' : 'fusantei'
+        todokeChecks['sn_1_r8'] = Number(buApplyVal.value) > 0 ? 'shinki' : 'fusantei'
+        saveTodokeChecks()
         buApplied.value = true
       }
     }
@@ -2950,16 +2954,13 @@ const RequirementsTab = {
           </template>
         </div>
       </div>
-      <div class="section">
-        <div class="section-title">R8予測に反映</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-          <select class="fee-select" :value="buApplyVal" @change="buApplyVal=$event.target.value">
-            <option value="4">届出する（4点）</option>
-            <option value="0">届出しない（0点）</option>
-          </select>
-          <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="buApplyToR8()">R8予測に反映</button>
-          <span v-if="buApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
-        </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <select class="fee-select" :value="buApplyVal" @change="buApplyVal=$event.target.value">
+          <option value="4">届出する（4点）</option>
+          <option value="0">届出しない（0点）</option>
+        </select>
+        <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:6px 16px" @click="buApplyToR8()">R8予測/届出に反映</button>
+        <span v-if="buApplied" style="font-size:13px;color:var(--pos);font-weight:600">反映済み</span>
       </div>
     </div>
 
