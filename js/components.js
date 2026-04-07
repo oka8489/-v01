@@ -577,6 +577,33 @@ const TasksTab = {
       return done + '/' + total
     }
 
+    const todokeTaskAdded = ref(false)
+    function addTodokeTask() {
+      // 届出が必要な項目をタスクとして追加
+      const items = [...todokeItemsShinsetsu.value, ...todokeItemsKaitei.value, ...todokeItemsGensan.value]
+      const toAdd = items.filter(item => {
+        const val = todokeChecks[item.key + '_r8']
+        return val && val !== 'fusantei' && val !== 'higaitou' && val !== 'jitai' && val !== 'keizoku'
+      })
+      if (toAdd.length === 0) return
+      const subtasks = toAdd.map((item, i) => ({
+        id: 's' + (i + 1),
+        label: item.label + (item.youshiki !== '−' ? '（' + item.youshiki + '）' : ''),
+        done: false
+      }))
+      const id = 'todoke_' + Date.now()
+      store.tasks[id] = {
+        title: 'R8施設基準の届出',
+        detail: '届出期間: 5/7〜6/1',
+        deadline: '2026-06-01',
+        status: 'todo',
+        tag: 'todoke',
+        subtasks
+      }
+      saveTasks()
+      todokeTaskAdded.value = true
+    }
+
     return { store, loading, viewMode, forceView: props.forceView, todokeCategory, status, setStatus, cycleStatus, statusLabel, tagDefs, tagLabel, tagColor,
              columns, tasksInColumn, dragId, onDragStart, onDragOver, onDrop, onDragEnd,
              expandedCard, toggleExpand, editingCard, editForm, startEdit, saveEdit, cancelEdit,
@@ -586,7 +613,7 @@ const TasksTab = {
              subtaskProgress, toggleSubtask,
              showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate,
              flowChecks, saveFlowChecks, phaseProgress,
-             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge }
+             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge, addTodokeTask, todokeTaskAdded }
   },
   template: `<div>
     <div v-if="loading&&!forceView" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
@@ -850,6 +877,12 @@ const TasksTab = {
         <tr :class="{done:todokeChecks.menkyo_1}"><td><input type="checkbox" v-model="todokeChecks.menkyo_1" @change="saveTodokeChecks"></td><td>麻薬小売業者の免許</td><td>在宅薬学総合体制加算</td><td>常時保持</td></tr>
         <tr :class="{done:todokeChecks.menkyo_2}"><td><input type="checkbox" v-model="todokeChecks.menkyo_2" @change="saveTodokeChecks"></td><td>高度管理医療機器の販売業許可</td><td>在宅薬学総合体制加算2</td><td>常時保持</td></tr>
       </tbody></table>
+
+      <div style="margin-top:24px;display:flex;align-items:center;gap:8px">
+        <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 20px" @click="addTodokeTask()">届出項目をタスクに追加</button>
+        <span v-if="todokeTaskAdded" style="font-size:12px;color:var(--pos);font-weight:600">タスクに追加しました</span>
+      </div>
+
       </template>
     </div>
 
