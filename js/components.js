@@ -630,12 +630,12 @@ const TasksTab = {
     const todokeItemTaskAdded = reactive({})
     // JSON定義を読込
     fetch('data/todoke-task-definitions.json').then(r => r.json()).then(d => { Object.assign(todokeTaskDefs, d) }).catch(() => {})
-    // 登録済み判定: localStorageにチェック状態があれば登録済み
-    function isTodokeTaskRegistered(key) { return todokeTaskRegistered[key] || (todokeTaskSelections[key] && todokeTaskSelections[key].length > 0) }
+    // 全タスクをフラット化（カテゴリ構造対応）
+    function flatTasks(def) { return def.categories ? def.categories.flatMap(c => c.tasks) : (def.tasks || []) }
     function openTodokeTaskModal(item) {
       if (!todokeTaskDefs[item.key]) return
-      // 初回は全チェックOFF
-      if (!todokeTaskSelections[item.key]) todokeTaskSelections[item.key] = todokeTaskDefs[item.key].tasks.map(() => false)
+      const all = flatTasks(todokeTaskDefs[item.key])
+      if (!todokeTaskSelections[item.key]) todokeTaskSelections[item.key] = all.map(() => false)
       todokeTaskModal.value = item
     }
     function closeTodokeTaskModal() { todokeTaskModal.value = null }
@@ -643,9 +643,11 @@ const TasksTab = {
       if (!todokeTaskModal.value) return
       const item = todokeTaskModal.value
       const def = todokeTaskDefs[item.key]
+      if (!def) return
+      const all = flatTasks(def)
       const sel = todokeTaskSelections[item.key]
-      if (!def || !sel) return
-      const checked = def.tasks.filter((_, i) => sel[i])
+      if (!sel) return
+      const checked = all.filter((_, i) => sel[i])
       if (checked.length === 0) { todokeTaskModal.value = null; return }
       const id = 'todoke_' + item.key + '_' + Date.now()
       const title = item.label + (item.youshiki !== '−' ? '（' + item.youshiki + '）' : '')
@@ -693,7 +695,7 @@ const TasksTab = {
              subtaskProgress, toggleSubtask,
              showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate,
              flowChecks, saveFlowChecks, phaseProgress,
-             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge, addTodokeTask, todokeTaskAdded, todokeTaskDefs, todokeTaskModal, todokeTaskSelections, todokeTaskRegistered, todokeItemTaskAdded, openTodokeTaskModal, closeTodokeTaskModal, registerTodokeTask, addTodokeItemTask, isTodokeTaskRegistered, loadR8ToTodoke, clearR8Todoke, todokeR8Loaded, todokeR8Cleared }
+             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge, addTodokeTask, todokeTaskAdded, todokeTaskDefs, todokeTaskModal, todokeTaskSelections, todokeItemTaskAdded, openTodokeTaskModal, closeTodokeTaskModal, registerTodokeTask, flatTasks, loadR8ToTodoke, clearR8Todoke, todokeR8Loaded, todokeR8Cleared }
   },
   template: `<div>
     <div v-if="loading&&!forceView" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
@@ -973,13 +975,18 @@ const TasksTab = {
       <div v-if="todokeTaskModal" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1000;display:flex;align-items:center;justify-content:center" @click="closeTodokeTaskModal()">
         <div style="background:white;border-radius:12px;padding:24px;max-width:520px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.2)" @click.stop>
           <div style="font-weight:700;font-size:17px;margin-bottom:4px">{{todokeTaskModal.label}}</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">届出に必要なタスクを確認し、未整備の項目にチェックを入れてください</div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
-            <label v-for="(task, i) in todokeTaskDefs[todokeTaskModal.key].tasks" :key="i" style="display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.6;cursor:pointer">
-              <input type="checkbox" v-model="todokeTaskSelections[todokeTaskModal.key][i]" style="margin:0;width:18px;height:18px">
-              <span>{{task}}</span>
-            </label>
-          </div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">未整備の項目にチェックを入れてタスク登録してください</div>
+          <template v-if="todokeTaskDefs[todokeTaskModal.key].categories">
+            <div v-for="(cat, ci) in todokeTaskDefs[todokeTaskModal.key].categories" :key="ci" style="margin-bottom:16px">
+              <div style="font-weight:600;font-size:13px;color:var(--teal);margin-bottom:6px;border-bottom:1px solid var(--border);padding-bottom:4px">{{cat.name}}</div>
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <label v-for="(task, ti) in cat.tasks" :key="ti" style="display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.6;cursor:pointer">
+                  <input type="checkbox" v-model="todokeTaskSelections[todokeTaskModal.key][todokeTaskDefs[todokeTaskModal.key].categories.slice(0,ci).reduce((s,c)=>s+c.tasks.length,0)+ti]" style="margin:0;width:18px;height:18px">
+                  <span>{{task}}</span>
+                </label>
+              </div>
+            </div>
+          </template>
           <div style="display:flex;gap:8px;justify-content:flex-end">
             <button class="btn" style="padding:8px 20px" @click="closeTodokeTaskModal()">キャンセル</button>
             <button class="btn" style="background:#e91e63;color:white;font-weight:600;padding:8px 20px" @click="registerTodokeTask()">タスク登録</button>
