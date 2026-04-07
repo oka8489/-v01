@@ -621,6 +621,15 @@ const TasksTab = {
       todokeR8Loaded.value = false
     }
 
+    const todokeItemTaskAdded = reactive({})
+    function addTodokeItemTask(item) {
+      const id = 'todoke_' + item.key + '_' + Date.now()
+      const title = item.label + (item.youshiki !== '−' ? '（' + item.youshiki + '）' : '')
+      store.tasks[id] = { title, detail: '届出期間: ' + item.kikan, deadline: '2026-06-01', status: 'todo', tag: 'todoke' }
+      saveTasks()
+      todokeItemTaskAdded[item.key] = true
+    }
+
     const todokeTaskAdded = ref(false)
     function addTodokeTask() {
       // 届出が必要な項目をタスクとして追加
@@ -657,7 +666,7 @@ const TasksTab = {
              subtaskProgress, toggleSubtask,
              showAddEvent, eventForm, openAddEvent, addEvent, deleteEvent, eventsForDate,
              flowChecks, saveFlowChecks, phaseProgress,
-             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge, addTodokeTask, todokeTaskAdded, loadR8ToTodoke, clearR8Todoke, todokeR8Loaded, todokeR8Cleared }
+             todokeChecks, saveTodokeChecks, todokeProgress, todokeItems, todokeItemsShinsetsu, todokeItemsKaitei, todokeItemsGensan, todokeCategory, r7Status, goToJudge: props.goToJudge, addTodokeTask, todokeTaskAdded, addTodokeItemTask, todokeItemTaskAdded, loadR8ToTodoke, clearR8Todoke, todokeR8Loaded, todokeR8Cleared }
   },
   template: `<div>
     <div v-if="loading&&!forceView" class="section" style="text-align:center;padding:40px;color:var(--text-muted)">読み込み中...</div>
@@ -842,14 +851,12 @@ const TasksTab = {
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:16px">
         <button class="btn" style="background:var(--pos);color:white;font-weight:600;padding:8px 20px" @click="loadR8ToTodoke()">R8予測を読込</button>
         <button class="btn" style="font-weight:600;padding:8px 20px" @click="clearR8Todoke()">読込をクリア</button>
-        <button class="btn" style="background:var(--teal);color:white;font-weight:600;padding:8px 20px" @click="addTodokeTask()">届出項目をタスクに追加</button>
         <span v-if="todokeR8Loaded" style="font-size:12px;color:var(--pos);font-weight:600">R8予測を読み込みました</span>
         <span v-if="todokeR8Cleared" style="font-size:12px;color:var(--text-muted);font-weight:600">クリアしました</span>
-        <span v-if="todokeTaskAdded" style="font-size:12px;color:var(--pos);font-weight:600">タスクに追加しました</span>
       </div>
       <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--new-text)">新設（届出必須）</div>
       <div style="overflow-x:auto;margin-bottom:24px">
-      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th><th style="width:60px"></th></tr></thead><tbody>
         <tr v-for="item in todokeItemsShinsetsu" :key="item.key">
           <td style="font-weight:600">{{item.label}}</td>
           <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
@@ -858,12 +865,13 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
+          <td><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">{{todokeItemTaskAdded[item.key]?'追加済':'タスク'}}</button></td>
         </tr>
       </tbody></table>
       </div>
       <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--mod-text)">改定（変更なければ届出不要）</div>
       <div style="overflow-x:auto;margin-bottom:24px">
-      <table class="fee-table" style="min-width:1100px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:80px">前回（R7）</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+      <table class="fee-table" style="min-width:1100px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:80px">前回（R7）</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th><th style="width:60px"></th></tr></thead><tbody>
         <tr v-for="item in todokeItemsKaitei" :key="item.key">
           <td style="font-weight:600">{{item.label}}</td>
           <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
@@ -873,12 +881,13 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
+          <td><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">{{todokeItemTaskAdded[item.key]?'追加済':'タスク'}}</button></td>
         </tr>
       </tbody></table>
       </div>
       <div style="font-weight:700;font-size:15px;margin-bottom:8px;color:var(--neg)">減算（新設）</div>
       <div style="overflow-x:auto;margin-bottom:24px">
-      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th></tr></thead><tbody>
+      <table class="fee-table" style="min-width:1000px"><thead><tr><th>加算名</th><th style="width:130px">実績要件</th><th style="width:110px">今回（R8）</th><th style="width:130px">判断期間</th><th style="width:110px">適用期間</th><th style="width:90px">様式</th><th style="width:140px">届出期間</th><th style="width:60px"></th></tr></thead><tbody>
         <tr v-for="item in todokeItemsGensan" :key="item.key">
           <td style="font-weight:600">{{item.label}}</td>
           <td style="font-size:11px;color:var(--text-muted)"><button v-if="item.judgeId&&goToJudge" class="btn" style="font-size:10px;padding:2px 8px;color:white;background:var(--teal);white-space:nowrap" @click="goToJudge(item.judgeId)">判定ページ</button><span v-else>{{item.jisseki}}</span></td>
@@ -887,6 +896,7 @@ const TasksTab = {
           <td style="font-size:11px;color:var(--text-muted)">{{item.tekiyou}}</td>
           <td>{{item.youshiki}}</td>
           <td style="font-size:11px">{{item.kikan}}</td>
+          <td><button class="btn" style="font-size:10px;padding:2px 8px;background:#e91e63;color:white;white-space:nowrap" @click="addTodokeItemTask(item)">{{todokeItemTaskAdded[item.key]?'追加済':'タスク'}}</button></td>
         </tr>
       </tbody></table>
       </div>
